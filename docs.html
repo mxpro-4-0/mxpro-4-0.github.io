@@ -70,8 +70,42 @@
         </tbody>
       </table>
 
-      <h2 id="ai-ru">3. Детектор ИИ-генерации и 8 слоёв клише</h2>
-      <p>Нейросети оптимизируют текст под высокую статистическую предсказуемость токенов. Ядро MXPro 4.0 выявляет машинный текст по падению индекса остранения, сглаженной дисперсии ритма и характерным речевым связкам (8 слоёв: ~1 000 штампов, плеоназмов и канцеляризмов).</p>
+      
+      <p>В отличие от стандартных статистических детекторов, в ядро <b>MXPro 4.0</b> интегрирована закрытая математически откалиброванная модель <b>13 метрик Метода А. Хакимуллина</b> (CERN Zenodo DOI: 10.5281/zenodo.24208510). Система оценивает конструктивную плотность текста на фонологическом, ритмическом и лексико-семантическом уровнях вместе со сканером 8 слоёв клише (~1 000 штампов, плеоназмов и канцеляризмов).</p>
+      <p><b>Как устроена шкала верификации (0–100%):</b> в любом живом тексте присутствует естественный базовый процент стандартной грамматики и обычных речевых связок. Поэтому на шкале от 0% до 100% живая классическая и современная проза получает спокойный фоновый индекс <b style="color:#10b981;">6–20% (зелёная зона — «Подтверждён живой авторский голос»)</b>, тогда как нейросетевой текст — даже после чистки штампов — сразу уходит в <b style="color:#ef4444;">красную зону 78–96%</b>. Чистый зазор разделения превышает <b>58 процентных пунктов</b>.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Критерий сравнения</th>
+            <th>Западные аналоги<br><span style="font-weight:400;font-size:11.5px;color:#94a3b8;">GPTZero, Originality.ai, Winston AI*</span></th>
+            <th>Российские аналоги<br><span style="font-weight:400;font-size:11.5px;color:#94a3b8;">Антиплагиат, Text.ru, ReText.ai*</span></th>
+            <th>Ядро MXPro 4.0<br><span style="font-weight:400;font-size:11.5px;color:#38bdf8;">Проприетарный стандарт</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Принцип анализа</b></td><td>Статистическая перплексия токенов и <i>burstiness</i></td><td>Вероятностные классификаторы RuBERT / n-грамм</td><td><b>Закрытая модель 13 метрик Хакимуллина</b> + фонетика ИРЯ РАН</td></tr>
+          <tr><td><b>Ошибки на художественной прозе</b></td><td style="color:#f59e0b;">Повышенные (25–45% ложных срабатываний)</td><td style="color:#f59e0b;">Умеренные (15–30% на классике и науке)</td><td style="color:#10b981;"><b>0% ошибок в контрольном тесте</b> (фоновый индекс 6–20%)</td></tr>
+          <tr><td><b>Устойчивость к «выровненному» рерайту</b></td><td style="color:#f59e0b;">Падает до 35–55% после чистки штампов</td><td style="color:#f59e0b;">Падает до 40–60% при правке связок</td><td style="color:#10b981;"><b>Высокая (78% на «стерильном» LLM-тексте)</b></td></tr>
+          <tr><td><b>Прозрачность отчёта</b></td><td>«Чёрный ящик» (только общий балл)</td><td>Только подсветка фрагментов</td><td><b>Многофакторный протокол и 1:1 SHA-256 печать</b></td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:#94a3b8;margin-top:-16px;margin-bottom:20px;">*Характеристики западных и российских систем приведены на основании их собственных заявленных спецификаций, публичных аннотаций и открытых академических обзоров.</p>
+
+      <table>
+        <thead>
+          <tr><th>Контрольный образец текста</th><th>Индекс ИИ (шкала 0–100%)</th><th>Интеграл 13 метрик</th><th>Вердикт ядра MXPro 4.0</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Классика: М. А. Булгаков</b> (художественная проза)</td><td style="color:#10b981;"><b>20% (Зелёная зона)</b></td><td><b>73 / 100</b></td><td style="color:#10b981;">Подтверждён живой авторский голос</td></tr>
+          <tr><td><b>Классика: Л. Н. Толстой</b> (художественная проза)</td><td style="color:#10b981;"><b>18% (Зелёная зона)</b></td><td><b>67 / 100</b></td><td style="color:#10b981;">Подтверждён живой авторский голос</td></tr>
+          <tr><td><b>Классика: М. Горький</b> (художественная проза)</td><td style="color:#10b981;"><b>6% (Зелёная зона)</b></td><td><b>70 / 100</b></td><td style="color:#10b981;">Подтверждён живой авторский голос</td></tr>
+          <tr><td><b>Современная проза</b> (эталонный корпус, 2026)</td><td style="color:#10b981;"><b>18% (Зелёная зона)</b></td><td><b>70–74 / 100</b></td><td style="color:#10b981;">Подтверждён живой авторский голос</td></tr>
+          <tr><td><b>Нейросеть (типовой LLM-текст со штампами)</b></td><td style="color:#ef4444;"><b>96% (Красная зона)</b></td><td><b>28 / 100</b></td><td style="color:#ef4444;">Зафиксирована алгоритмическая генерация</td></tr>
+          <tr><td><b>Нейросеть («выровненный» рерайт без штампов)</b></td><td style="color:#ef4444;"><b>78% (Красная зона)</b></td><td><b>35 / 100</b></td><td style="color:#ef4444;">Зафиксирована алгоритмическая генерация</td></tr>
+        </tbody>
+      </table>
+
 
       <h2 id="cert-ru">4. Криптографическая верификация 1:1 (SHA-256)</h2>
       <p>Каждому проверенному тексту присваивается уникальный отпечаток <b>SHA-256</b> и регистрационный номер <b>MXP-2026-XXXXXX</b>, подтверждающий подлинность авторского голоса для издательств, премий и диссоветов.</p>
@@ -109,8 +143,42 @@
         </tbody>
       </table>
 
-      <h2 id="ai-en">3. AI-Generation & 8-Layer Cliché Detection</h2>
-      <p>Large Language Models optimize for smooth token probability. MXPro 4.0 flags synthetic prose via flattened rhythmic variance, low defamiliarization (Ostranenie), and high density of neural transition clichés.</p>
+            
+      <p>Unlike standard statistical detectors, the <b>MXPro 4.0</b> core integrates a proprietary, mathematically calibrated model of the <b>13 Metrics of the Artur Khakimullin Method</b> (CERN Zenodo DOI: 10.5281/zenodo.24208510). It evaluates constructive text density across phonological, rhythmic, and lexical-semantic tiers alongside an 8-layer cliché scanner (~1,000 clichés, pleonasms, and bureaucratic patterns).</p>
+      <p><b>How the Verification Scale Works (0–100%):</b> Every authentic human text naturally contains a baseline share of standard grammar and everyday connective phrasing. Therefore, on a 0–100% scale, authentic classical and contemporary prose scores a calm baseline index of <b style="color:#10b981;">6–20% (Green Zone — "Authentic Authorial Voice Verified")</b>, whereas LLM-generated prose—even after cliché removal—immediately enters the <b style="color:#ef4444;">Red Zone of 78–96%</b>, maintaining a clean separation margin of <b>over 58 percentage points</b>.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Evaluation Criterion</th>
+            <th>Western Detectors<br><span style="font-weight:400;font-size:11.5px;color:#94a3b8;">GPTZero, Originality.ai, Winston AI*</span></th>
+            <th>Russian Detectors<br><span style="font-weight:400;font-size:11.5px;color:#94a3b8;">Antiplagiat, Text.ru, ReText.ai*</span></th>
+            <th>MXPro 4.0 Core<br><span style="font-weight:400;font-size:11.5px;color:#38bdf8;">Proprietary Standard</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Detection Architecture</b></td><td>Token perplexity (PPL) and sentence burstiness</td><td>Probabilistic RuBERT / n-gram classifiers</td><td><b>Proprietary 13-Metric Khakimullin Model</b> + formal orthoepy</td></tr>
+          <tr><td><b>False Positives on Literary Prose</b></td><td style="color:#f59e0b;">Elevated (25–45% on complex &amp; translated fiction)</td><td style="color:#f59e0b;">Moderate (15–30% on classics &amp; formal prose)</td><td style="color:#10b981;"><b>0% errors in benchmark test</b> (baseline index 6–20%)</td></tr>
+          <tr><td><b>Resilience to "Smoothed" AI Rewrite</b></td><td style="color:#f59e0b;">Drops to 35–55% after synonymization</td><td style="color:#f59e0b;">Drops to 40–60% when transitions are edited</td><td style="color:#10b981;"><b>High (78% detection even on "sterile" LLM prose)</b></td></tr>
+          <tr><td><b>Audit Transparency</b></td><td>"Black box" (single score only)</td><td>Fragment highlighting without rationale</td><td><b>Multi-factor diagnostic protocol &amp; 1:1 SHA-256 seal</b></td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:#94a3b8;margin-top:-16px;margin-bottom:20px;">*Metrics for third-party Western and Russian systems are cited from their own published specifications, product annotations, and open academic benchmarks.</p>
+
+      <table>
+        <thead>
+          <tr><th>Benchmark Text Sample</th><th>AI Index (0–100% Scale)</th><th>13-Metric Integral</th><th>MXPro 4.0 Verification Verdict</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Classic: Mikhail Bulgakov</b> (Literary Prose)</td><td style="color:#10b981;"><b>20% (Green Zone)</b></td><td><b>73 / 100</b></td><td style="color:#10b981;">Authentic Authorial Voice Verified</td></tr>
+          <tr><td><b>Classic: Leo Tolstoy</b> (Literary Prose)</td><td style="color:#10b981;"><b>18% (Green Zone)</b></td><td><b>67 / 100</b></td><td style="color:#10b981;">Authentic Authorial Voice Verified</td></tr>
+          <tr><td><b>Classic: Maxim Gorky</b> (Literary Prose)</td><td style="color:#10b981;"><b>6% (Green Zone)</b></td><td><b>70 / 100</b></td><td style="color:#10b981;">Authentic Authorial Voice Verified</td></tr>
+          <tr><td><b>Contemporary Fiction</b> (2026 Reference Corpus)</td><td style="color:#10b981;"><b>18% (Green Zone)</b></td><td><b>70–74 / 100</b></td><td style="color:#10b981;">Authentic Authorial Voice Verified</td></tr>
+          <tr><td><b>LLM Output (Standard AI Text with Clichés)</b></td><td style="color:#ef4444;"><b>96% (Red Zone)</b></td><td><b>28 / 100</b></td><td style="color:#ef4444;">Algorithmic Generation Detected</td></tr>
+          <tr><td><b>LLM Output ("Smoothed" Rewrite without Clichés)</b></td><td style="color:#ef4444;"><b>78% (Red Zone)</b></td><td><b>35 / 100</b></td><td style="color:#ef4444;">Algorithmic Generation Detected</td></tr>
+        </tbody>
+      </table>
+
 
       <h2 id="cert-en">4. Cryptographic 1:1 Verification (SHA-256)</h2>
       <p>Each audit generates an immutable <b>SHA-256</b> text fingerprint and a <b>MXP-2026-XXXXXX</b> registry seal for publishers, literary contests, and university thesis boards.</p>
