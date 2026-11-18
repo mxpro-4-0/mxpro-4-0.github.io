@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://github.io
+Sitemap: https://mxpro-4-0.github.io/
