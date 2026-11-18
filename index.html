@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MXPro 4.0 — Филологический и стилометрический комплекс А. Хакимуллина</title>
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --bg-card: rgba(17, 25, 40, 0.78);
+      --border-glass: rgba(56, 189, 248, 0.22);
+      --cyan: #38bdf8;
+      --indigo: #818cf8;
+      --emerald: #10b981;
+      --amber: #f59e0b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+      background: radial-gradient(circle at 15% 10%, #172554 0%, #090d16 45%, #05080f 100%);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      backdrop-filter: blur(12px);
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(9, 13, 22, 0.85);
+    }
+    .nav-wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: #fff; }
+    .brand-title { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; }
+    .brand-sub { font-size: 11px; color: var(--cyan); text-transform: uppercase; letter-spacing: 1.2px; }
+    .btn-primary {
+      display: inline-block;
+      background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%);
+      color: #fff; font-weight: 700; text-decoration: none;
+      padding: 13px 26px; border-radius: 10px;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.35);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 0 35px rgba(56, 189, 248, 0.6); }
+    .btn-outline {
+      display: inline-block;
+      border: 1px solid rgba(56, 189, 248, 0.45);
+      color: var(--cyan); font-weight: 600; text-decoration: none;
+      padding: 12px 24px; border-radius: 10px;
+      background: rgba(56, 189, 248, 0.06);
+    }
+    .hero { padding: 72px 0 56px; display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 40px; align-items: center; }
+    .doi-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6ee7b7; font-size: 12px; font-weight: 600;
+      padding: 6px 14px; border-radius: 999px; margin-bottom: 20px;
+    }
+    h1 {
+      font-size: 44px; line-height: 1.15; font-weight: 800; margin-bottom: 20px;
+      background: linear-gradient(90deg, #ffffff 0%, #bae6fd 50%, #818cf8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-desc { font-size: 17px; color: var(--text-muted); margin-bottom: 30px; }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+    .glass-card {
+      background: var(--bg-card); border: 1px solid var(--border-glass);
+      border-radius: 16px; padding: 24px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+    }
+    section { padding: 64px 0; }
+    .sec-title { text-align: center; font-size: 32px; font-weight: 800; margin-bottom: 12px; }
+    .sec-sub { text-align: center; color: var(--text-muted); max-width: 680px; margin: 0 auto 44px; font-size: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 14px;
+      background: linear-gradient(135deg, rgba(56,189,248,0.2), rgba(99,102,241,0.2));
+      border: 1px solid rgba(56,189,248,0.3);
+    }
+    .glass-card h3 { font-size: 19px; margin-bottom: 10px; color: #fff; }
+    .glass-card p { font-size: 14px; color: var(--text-muted); }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 14px; }
+    th { color: var(--cyan); font-weight: 700; background: rgba(56,189,248,0.06); }
+    footer { padding: 36px 0; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; color: var(--text-muted); font-size: 13px; }
+    @media (max-width: 860px) { .hero { grid-template-columns: 1fr; } h1 { font-size: 34px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav-wrap">
+      <a href="#" class="brand">
+        <svg width="44" height="44" viewBox="0 0 120 120" xmlns="http://w3.org">
+          <ellipse cx="60" cy="60" rx="52" ry="20" fill="none" stroke="#38bdf8" stroke-width="3" transform="rotate(30 60 60)"/>
+          <ellipse cx="60" cy="60" rx="52" ry="20" fill="none" stroke="#818cf8" stroke-width="3" transform="rotate(-30 60 60)"/>
+          <ellipse cx="60" cy="60" rx="52" ry="20" fill="none" stroke="#06b6d4" stroke-width="3" transform="rotate(90 60 60)"/>
+          <circle cx="60" cy="60" r="24" fill="#1e3a8a" stroke="#bae6fd" stroke-width="2"/>
+          <text x="60" y="64" text-anchor="middle" fill="#ffffff" font-family="Arial, sans-serif" font-weight="bold" font-size="11.5">MXPro</text>
+        </svg>
+        <div>
+          <div class="brand-title">MXPro 4.0</div>
+          <div class="brand-sub">Метод А. Хакимуллина</div>
+        </div>
+      </a>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+        <button onclick="switchSiteLang('ru')" class="btn-outline" style="padding:8px 14px; cursor:pointer;">🇷🇺 RU</button>
+        <button onclick="switchSiteLang('en')" class="btn-outline" style="padding:8px 14px; cursor:pointer;">🇬🇧 EN</button>
+        <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn-primary" id="topLabBtn">🚀 Открыть лабораторию</a>
+      </div>
+
+    </div>
+  </header>
+
+  <main class="container">
+      <div id="portal-ru">
+
+    <section class="hero">
+      <div>
+        <div class="doi-badge">🔬 Научная публикация CERN Zenodo DOI: 10.5281/zenodo.24208510</div>
+        <h1>Интеллектуальный стилометрический и литературоведческий аудит текста</h1>
+        <p class="hero-desc">
+          Первая гибридная платформа, объединяющая математическую морфологию, защиту от эпигонства, 
+          критерии ведущих литературных критиков, психопоэтику и прогностическое моделирование судьбы произведения.
+        </p>
+        <div class="hero-actions">
+          <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn-primary">✨ Проверить текст бесплатно</a>
+          <a href="#features" class="btn-outline">Изучить возможности</a>
+        </div>
+      </div>
+
+      <div class="glass-card" style="text-align:center;">
+        <div style="font-size:12px; color:#38bdf8; font-weight:bold; letter-spacing:1px; margin-bottom:6px;">
+          МАТРИЦА «ДНК ТЕКСТА» • СЕРТИФИКАТ MXPRO 4.0
+        </div>
+        <div style="font-size:13px; color:#94a3b8; margin-bottom:12px;">
+          Визуальный контур авторского голоса в сравнении с референсной моделью
+        </div>
+        <svg width="310" height="250" viewBox="0 0 370 300" xmlns="http://w3.org" style="max-width:100%;">
+          <defs>
+            <radialGradient id="heroDna" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.55"/>
+              <stop offset="100%" stop-color="#6366f1" stop-opacity="0.22"/>
+            </radialGradient>
+          </defs>
+          <polygon points="185,55 267,102 267,198 185,245 103,198 103,102" fill="none" stroke="#334155" stroke-width="1"/>
+          <polygon points="185,86 240,118 240,182 185,214 130,182 130,118" fill="none" stroke="#334155" stroke-width="1"/>
+          <line x1="185" y1="55" x2="185" y2="245" stroke="#1e293b"/>
+          <line x1="103" y1="102" x2="267" y2="198" stroke="#1e293b"/>
+          <line x1="267" y1="102" x2="103" y2="198" stroke="#1e293b"/>
+          <polygon points="185,72 252,112 245,186 185,222 122,185 118,110" fill="none" stroke="#f59e0b" stroke-width="1.8" stroke-dasharray="4,3"/>
+          <polygon points="185,62 260,106 254,190 185,234 114,192 110,105" fill="url(#heroDna)" stroke="#38bdf8" stroke-width="2.5"/>
+          <circle cx="185" cy="62" r="5" fill="#10b981"/>
+          <circle cx="260" cy="106" r="5" fill="#10b981"/>
+          <circle cx="254" cy="190" r="5" fill="#10b981"/>
+          <circle cx="185" cy="234" r="5" fill="#f59e0b"/>
+          <circle cx="114" cy="192" r="5" fill="#10b981"/>
+          <circle cx="110" cy="105" r="5" fill="#10b981"/>
+          <text x="185" y="42" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Лексика (TTR 94%)</text>
+          <text x="305" y="102" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Ритм (89%)</text>
+          <text x="305" y="202" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Фонетика (84%)</text>
+          <text x="185" y="266" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Действие (78%)</text>
+          <text x="65" y="202" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Энтропия (91%)</text>
+          <text x="65" y="102" text-anchor="middle" fill="#f1f5f9" font-size="11" font-weight="bold">Уникальность (98%)</text>
+        </svg>
+      </div>
+    </section>
+         <section id="features">
+      <h2 class="sec-title">6 интеллектуальных модулей в единой лаборатории</h2>
+      <p class="sec-sub">
+        Система объединяет строгую квантитативную лингвистику с методологией современной литературной критики и психопоэтики.
+      </p>
+      <div class="grid-3">
+        <div class="glass-card">
+          <div class="feature-icon">📚</div>
+          <h3>Морфология и 8 слоёв клише</h3>
+          <p>Лемматизация pymorphy3 с поправкой на длину текста (закон Хердана — Хипса) и сканер по базе из 1 000+ штампов, канцеляризмов и плеоназмов.</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">🎵</div>
+          <h3>Ритмика и звукопись</h3>
+          <p>Автоматический расчёт вариативности ритма, энтропии Шеннона, консонантных кластеров, горизонтальных аллитераций и 3–4-ударных акцентных иктов.</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">🏛️</div>
+          <h3>Фонетика ИРЯ РАН и Реестр DOI</h3>
+          <p>Транскрипция по нормам ИРЯ РАН и словарю Зализняка, послоговая метрика Гаспарова, прогноз публикации и Сертификат с проверочным номером в публичном архиве.</p>
+        </div>
+
+        <div class="glass-card">
+          <div class="feature-icon">🧠</div>
+          <h3>Калейдоскопический критик</h3>
+          <p>Глубокий автономный аудит без ключей по 6 критериям современной критики (оптика автора, сопротивление языка, Show don't tell, логика финала).</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">💫</div>
+          <h3>Психопоэтика и социопоэтика</h3>
+          <p>Развёрнутый литературно-психологический портрет автора, определение когнитивного типа высказывания и его социокультурного резонанса.</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">🔮</div>
+          <h3>Прогностика и Личный журнал</h3>
+          <p>Расчёт индексов журнальной проходимости, виральности и долговечности текста, личный дневник роста и официальный Сертификат с печатью DOI.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="sec-title">Почему MXPro 4.0 точнее обычных нейросетей?</h2>
+      <p class="sec-sub">
+        Универсальные чат-боты склонны льстить автору и выдумывать факты. MXPro 4.0 опирается на проверяемую лингвистическую математику.
+      </p>
+      <div class="glass-card" style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Критерий оценки</th>
+              <th>Обычный ChatGPT / чат-бот</th>
+              <th>Лаборатория MXPro 4.0</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Объективность</b></td>
+              <td>Льстит автору, раздаёт общие комплименты без цифр</td>
+              <td>Считает точный TTR, энтропию, глагольность и плотность согласных</td>
+            </tr>
+            <tr>
+              <td><b>Анализ верлибра и авангарда</b></td>
+              <td>Часто путает свободный стих с «плохой прозой»</td>
+              <td>Калиброван по референсному корпусу современного авангарда</td>
+            </tr>
+            <tr>
+              <td><b>Поиск штампов и повторов</b></td>
+              <td>Пропускает скрытые плеоназмы и тавтологии</td>
+              <td>Сканирует 8 слоёв клише (~1 000 форм) и векторные дубли TF-IDF</td>
+            </tr>
+            <tr>
+              <td><b>Научная верификация</b></td>
+              <td>Не имеет методологической базы и статуса</td>
+              <td>Зафиксирован в CERN Zenodo (DOI: 10.5281/zenodo.24208510)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+        <section id="method-13">
+      <h2 class="sec-title">Паспорт конструктора: 13 приёмов Метода Хакимуллина</h2>
+      <p class="sec-sub">
+        Алгоритмическая верификация живого текста на базе орфоэпических норм ИРЯ им. В. В. Виноградова РАН, словаря А. А. Зализняка и стиховедческой метрики М. Л. Гаспарова.
+      </p>
+      <div class="grid-3">
+        <div class="glass-card">
+          <div class="feature-icon">🔊</div>
+          <h3>I. Уровень звука (Приёмы 1–5)</h3>
+          <p>1. Горизонтальная аллитерация<br>2. Точечный консонанс стыков<br>3. Акустические консонантные кластеры<br>4. Семантизация жёсткой фонологии<br>5. Паронимическая аттракция</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">⏱️</div>
+          <h3>II. Уровень ритма (Приёмы 6–8)</h3>
+          <p>6. Тонический и акцентный строй<br>7. Дисперсия межиктовых интервалов дольника и тактовика<br>8. Синкопы, обрывы строк и парцелляция</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">📐</div>
+          <h3>III. Смысловая геометрия (9–13)</h3>
+          <p>9. Дистантные сквозные повторы<br>10. Рифмовка контрастных концептов<br>11. Индекс остранения (по Шкловскому)<br>12. Фоносемантический профиль<br>13. Акцентная инструментовка прозы</p>
+        </div>
+      </div>
+    </section>
+
+        <section id="uniqueness-faq">
+      <h2 class="sec-title">Научная уникальность Метода Хакимуллина и FAQ</h2>
+      <p class="sec-sub">
+        Впервые в российской практике разрозненные категории звука, ритмического сбоя и смысловой геометрии объединены в единый математический прибор (CERN Zenodo DOI: 10.5281/zenodo.24208510).
+      </p>
+
+      <div class="glass-card" style="border-left: 5px solid #38bdf8; margin-bottom: 24px;">
+        <h3 style="color:#38bdf8; margin-bottom:12px;">🏛️ В чём именно уникальность 13 метрик и почему в РФ нет аналогов?</h3>
+        <p style="margin-bottom:12px;">
+          <b>1. От «очистки от ошибок» к измерению эстетической энергии:</b> Все существующие в России сервисы («Главред», «Тургенев», Text.ru, «Орфограммка») созданы для информационного и рекламного стиля. Они ищут опечатки и штрафуют автора за метафоры и парцелляцию. <b>Метод А. Хакимуллина</b> впервые измеряет конструктивную плотность живого текста — механизмы звука, сбоя читательского «автопилота» и семантического сдвига.
+        </p>
+        <p style="margin-bottom:12px;">
+          <b>2. Первый триединый синтез 13 приёмов в одной формуле:</b> До создания MXPro 4.0 аллитерация, дольник, паронимия и остранение изучались филологами изолированно. А. Хакимуллин впервые алгоритмизировал и объединил все 13 параметров в единую трёхступенчатую архитектуру (Звук → Ритм → Смысловая геометрия).
+        </p>
+        <p style="margin-bottom:0;">
+          <b>3. Академический стандарт и международный приоритет:</b> Расчёты опираются на орфоэпические нормы ИРЯ им. В. В. Виноградова РАН, грамматический словарь А. А. Зализняка и послоговую метрику М. Л. Гаспарова. Научный приоритет метода зафиксирован в репозитории Европейской организации по ядерным исследованиям (CERN Zenodo, <b>DOI: 10.5281/zenodo.24208510</b>).
+        </p>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <details class="glass-card" style="padding:18px 22px; cursor:pointer;">
+          <summary style="font-weight:700; color:#fff; font-size:16px;">🔊 Что измеряют метрики 1–5 (Уровень I. Звук)?</summary>
+          <p style="margin-top:12px;">
+            <b>1. Горизонтальная аллитерация</b> — повтор опорных согласных внутри строки.<br>
+            <b>2. Консонанс</b> — точечная перекличка согласных на стыке соседних слов.<br>
+            <b>3. Акустические консонантные кластеры</b> — узлы из 3+ согласных подряд в реальном произношении (после транскрипции ИРЯ РАН).<br>
+            <b>4. Семантизация жёсткой фонологии</b> — доля взрывных, шипящих и вибрантов (Р, Ж, Ш, Щ, К, Т, П, Б, Д, Г, З, Ц), отражающая артикуляционный напор.<br>
+            <b>5. Паронимическая аттракция</b> — сближение слов с разными корнями, но общим согласным скелетом («парсек — паркета»).
+          </p>
+        </details>
+
+        <details class="glass-card" style="padding:18px 22px; cursor:pointer;">
+          <summary style="font-weight:700; color:#fff; font-size:16px;">⏱️ Что измеряют метрики 6–8 (Уровень II. Ритм)?</summary>
+          <p style="margin-top:12px;">
+            <b>6. Тонический и акцентный строй</b> — доля строк, организованных по количеству главных фразовых ударений (иктов), а не по школьной силлабо-тонике.<br>
+            <b>7. Дисперсия межиктовых интервалов (по М. Л. Гаспарову)</b> — переменность числа безударных слогов между ударениями. Разрушает читательский «автопилот» и удерживает внимание.<br>
+            <b>8. Синкопы и ритмические обрывы</b> — резкие сбои ритма за счёт коротких строк (1–2 слова), парцелляции, тире-пауз и многоточий.
+          </p>
+        </details>
+
+        <details class="glass-card" style="padding:18px 22px; cursor:pointer;">
+          <summary style="font-weight:700; color:#fff; font-size:16px;">📐 Что измеряют метрики 9–13 (Уровень III. Смысловая геометрия)?</summary>
+          <p style="margin-top:12px;">
+            <b>9. Дистантные семантические повторы</b> — возвращение сквозных образов на дистанции от 25 слов, формирующее композиционную арку.<br>
+            <b>10. Рифмовка контрастных концептов</b> — столкновение полярных понятийных полей (техника/космос и телесная/предметная конкретика).<br>
+            <b>11. Индекс остранения (по В. Шкловскому)</b> — сопротивление речевой инерции и отказ от стёртых штампов.<br>
+            <b>12. Фоносемантический профиль</b> — звукосимволический характер текста (жёсткий, контрастный или сонорный).<br>
+            <b>13. Акцентная инструментовка прозы</b> — насыщенность прозаического текста приёмами акцентного стиха.
+          </p>
+        </details>
+
+        <details class="glass-card" style="padding:18px 22px; cursor:pointer;">
+          <summary style="font-weight:700; color:#fff; font-size:16px;">🏛️ Как работает фонетика ИРЯ РАН, словарь Зализняка и защита от эпигонства?</summary>
+          <p style="margin-top:12px;">
+            <b>Фонетика ИРЯ РАН и словарь А. А. Зализняка:</b> система переводит слова в реальную звуковую транскрипцию (различает омографы «рЕки / рекИ», оглушает звонкие согласные на конце слова «дуб → [дуп]», стягивает непроизносимые согласные «солнце → [сонцъ]» и учитывает редукцию гласных).<br>
+            <b>Защита от эпигонства vs Референсный корпус:</b> высокое сходство (>88%) с классиками XIX–XX вв. фиксируется как риск вторичности, тогда как резонанс с референсным корпусом метода (современный авангард и верлибр) подтверждает высокую плотность авторской оптики.<br>
+            <b>Психопоэтика и социопоэтика:</b> базируется на работах Л. С. Выготского, В. П. Белянина, Р. Цура, М. М. Бахтина, Ю. М. Лотмана и П. Бурдьё.
+          </p>
+        </details>
+      </div>
+                <div class="glass-card" style="margin-top:24px; border-left: 4px solid #10b981;">
+        <h3 style="color:#6ee7b7; margin-bottom:14px;">Архитектура критических оптик и эталонных корпусов (РФ / США / Великобритания)</h3>
+        <p style="margin-bottom:14px; color:#cbd5e1;">
+          Многомерная калибровка алгоритмов MXPro 4.0 базируется на контрольном корпусе современного авангарда (<a href="corpus.html" style="color:#38bdf8; font-weight:600;">Reference Benchmark Corpus, DOI: 10.5281/zenodo.24208510 →</a>) и моделирует экспертные критерии ведущих филологических и литературно-критических традиций:
+        </p>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:14px;">
+          <div style="background:rgba(15,23,42,0.65); border:1px solid rgba(56,189,248,0.2); border-radius:10px; padding:14px;">
+            <div style="color:#38bdf8; font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:6px;">Российская Федерация</div>
+            <p style="margin:0; font-size:13.5px; color:#e2e8f0; line-height:1.55;">
+              • <b>Московская школа</b> (Л. Оборин, Д. Давыдов — актуальный верлибр и остранение)<br>
+              • <b>Петербургская школа</b> (В. Шубинский, А. Арьев — интертекст и метафизика)<br>
+              • <b>Уфимская школа УФЛИ</b> (А. Хусаинов, С. Чураева — предметность и пластика)<br>
+              • <b>Театр и экран</b> (П. Руднев, А. Вислов; А. Молчанов)
+            </p>
+          </div>
+          <div style="background:rgba(15,23,42,0.65); border:1px solid rgba(129,140,248,0.2); border-radius:10px; padding:14px;">
+            <div style="color:#818cf8; font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:6px;">США и Великобритания (760 профилей)</div>
+            <p style="margin:0; font-size:13.5px; color:#e2e8f0; line-height:1.55;">
+              • <b>Авангард и свободный стих</b> (стандарты <i>Poetry Foundation</i>)<br>
+              • <b>Формалистская поэтика</b> (канон <i>Oxford / Cambridge</i>)<br>
+              • <b>Художественная проза</b> (оптика <i>The Paris Review</i> и <i>Granta</i>)<br>
+              • <b>Драматургия и нарратив</b> (стандарты <i>Story</i> Р. Макки)
+            </p>
+          </div>
+        </div>
+      </div>
+
+
+        </section>
+
+            <div class="glass-card" style="max-width:1100px; margin: 0 auto 28px auto; border-left: 5px solid #f43f5e; background: rgba(15,23,42,0.85);">
+      <h3 style="margin-bottom:8px;">🎨 Новинка: Интерактивный редактор и Тепловая карта текста (COMPUTATIONAL STYLOMETRY STANDARD)</h3>
+      <p style="margin-bottom:8px; color:#cbd5e1;">
+        Шлифуйте рукопись в реальном времени с помощью 4 умных цветовых маркеров прямо в окне лаборатории MXPro 4.0:
+      </p>
+      <p style="margin-bottom:0; font-size:14px; color:#e2e8f0;">
+        🟥 <b>Коралловый</b> — речевые штампы и ИИ-клише &nbsp;|&nbsp;
+        🟨 <b>Янтарный</b> — случайные тавтологии &nbsp;|&nbsp;
+        🟦 <b>Бирюзовый</b> — кластеры согласных и звукопись &nbsp;|&nbsp;
+        🟪 <b>Фиолетовый</b> — редкие авторские лексемы
+      </p>
+    </div>
+
+    <section id="api-books">
+      <h2 class="sec-title">Интеграция для издательств, вузов, платформ и типографий</h2>
+      <p class="sec-sub">
+        Лаборатория MXPro 4.0 готова к интеграции по REST API в издательские холдинги, научные журналы, вузы, литературные порталы и типографии полного цикла.
+      </p>
+      <div class="grid-3" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+        <div class="glass-card" style="border-top: 4px solid #38bdf8;">
+          <div class="feature-icon">🏢</div>
+          <h3>Издательства и порталы (Эксмо, АСТ, Литрес, Author.Today, Стихи.ру)</h3>
+          <p style="margin-bottom:12px;">
+            Встраивание ядра MXPro 4.0 по REST API в редакционные системы и платформы самиздата (Ridero, Литмаркет, Поэтов.нет, Строки).
+          </p>
+          <p style="margin-bottom:0; color:#cbd5e1;">
+            • Автоматический скрининг самотёка, детектор ИИ-генерации и рерайта;<br>
+            • Защита от эпигонства и оценка авторского голоса по 13 метрикам;<br>
+            • Формирование рейтингов качества и платный аудит для авторов.
+          </p>
+        </div>
+        <div class="glass-card" style="border-top: 4px solid #a855f7;">
+          <div class="feature-icon">🎓</div>
+          <h3>Вузы, научные журналы и диссоветы</h3>
+          <p style="margin-bottom:12px;">
+            Стилометрическая экспертиза научных статей, диссертаций, монографий и выпускных квалификационных работ (ВКР).
+          </p>
+          <p style="margin-bottom:0; color:#cbd5e1;">
+            • Выявление скрытой ИИ-генерации, которую пропускает классический антиплагиат;<br>
+            • Верификация «авторского голоса» и оригинальности научного слога;<br>
+            • Инструмент для кафедр филологии, лингвистики и Digital Humanities.
+          </p>
+        </div>
+        <div class="glass-card" style="border-top: 4px solid #10b981;">
+          <div class="feature-icon">📕</div>
+          <h3>Типографии и книжные серии (Верификация 1:1)</h3>
+          <p style="margin-bottom:12px;">
+            Официальная сертификация печатных книг, монографий и поэтических сборников с номером <b>MXP-2026-XXXXXX</b> и QR-кодом на обложке.
+          </p>
+          <p style="margin-bottom:0; color:#cbd5e1;">
+            • Совпадение 1 в 1: номер и отпечаток текста (SHA-256) в Реестре MXPro 4.0;<br>
+            • Гарантия для читателей и библиотек, что издание прошло проверку на ИИ-спам;<br>
+            • Решение для Print-on-Demand типографий и малотиражных серий.
+          </p>
+        </div>
+      </div>
+      <div class="glass-card" style="margin-top:20px; text-align:center; border-color: rgba(56,189,248,0.45);">
+        <h3 style="margin-bottom:8px;">🤝 Прямая связь с автором Метода Хакимуллина</h3>
+        <p style="margin-bottom:14px;">По вопросам API-интеграции с издательствами, вузами, платформами и верификации изданий:</p>
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+          <a href="mailto:a.k.khakimullin@gmail.com" class="btn-primary">✉️ a.k.khakimullin@gmail.com</a>
+          <a href="mailto:arturkhakimullin@yahoo.co.uk" class="btn-outline">✉️ arturkhakimullin@yahoo.co.uk</a>
+          <span class="btn-outline" style="cursor:default;">📲 Telegram: Artur Khakimullin</span>
+        </div>
+      </div>
+    </section>
+
+      <section id="science-stack">
+      <h2 class="sec-title">Интегрированный научный стек MXPro 4.0</h2>
+      <p class="sec-sub">
+        Помимо 13 авторских приёмов Метода Артура Хакимуллина, в ядро комплекса встроены мировые стандарты квантитативной филологии и стилометрии.
+      </p>
+      <div class="grid-3" style="grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));">
+        <div class="glass-card">
+          <div class="feature-icon">🔊</div>
+          <h3>Фоносемантика А. П. Журавлёва (ВААЛ) и ИРЯ РАН</h3>
+          <p>Вычисляет звукосимволический ореол текста по 6 биполярным шкалам восприятия (<i>Светлый—Тёмный, Сильный—Слабый, Громкий—Тихий, Быстрый—Медленный, Мужественный—Женственный, Величественный—Низменный</i>) с учётом орфоэпических норм ИРЯ РАН.</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">🎼</div>
+          <h3>Стиховедческий парсер стандарта НКРЯ и М. Л. Гаспарова</h3>
+          <p>Автоматически определяет схему рифмовки (<i>перекрёстная ABAB, парная AABB, охватная ABBA, верлибр</i>), тип клаузул (мужская, женская, дактилическая), коэффициент пиррихиев, цезуры и разброс межиктовых интервалов.</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">🧬</div>
+          <h3>Дельта Берроуза (Stylo) и индекс когезии Coh-Metrix</h3>
+          <p>Рассчитывает инвариант авторского почерка по частотным служебным словам (MFW) для атрибуции и выявления стилизации, а также измеряет логическую связность (когезию) соседних предложений.</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">🧭</div>
+          <h3>Психолингвистика LIWC и аудит стиля ProWritingAid</h3>
+          <p>Диагностирует фокус авторского сознания (<i>Я-фокус, Мы-фокус, когнитивная рефлексия</i> по Дж. Пеннебейкеру) и выявляет страдательный залог вместе с речевыми штампами.</p>
+        </div>
+      </div>
+    </section>
+
+      <section id="pricing">
+      <h2 class="sec-title">Тарифы для авторов, редакций и вузов</h2>
+      <p class="sec-sub">
+        Открытый пилот до февраля 2027 года: протестируйте возможности лаборатории бесплатно или подключите кабинет организации по ИНН.
+      </p>
+      <div class="grid-3">
+        <div class="glass-card">
+          <div style="color:#38bdf8; font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:6px;">Без регистрации</div>
+          <h3>Гостевой доступ</h3>
+          <div style="font-size:28px; font-weight:800; color:#fff; margin:10px 0;">15 000 знаков</div>
+          <p style="margin-bottom:18px;">Полный аудит рассказа, научной статьи или подборки стихов по 360 профилям, 13 приёмам и индексу Оборневой.</p>
+          <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn-outline" style="width:100%; text-align:center;">Попробовать сразу</a>
+        </div>
+        <div class="glass-card" style="border-color: rgba(56, 189, 248, 0.55); box-shadow: 0 0 30px rgba(56,189,248,0.15);">
+          <div style="color:#10b981; font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:6px;">Для писателей и аспирантов (B2C)</div>
+          <h3>Кабинет автора</h3>
+          <div style="font-size:28px; font-weight:800; color:#fff; margin:10px 0;">250 000 зн./мес</div>
+          <p style="margin-bottom:18px;">Регистрация официальных Сертификатов в публичном Реестре (MXP-2026), кнопки репоста и несгораемые пакеты докупки.</p>
+          <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn-primary" style="width:100%; text-align:center;">Открыть кабинет автора</a>
+        </div>
+        <div class="glass-card">
+          <div style="color:#818cf8; font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:6px;">Для журналов, премий и кафедр (B2B)</div>
+          <h3>Редакция / ВУЗ</h3>
+          <div style="font-size:28px; font-weight:800; color:#fff; margin:10px 0;">5 000 000 зн./мес</div>
+          <p style="margin-bottom:18px;">Пакетный скрининг до 30 рукописей или дипломов за 1 клик, отраслевой аудит ВАК, детектор ИИ-рерайта и экспорт в Excel.</p>
+          <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn-outline" style="width:100%; text-align:center;">Подключить по ИНН</a>
+        </div>
+      </div>
+    </section>
+
+    <section style="text-align:center;">
+      <div class="glass-card" style="background:linear-gradient(135deg, rgba(30,58,138,0.55) 0%, rgba(15,23,42,0.85) 100%); padding:48px 24px;">
+        <h2 style="font-size:30px; margin-bottom:14px;">Готовы увидеть подлинную ДНК вашего текста?</h2>
+        <p style="color:#cbd5e1; max-width:600px; margin:0 auto 28px; font-size:16px;">
+          Загрузите стихотворение, рассказ или научную статью и получите развёрнутый критический протокол, психопоэтический портрет и Сертификат с DOI за 5 секунд.
+        </p>
+        <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn-primary" style="font-size:16px; padding:15px 34px; display:inline-flex; align-items:center; gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Перейти в лабораторию MXPro 4.0
+        </a>
+
+      </div>
+    </section>
+          </div>
+    <section id="global-en-showcase" style="display:none; padding-top:24px;">
+      <div class="hero" style="padding-top:24px;">
+        <div>
+         <div class="doi-badge" style="display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>CERN ZENODO DOI: 10.5281/zenodo.24208510 • COMPUTATIONAL STYLOMETRY STANDARD</div>
+
+          <h1>Computational Philology &amp; Stylometry Suite (The Artur Khakimullin Method)</h1>
+
+          <p class="hero-desc">
+            The first hybrid platform uniting quantitative linguistics, plagiarism &amp; AI-rewrite protection, multi-school literary criticism, psychopoetics, and 1:1 SHA-256 book certification.
+          </p>
+          <div class="hero-actions">
+            <a href="https://mx-pro.streamlit.app/?lang=en" target="_blank" class="btn-primary" style="display:inline-flex;align-items:center;gap:6px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Launch English Lab</a>
+            <a href="corpus.html" class="btn-outline">📖 Khakimullin Reference Corpus</a>
+            
+          </div>
+        </div>
+                <div class="glass-card" style="border-left:4px solid #38bdf8;">
+          <h3 style="color:#38bdf8; margin-bottom:12px;">Benchmark Architecture &amp; Critical Optics</h3>
+          <p style="margin-bottom:10px; font-size:13.5px; color:#cbd5e1;">
+            Calibrated on <b>760 US &amp; UK Author Profiles (30 Genres)</b> and the <a href="corpus.html" style="color:#38bdf8;">Reference Avant-Garde Corpus (DOI: 10.5281/zenodo.24208510)</a>, modeling peer-reviewed evaluation frameworks:
+          </p>
+          <p style="margin-bottom:8px; font-size:13.5px; color:#e2e8f0;">
+            • <b>US &amp; UK Standards:</b> <i>Poetry Foundation</i> (free verse &amp; avant-garde), <i>Oxford / Cambridge</i> (formalist prosody), <i>The Paris Review / Granta</i> (literary fiction), and Robert McKee's <i>Story</i> (screenwriting &amp; GameDev).
+          </p>
+          <p style="margin-bottom:0; font-size:13.5px; color:#e2e8f0;">
+            • <b>Polycentric Russian Schools:</b> Moscow (L. Oborin, D. Davydov), St. Petersburg (V. Shubinsky, A. Aryev), Ufa UFLI School (A. Khusainov, S. Churaeva), and Contemporary Theatre (P. Rudnev, A. Vislov).
+          </p>
+        </div>
+        </div>
+
+
+      <div class="glass-card" style="border-left: 5px solid #10b981; margin-bottom: 32px;">
+        <h2 style="font-size:24px; color:#6ee7b7; margin-bottom:12px;">🏛️ What Makes the 13 Metrics of the Khakimullin Method Unique — and Why There Are No Global Analogues?</h2>
+        <p style="margin-bottom:10px;"><b>1. From "Error-Cleaning" to Measuring Aesthetic Energy:</b> Commercial tools (Grammarly, Hemingway, standard AI detectors) are built for plain copywriting and penalize metaphors and rhythmic inversion. The Khakimullin Method measures the constructive aesthetic density of living literature.</p>
+        <p style="margin-bottom:10px;"><b>2. The First Unified Synthesis of 13 Poetic Devices:</b> Horizontal alliteration, dolnik/tactovik interval dispersion, paronymic attraction, and <i>ostranenie</i> (defamiliarization) are united into a single three-tier formula: <b>Sound (Metrics 1–5) → Rhythm (Metrics 6–8) → Semantic Geometry (Metrics 9–13)</b>.</p>
+        <p style="margin-bottom:0;"><b>3. Academic Rigor &amp; International Priority:</b> Grounded in formal phonetics, lexical morphology, Gasparov's syllabic-accentual metrics, Shklovsky's defamiliarization theory, and Shannon entropy. Indexed at <b>CERN Zenodo (DOI: 10.5281/zenodo.24208510)</b>.</p>
+      </div>
+
+            <h2 class="sec-title" style="margin-top:24px;">Why Is MXPro 4.0 More Accurate Than Standard LLMs?</h2>
+      <p class="sec-sub">
+        General-purpose chatbots tend to flatter writers and hallucinate facts. MXPro 4.0 relies on verifiable computational linguistics.
+      </p>
+      <div class="glass-card" style="overflow-x:auto; margin-bottom:44px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Evaluation Criterion</th>
+              <th>Standard ChatGPT / LLM</th>
+              <th>MXPro 4.0 Stylometry Lab</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Objectivity</b></td>
+              <td>Flatters the author with vague compliments and no hard metrics</td>
+              <td>Computes exact TTR, Shannon entropy, verb-to-adjective ratio &amp; consonant density</td>
+            </tr>
+            <tr>
+              <td><b>Free Verse &amp; Avant-Garde</b></td>
+              <td>Often misreads open form and experimental verse as "broken prose"</td>
+              <td>Calibrated on 760 US/UK profiles &amp; the Khakimullin Reference Avant-Garde Corpus</td>
+            </tr>
+            <tr>
+              <td><b>Clichés &amp; AI-Filler Scan</b></td>
+              <td>Misses subtle tautologies, pleonasms, and neural text inertia</td>
+              <td>Highlights clichés, tautologies, clusters &amp; rare lexemes on a 4-color heatmap</td>
+            </tr>
+            <tr>
+              <td><b>Scientific Verification</b></td>
+              <td>No peer-reviewed methodology or cryptographic registry</td>
+              <td>Indexed at CERN Zenodo (DOI: 10.5281/zenodo.24208510) with SHA-256 Certificates</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="sec-title">Method Passport: The 13 Poetic Devices &amp; Scientific FAQ</h2>
+      <p class="sec-sub">
+        Algorithmic verification of living literature across Sound, Rhythm, and Semantic Geometry.
+      </p>
+      <div class="grid-3" style="margin-bottom:24px;">
+        <div class="glass-card">
+          <div class="feature-icon">🔊</div>
+          <h3>I. Sound Architecture (1–5)</h3>
+          <p>1. Horizontal Alliteration<br>2. Juncture Consonance<br>3. Acoustic Consonant Clusters<br>4. Hard Phonology Semantization<br>5. Paronymic Attraction</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">⏱️</div>
+          <h3>II. Rhythmic Geometry (6–8)</h3>
+          <p>6. Tonic &amp; Accentual Meter<br>7. Inter-Ictus Interval Dispersion (Gasparov Standard)<br>8. Syncopation &amp; Enjambment</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">📐</div>
+          <h3>III. Semantic Geometry (9–13)</h3>
+          <p>9. Distant Leitmotif Recurrence<br>10. Contrasting Concept Rhyme<br>11. Ostranenie Index (Shklovsky)<br>12. Phonosemantic Profile<br>13. Accentual Prose Instrumentation</p>
+        </div>
+      </div>
+            <h2 class="sec-title">Integrated Computational Philology &amp; Stylometry Stack</h2>
+      <p class="sec-sub">
+        Alongside the 13 devices of the Artur Khakimullin Method, MXPro 4.0 incorporates five globally recognized quantitative linguistics standards.
+      </p>
+      <div class="grid-3" style="grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); margin-bottom:44px;">
+
+        <div class="glass-card">
+          <div class="feature-icon">🔊</div>
+          <h3>Phonosemantics (Zhuravlev–Jakobson Matrix)</h3>
+          <p>Evaluates sound symbolism across 6 bipolar perceptual scales (<i>Bright–Dark, Strong–Weak, Loud–Quiet, Fast–Slow, Masculine–Feminine, Sublime–Grounded</i>) calibrated on Russian Academy of Sciences (IRYA RAN) orthoepy and English phonetics.</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">🎼</div>
+          <h3>Prosody &amp; Rhyme Parser (NKRYA &amp; Gasparov Standard)</h3>
+          <p>Automatically detects rhyme schemes (<i>ABAB, AABB, ABBA, Free Verse</i>), dominant clausulae (masculine, feminine, dactylic), pyrrhic substitution rates, caesuras, and inter-ictus syllable dispersion.</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">🧬</div>
+          <h3>Burrows' Delta (Stylo) &amp; Coh-Metrix Cohesion</h3>
+          <p>Computes the Most Frequent Words (MFW) function-word invariant to detect authorship or pastiche, paired with Coh-Metrix local referential cohesion across adjacent sentences.</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">🧭</div>
+          <h3>LIWC Psycholinguistics &amp; ProWritingAid Audit</h3>
+          <p>Measures authorial cognitive focus (<i>I-Optics, We-Optics, Cognitive Reflection</i>) alongside passive voice density and stylistic filler detection for manuscript polishing.</p>
+        </div>
+      </div>
+
+      <div class="glass-card" style="margin-bottom:44px;">
+        <h3 style="margin-bottom:14px;">🔬 Scientific FAQ &amp; Methodology Verification</h3>
+        <details style="margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid rgba(148,163,184,0.2);">
+          <summary style="cursor:pointer; font-weight:700;">How does MXPro 4.0 distinguish human avant-garde poetry from LLM hallucinations?</summary>
+          <p style="margin-top:8px; color:#cbd5e1;">
+            Large Language Models optimize for high token probability and smooth statistical averages. True avant-garde and complex lyricism rely on deliberate <b>Ostranenie (Defamiliarization)</b>, high inter-ictus rhythmic variance, and dense consonantal clusters that break neural autopilot.
+          </p>
+        </details>
+        <details style="margin-bottom:12px; padding-bottom:10px; border-bottom:1px solid rgba(148,163,184,0.2);">
+          <summary style="cursor:pointer; font-weight:700;">What is the benchmark corpus behind the English engine?</summary>
+          <p style="margin-top:8px; color:#cbd5e1;">
+            The Global English Engine benchmarks manuscripts against <b>760 stylometric profiles</b> across 30 US/UK literary genres (from Modernist verse and Beat poetry to contemporary literary fiction and academic prose) alongside the Artur Khakimullin Reference Corpus.
+          </p>
+        </details>
+        <details>
+          <summary style="cursor:pointer; font-weight:700;">How does the SHA-256 Literary Certificate protect authorial priority?</summary>
+          <p style="margin-top:8px; color:#cbd5e1;">
+            Every audit generates an immutable cryptographic SHA-256 fingerprint tied to the exact text state, stylometric metrics, and timestamp under CERN Zenodo DOI: <code>10.5281/zenodo.24208510</code>.
+          </p>
+        </details>
+      </div>
+
+      <h2 class="sec-title">Enterprise REST API &amp; B2B Institutional Integration</h2>
+      <p class="sec-sub">
+        Automated manuscript screening, AI-authorship auditing, and 1:1 book verification for publishers, journals, and universities.
+      </p>
+      <div class="grid-3" style="margin-bottom:48px;">
+        <div class="glass-card">
+          <div class="feature-icon">📚</div>
+          <h3>Literary Journals &amp; Contests</h3>
+          <p>Batch-screen hundreds of Submittable entries in seconds to filter out generic AI submissions and spotlight high-craft voices.</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">🏛️</div>
+          <h3>Digital Humanities &amp; Universities</h3>
+          <p>Integrate quantitative stylometry and Gasparov rhythmic metrics into literature curricula, attribution research, and thesis defense.</p>
+        </div>
+        <div class="glass-card">
+          <div class="feature-icon">🔌</div>
+          <h3>REST API &amp; 1:1 Print Verification</h3>
+          <p>Connect MXPro 4.0 directly to editorial workflows or issue verifiable QR/SHA-256 authenticity seals for print editions.</p>
+        </div>
+      </div>
+
+      <h2 class="sec-title">Plans for Authors, Publishers &amp; Universities</h2>
+      <p class="sec-sub">Open Global Pilot until February 2027 — test the stylometric lab for free or connect an institutional API.</p>
+      <div class="grid-3" style="margin-bottom:32px;">
+        <div class="glass-card">
+          <div style="color:#38bdf8; font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:6px;">No Registration</div>
+          <h3>Guest Access</h3>
+          <div style="font-size:26px; font-weight:800; color:#fff; margin:10px 0;">15,000 chars</div>
+          <p style="margin-bottom:16px;">Full stylometric audit against 760 US/UK profiles, 13 poetic metrics, and the 4-color live heatmap.</p>
+          <a href="https://mx-pro.streamlit.app/?lang=en" target="_blank" class="btn-outline" style="width:100%; text-align:center;">Try Free Now</a>
+        </div>
+        <div class="glass-card" style="border-color: rgba(56, 189, 248, 0.55);">
+          <div style="color:#10b981; font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:6px;">For Writers &amp; Researchers (B2C)</div>
+          <h3>Author Studio</h3>
+          <div style="font-size:26px; font-weight:800; color:#fff; margin:10px 0;">250,000 chars/mo</div>
+          <p style="margin-bottom:16px;">Official Certificates in the public Registry (MXP-2026-XXXXXX) with SHA-256 text fingerprint.</p>
+          <a href="https://mx-pro.streamlit.app/?lang=en" target="_blank" class="btn-primary" style="width:100%; text-align:center;">Open Author Studio</a>
+        </div>
+        <div class="glass-card">
+          <div style="color:#818cf8; font-size:12px; font-weight:700; text-transform:uppercase; margin-bottom:6px;">Publishers, Journals &amp; Universities (B2B)</div>
+          <h3>Enterprise / API</h3>
+          <div style="font-size:26px; font-weight:800; color:#fff; margin:10px 0;">5,000,000 chars/mo</div>
+          <p style="margin-bottom:16px;">Batch manuscript screening, AI-rewrite detection, and 1:1 print book verification API.</p>
+          <a href="mailto:a.k.khakimullin@gmail.com" class="btn-outline" style="width:100%; text-align:center;">Contact Founder</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container" id="footer-ru">
+      <p style="margin-bottom:6px; color:#e2e8f0; font-weight:600;">
+        MXPro 4.0 — Филологический и стилометрический комплекс А. Хакимуллина
+      </p>
+      <p>
+        Индекс научной публикации: <a href="https://doi.org/10.5281/zenodo.24208510" target="_blank" style="color:#38bdf8;">CERN Zenodo DOI: 10.5281/zenodo.24208510</a> • Все права защищены
+      </p>
+    </div>
+    <div class="container" id="footer-en" style="display:none;">
+      <p style="margin-bottom:6px; color:#e2e8f0; font-weight:600;">
+        MXPro 4.0 — Computational Philology &amp; Stylometry Suite (The Artur Khakimullin Method)
+      </p>
+      <p>
+        Indexed at: <a href="https://doi.org/10.5281/zenodo.24208510" target="_blank" style="color:#38bdf8;">CERN Zenodo DOI: 10.5281/zenodo.24208510</a> • All rights reserved
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const SVG_ARROW = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-3px;margin-right:6px;"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+      function switchSiteLang(lang) {
+      const ruBox = document.getElementById('portal-ru');
+      const enBox = document.getElementById('global-en-showcase');
+      const fRu = document.getElementById('footer-ru');
+      const fEn = document.getElementById('footer-en');
+      const topBtn = document.getElementById('topLabBtn');
+      if (lang === 'en') {
+        if (ruBox) ruBox.style.display = 'none';
+        if (enBox) enBox.style.display = 'block';
+        if (fRu) fRu.style.display = 'none';
+        if (fEn) fEn.style.display = 'block';
+        if (topBtn) {
+          topBtn.innerHTML = SVG_ARROW + 'Launch Lab (EN)';
+          topBtn.href = 'https://mx-pro.streamlit.app/?lang=en';
+        }
+      } else {
+        if (ruBox) ruBox.style.display = 'block';
+        if (enBox) enBox.style.display = 'none';
+        if (fRu) fRu.style.display = 'block';
+        if (fEn) fEn.style.display = 'none';
+        if (topBtn) {
+          topBtn.innerHTML = SVG_ARROW + 'Открыть лабораторию';
+          topBtn.href = 'https://mx-pro.streamlit.app';
+        }
+      }
+    }
+
+
+    const browserLang = (navigator.language || navigator.userLanguage || 'ru').toLowerCase();
+    if (!browserLang.startsWith('ru')) { switchSiteLang('en'); }
+
+    (function() {
+      const s = (d) => `<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-3px;margin-right:6px;">${d}</svg>`;
+      const icons = {
+        "🚀": s('<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>'),
+        "🔬": s('<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>'),
+        "✨": s('<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'),
+        "📚": s('<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>'),
+        "📖": s('<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>'),
+        "🎵": s('<path d="M2 12h2"/><path d="M6 8v8"/><path d="M10 5v14"/><path d="M14 9v6"/><path d="M18 7v10"/><path d="M22 12h-2"/>'),
+        "🎼": s('<path d="M2 12h2"/><path d="M6 8v8"/><path d="M10 5v14"/><path d="M14 9v6"/><path d="M18 7v10"/><path d="M22 12h-2"/>'),
+        "🏛️": s('<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>'),
+        "🏛": s('<line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/>'),
+        "🧠": s('<circle cx="12" cy="12" r="3"/><path d="M12 2v4"/><path d="M12 18v4"/><path d="m4.93 4.93 2.83 2.83"/><path d="m16.24 16.24 2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/>'),
+        "💫": s('<circle cx="12" cy="12" r="9"/><path d="M12 8v4l2 2"/>'),
+        "🔮": s('<polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>'),
+        "🔊": s('<polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>'),
+        "⏱️": s('<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'),
+        "⏱": s('<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>'),
+        "📐": s('<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>'),
+        "🌍": s('<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'),
+        "🎨": s('<rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>'),
+        "🏢": s('<rect x="4" y="2" width="16" height="20" rx="2"/><line x1="9" y1="6" x2="9" y2="6.01"/><line x1="15" y1="6" x2="15" y2="6.01"/><line x1="9" y1="10" x2="9" y2="10.01"/><line x1="15" y1="10" x2="15" y2="10.01"/><line x1="9" y1="14" x2="9" y2="14.01"/><line x1="15" y1="14" x2="15" y2="14.01"/>'),
+        "🎓": s('<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>'),
+        "📕": s('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),
+        "🤝": s('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'),
+        "🧬": s('<path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/>'),
+        "🧭": s('<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>'),
+        "🔌": s('<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>'),
+        "✉️": s('<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>'),
+        "✉": s('<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>'),
+        "📲": s('<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>'),
+        "🇷🇺": "",
+        "🇬🇧": ""
+      };
+      function cleanNodes(root) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+        const nodes = [];
+        let n;
+        while ((n = walker.nextNode())) {
+          if (n.parentElement && !["SCRIPT", "STYLE"].includes(n.parentElement.tagName)) {
+            nodes.push(n);
+          }
+        }
+        nodes.forEach((node) => {
+          let val = node.nodeValue;
+          let changed = false;
+          for (const [emo, svg] of Object.entries(icons)) {
+            if (val.includes(emo)) {
+              val = val.split(emo).join(svg);
+              changed = true;
+            }
+          }
+          if (changed) {
+            const span = document.createElement("span");
+            span.innerHTML = val;
+            node.parentNode.replaceChild(span, node);
+          }
+        });
+      }
+      cleanNodes(document.body);
+    })();
+  </script>
+</body>
+</html>

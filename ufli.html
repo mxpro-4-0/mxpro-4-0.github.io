@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Литературная школа УФЛИ — Критическая оптика MXPro 4.0</title>
+  <style>
+    :root { --bg-dark: #090d16; --bg-card: rgba(17, 25, 40, 0.84); --border-glass: rgba(56, 189, 248, 0.25); --cyan: #38bdf8; --indigo: #818cf8; --emerald: #10b981; --text-main: #f1f5f9; --text-muted: #94a3b8; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif; background: radial-gradient(circle at 15% 10%, #172554 0%, #090d16 45%, #05080f 100%); color: var(--text-main); line-height: 1.7; }
+    .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+    header { padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.08); background: rgba(9, 13, 22, 0.9); position: sticky; top: 0; z-index: 100; backdrop-filter: blur(10px); }
+    .nav-wrap { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .btn-outline { display: inline-block; border: 1px solid rgba(56, 189, 248, 0.45); color: var(--cyan); font-weight: 600; text-decoration: none; padding: 8px 16px; border-radius: 10px; background: rgba(56, 189, 248, 0.08); cursor: pointer; }
+    .btn-primary { display: inline-block; background: linear-gradient(135deg, #0284c7 0%, #4f46e5 100%); color: #fff; font-weight: 700; text-decoration: none; padding: 9px 18px; border-radius: 10px; }
+    .hero-box { padding: 48px 0 28px; }
+    .badge { display: inline-block; background: rgba(16, 185, 129, 0.14); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 999px; margin-bottom: 14px; }
+    h1 { font-size: 34px; line-height: 1.2; font-weight: 800; margin-bottom: 14px; background: linear-gradient(90deg, #ffffff 0%, #bae6fd 60%, #818cf8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .card { background: var(--bg-card); border: 1px solid var(--border-glass); border-radius: 16px; padding: 26px 30px; margin-bottom: 24px; box-shadow: 0 18px 40px rgba(0,0,0,0.45); }
+    .card h2 { font-size: 21px; color: #fff; margin-bottom: 12px; }
+    .card p { color: #cbd5e1; margin-bottom: 12px; font-size: 15.5px; }
+    .mentor-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 16px; margin-top: 14px; }
+    .mentor-item { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(56, 189, 248, 0.2); border-left: 4px solid var(--cyan); border-radius: 10px; padding: 16px 18px; }
+    .mentor-name { font-size: 17px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .mentor-desc { font-size: 14px; color: var(--text-muted); }
+    footer { padding: 36px 0; border-top: 1px solid rgba(255,255,255,0.08); text-align: center; color: var(--text-muted); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav-wrap">
+      <a href="index.html" class="btn-outline" id="backBtn">← На портал MXPro 4.0</a>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <button onclick="setLang('ru')" class="btn-outline">RU</button>
+        <button onclick="setLang('en')" class="btn-outline">EN</button>
+
+        <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn-primary" id="labBtn"> Открыть лабораторию</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div id="lang-ru">
+      <section class="hero-box">
+        <div class="badge"> ПОЛИЦЕНТРИЧНОСТЬ ЛИТЕРАТУРЫ • УФА, РЕСПУБЛИКА БАШКОРТОСТАН</div>
+        <h1>Литературно-критическая школа УФЛИ («Уфимская литература»)</h1>
+        <p style="color:var(--text-muted); font-size:16px;">
+          Профессиональная критическая и редакторская оптика международного уровня в аналитическом комплексе MXPro 4.0.
+        </p>
+      </section>
+      <div class="card">
+        <h2>О школе и международных стандартах экспертизы</h2>
+        <p>Уфимское литературное объединение <b>УФЛИ</b>, основанное в 2002 году в Уфе, является одним из ведущих центров современной поэзии, прозы и литературной критики России. Деятельность школы неразрывно связана с газетой <b>«Истоки»</b> и федеральным литературным журналом <b>«Бельские просторы»</b>.</p>
+        <p>Критическая и редакторская практика наставников УФЛИ строится на строгом профессиональном отборе и полностью соответствует высоким международным стандартам журнальной экспертизы, стиховедения и литературной аналитики: жёсткому отказу от речевых штампов («анти-красивости»), ритмической упругости живой речи, предметной достоверности детали и внутренней драматургии текста.</p>
+      </div>
+      <div class="card">
+        <h2>Ведущие критики и наставники школы (Критическая оптика MXPro 4.0)</h2>
+        <div class="mentor-grid">
+          <div class="mentor-item">
+            <div class="mentor-name">Айдар Хусаинов</div>
+            <div class="mentor-desc">Основатель и руководитель объединения УФЛИ, поэт, прозаик, драматург, переводчик и главный редактор газеты «Истоки». Задаёт стандарт бескомпромиссной драматургической точности и смысловой плотности слова.</div>
+          </div>
+          <div class="mentor-item">
+                     <div class="mentor-name">Светлана Чураева</div>
+         <div class="mentor-desc">Поэт, прозаик, переводчик, заместитель главного редактора и заведующая отделом поэзии журнала «Бельские просторы». Обеспечивает эталонный уровень редакторской экспертизы стиха и художественного перевода.</div>
+       </div>
+     </div>
+   </div>
+   <div class="card" style="border-left: 5px solid #10b981;">
+     <h2 style="color:#6ee7b7;">Как оптика школы УФЛИ работает в алгоритмах MXPro 4.0</h2>
+
+        
+        <p>При выборе оптики УФЛИ в лаборатории математическое ядро автоматически перекалибрует весовые коэффициенты экспертизы:</p>
+        <p style="margin-bottom:0;">
+          • <b>Жёсткий анти-штамп фильтр:</b> повышенные штрафы за «красивости», сентиментальные клише и страдательный залог (ProWritingAid / 8 слоёв клише);<br>
+          • <b>Ритмическая упругость:</b> приоритет дисперсии межиктовых интервалов (по М. Л. Гаспарову) и живой акцентной речи над гладкой силлабо-тоникой;<br>
+          • <b>Предметная конкретика и связность:</b> контроль глагольной динамики, когезии Coh-Metrix и фоносемантической плотности (по А. П. Журавлёву и ИРЯ РАН).
+        </p>
+      </div>
+    </div>
+   
+    <div id="lang-en" style="display:none;">
+      <section class="hero-box">
+        <div class="badge"> POLYCENTRIC WORLD LITERATURE • UFA, BASHKORTOSTAN</div>
+        <h1>UFLI Literary &amp; Critical School ("Ufa Literature")</h1>
+        <p style="color:var(--text-muted); font-size:16px;">
+          International-grade literary criticism and editorial optics integrated into the MXPro 4.0 stylometric complex.
+        </p>
+      </section>
+      <div class="card">
+        <h2>About the School &amp; International Editorial Standards</h2>
+        <p>Founded in 2002 in Ufa (capital of the Republic of Bashkortostan, at the crossroads of Europe and Asia), the <b>UFLI Literary Association</b> is one of Russia's leading centers of contemporary poetry, prose, and literary criticism outside the metropolitan capitals, closely linked with the cultural newspaper <b>Istoki</b> and the literary journal <b>Belskie Prostory</b>.</p>
+        <p>The critical and editorial practice of UFLI's mentors operates at a rigorous professional level fully aligned with international standards of literary journalism, poetics, and textual scholarship: strict rejection of clichés ("anti-ornamentalism"), rhythmic resilience of living speech, concrete authenticity of detail, and internal dramatic tension.</p>
+      </div>
+      <div class="card">
+        <h2>Leading Critics &amp; Mentors (MXPro 4.0 Critical Optics)</h2>
+        <div class="mentor-grid">
+          <div class="mentor-item">
+            <div class="mentor-name">Aidar Khusainov</div>
+            <div class="mentor-desc">Founder and head of UFLI, poet, prose writer, playwright, translator, and Editor-in-Chief of <i>Istoki</i>. Establishes the standard of uncompromising dramatic precision and semantic density.</div>
+          </div>
+          <div class="mentor-item">
+            <div class="mentor-name">Svetlana Churaeva</div>
+            <div class="mentor-desc">Poet, prose writer, translator, Deputy Editor-in-Chief, and Head of the Poetry Department at <i>Belskie Prostory</i>. Represents benchmark editorial rigor in verse and literary translation.</div>
+          </div>    
+        </div>
+      </div>
+        <div class="card" style="border-left: 5px solid #10b981;">
+        <h2 style="color:#6ee7b7;"> How UFLI Critical Optics Operates Inside MXPro 4.0 Algorithms</h2>
+        <p>Selecting UFLI Optics recalibrates the stylometric weighting engine toward uncompromising editorial rigor:</p>
+        <p style="margin-bottom:0;">
+          • <b>Strict Anti-Ornamental Filter:</b> heightened penalties for poetic clichés, sentimental filler, and passive voice (ProWritingAid &amp; 8-layer scanner);<br>
+          • <b>Rhythmic Resilience:</b> prioritizes inter-ictus interval dispersion (Gasparov Standard) and living accentual cadence over mechanical meter;<br>
+          • <b>Concrete Precision &amp; Cohesion:</b> enforces high verb-to-adjective energy, Coh-Metrix referential cohesion, and Zhuravlev–Jakobson phonosemantic density.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p style="color:#e2e8f0; font-weight:600; margin-bottom:6px;">MXPro 4.0 • Polycentric Stylometric &amp; Critical Complex (Artur Khakimullin)</p>
+      <p>Ufa, Republic of Bashkortostan • CERN Zenodo DOI: 10.5281/zenodo.24208510 • <a href="index.html" style="color:#38bdf8;">Main Portal</a></p>
+    </div>
+  </footer>
+
+  <script>
+    function setLang(lang) {
+      document.getElementById('lang-ru').style.display = (lang === 'ru') ? 'block' : 'none';
+      document.getElementById('lang-en').style.display = (lang === 'en') ? 'block' : 'none';
+      document.getElementById('backBtn').textContent = (lang === 'ru') ? '← На портал MXPro 4.0' : '← Back to MXPro 4.0 Portal';
+      const lab = document.getElementById('labBtn');
+      lab.textContent = (lang === 'ru') ? ' Открыть лабораторию' : ' Open Stylometric Lab';
+      lab.href = (lang === 'ru') ? 'https://mx-pro.streamlit.app/' : 'https://mx-pro.streamlit.app/?lang=en';
+
+    }
+    const userLang = (navigator.language || navigator.userLanguage || 'ru').toLowerCase();
+    if (!userLang.startsWith('ru')) { setLang('en'); }
+  </script>
+</body>
+</html>
+
