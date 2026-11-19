@@ -226,9 +226,10 @@
       <div class="demo-shell">
         <div class="demo-bar">
           <div class="tab-group">
-            <button class="tab-btn active" onclick="setSample('poetry', this)">Стихи (XXI век)</button>
-            <button class="tab-btn" onclick="setSample('gamedev', this)">GameDev (Диалог)</button>
+            <button class="tab-btn active" onclick="setSample('prose', this)">Проза и книги</button>
+            <button class="tab-btn" onclick="setSample('gamedev', this)">GameDev и сценарии</button>
             <button class="tab-btn" onclick="setSample('ai', this)">Текст от нейросети (Правка До/После)</button>
+
           </div>
           <div style="font-size:12px;color:var(--text-muted);align-self:center;">Интерактивное демо • Попробуйте отредактировать текст ниже</div>
         </div>
@@ -243,32 +244,25 @@
             <div id="verdict-concept" class="verdict-val">В концепте XXI века: 94/100</div>
           </div>
         </div>
-        <div class="tab-group" style="margin-bottom:16px;">
-          <button class="tab-btn active" onclick="setSlide('edit', this)">1. Работа над текстом (До / После)</button>
-          <button class="tab-btn" onclick="setSlide('critics', this)">2. Оценка критиков</button>
-          <button class="tab-btn" onclick="setSlide('psycho', this)">3. Психопоэтический анализ</button>
-          <button class="tab-btn" onclick="setSlide('cert', this)">4. Сертификат / Протокол</button>
+       <div class="split-grid">
+          <div class="pane">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <div class="pane-title" style="margin:0;">Подсветка и редактор (до 2 500 знаков в сервисе)</div>
+              <span style="font-size:11px;color:var(--text-muted);"><span class="ai-mark">ИИ-след / штамп</span></span>
+            </div>
+            <div id="demo-highlight" style="font-family:'Newsreader',Georgia,serif;font-size:16px;line-height:1.65;margin-bottom:10px;padding:10px;background:#FFFFFF;border:1px solid var(--border);border-radius:8px;"></div>
+            <textarea id="demo-input" class="editor-area" style="min-height:95px;border-top:1px dashed var(--border);padding-top:8px;" oninput="liveRecalc()"></textarea>
+          </div>
+          <div class="pane">
+            <div class="pane-title">Что исправить и зачем (режим До / После)</div>
+            <div id="demo-advice" style="font-size:14px;color:var(--text-main);line-height:1.6;"></div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
+              <button id="fix-btn" class="btn btn-outline" style="font-size:12px;padding:8px 12px;" onclick="applyAutoFix()">Применить правку (До → После)</button>
+              <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn btn-accent" style="font-size:12px;padding:8px 14px;">Загрузить свой текст →</a>
+            </div>
+          </div>
         </div>
 
-        <div id="slide-edit" class="slide-panel">
-          <div class="split-grid">
-            <div class="pane">
-              <div class="pane-title">Живой редактор текста (можно править прямо здесь)</div>
-              <textarea id="demo-input" class="editor-area" oninput="liveRecalc()"></textarea>
-            </div>
-            <div class="pane">
-              <div class="pane-title">Что исправить и зачем (режим До / После)</div>
-              <div id="demo-advice" style="font-size:14px;color:var(--text-main);line-height:1.6;"></div>
-              <button id="fix-btn" class="btn btn-outline" style="margin-top:14px;font-size:12px;padding:7px 12px;" onclick="applyAutoFix()">Применить живую правку (До → После)</button>
-            </div>
-          </div>
-        </div>
-       <div id="slide-critics" class="slide-panel" style="display:none;">
-          <div class="pane">
-            <div class="pane-title">Четыре критические школы РФ (без шаблонных повторов)</div>
-            <div id="demo-critics" style="font-size:14px;line-height:1.65;"></div>
-          </div>
-        </div>
 
         <div id="slide-psycho" class="slide-panel" style="display:none;">
           <div class="pane">
@@ -314,42 +308,39 @@
       </div>
     </div>
   </footer>
-  <script>
+    <script>
     const SAMPLES = {
-      poetry: {
-        ai: 9,
-        concept: "В концепте XXI века: 94/100",
-        text: "Я вычисляю галактику квантов\nВ каплях на твоих волосах.\nОбновляю потоки данных\nВ своих интерфейсных глазах.",
-        fixedText: "Я вычисляю галактику квантов\nВ каплях на твоих волосах.\nОбновляю потоки данных\nВ своих интерфейсных глазах.",
-        advice: "<b>Следов ИИ не обнаружено:</b> столкновение квантовой лексики с живой предметной деталью и точный ритмический перебив. Правка не требуется.",
-
-        critics: "<b>Московская школа:</b> резкий сбой ритма и преодоление речевой инерции.<br><b>Петербургская школа:</b> плотная метафорическая стыковка урбанизма и степи.<br><b>Уфимская школа (УФЛИ):</b> осязаемая пластика движения и фактура асфальта.<br><b>Театр и экран:</b> высокий темпоритм, готовый сценический нерв.",
-        psycho: "<b>Психотип голоса: Кинетический визионер.</b><br>Автор мыслит через физическое сопротивление среды и резкое ускорение. В тексте доминируют глаголы действия и контрастные образы — признак высокой эмоциональной вовлечённости без самолюбования.",
-        cert: "STATUS: VERIFIED HUMAN VOICE • AI INDEX: 9% (<15% THRESHOLD)\nCONCEPT SCORE: XXI CENTURY — 94/100\nSHA-256: 8F94A2C19E7B40D3115A8E90C4B271F0"
+      prose: {
+        ai: 8,
+        taste: "Предположительная оценка художественного вкуса: 93/100 (эталон современной прозы)",
+        text: "Дождь сек чёрный асфальт косо и зло. Марк сунул озябшие руки глубже в карманы драпового пальто и толкнул тяжёлую дверь подъезда.",
+        fixedText: "Дождь сек чёрный асфальт косо и зло. Марк сунул озябшие руки глубже в карманы драпового пальто и толкнул тяжёлую дверь подъезда.",
+        advice: "<b>Живой авторский слог:</b> точные глаголы действия, предметная деталь и естественная смена длины фраз. Вероятность ИИ минимальна или исключена."
       },
       gamedev: {
-        ai: 12,
-        concept: "В концепте XXI века: 89/100",
+        ai: 11,
+        taste: "Предположительная оценка художественного вкуса: 90/100 (высокая речевая компрессия)",
         text: "— Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\n— А если не дёрну, мы через минуту задохнёмся в этом шлюзе.",
         fixedText: "— Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\n— А если не дёрну, мы через минуту задохнёмся в этом шлюзе.",
-        advice: "<b>Живая речевая компрессия:</b> короткие реплики с конфликтом и конкретным действием. Вероятность ИИ минимальна или исключена.",
-        critics: "<b>Театр и GameDev:</b> реплики работают на конфликт с первой секунды, нет лишнего пересказа.<br><b>Московская школа:</b> точная разговорная интонация без книжных костылей.<br><b>Уфимская школа (УФЛИ):</b> предметная среда (вентиль, шлюз) держит сцену.<br><b>Петербургская школа:</b> жёсткий экзистенциальный выбор внутри замкнутого пространства.",
-        psycho: "<b>Психотип голоса: Тактический реалист.</b><br>Фокус внимания направлен на действие и мгновенную причинно-следственную связь. Минимум абстракций, высокая концентрация на физике момента.",
-        cert: "STATUS: VERIFIED HUMAN DIALOGUE • AI INDEX: 12% (<15% THRESHOLD)\nCONCEPT SCORE: XXI CENTURY — 89/100\nSHA-256: 3C71E09B4A2D88F1520C9A4E11B83D22"
+        advice: "<b>Отличный темпоритм сцены:</b> короткие реплики с конфликтом и конкретным действием без лишнего пересказа."
       },
       ai: {
         ai: 78,
-        concept: "В концепте XX века: 38/100",
+        taste: "Предположительная оценка художественного вкуса: 36/100 (алгоритмическая гладкость)",
         text: "В современном мире важно отметить, что тихий вечер медленно опускался на старый город, наполняя душу светлой грустью и гармонией.",
         fixedText: "Холодный ветер резал пустой проспект. Стекло витрины дрогнуло от шагов — город глотал сумерки по кускам.",
-        advice: "<b>Обнаружен ИИ-след (78%):</b> канцелярский зачин <i>«В современном мире важно отметить»</i>, штампы <i>«тихий вечер»</i>, <i>«светлой грустью»</i> и ровный ритм.<br><b>Как исправить:</b> уберите вводный костыль и замените абстракции на конкретное действие.",
-        critics: "<b>Московская школа:</b> речевая инерция и набор готовых нейросетевых связок.<br><b>Уфимская школа (УФЛИ):</b> нет осязаемой предметности — сплошной пересказ эмоций.<br><b>Петербургская школа:</b> вторичность интонации без собственного нерва.<br><b>Театр и экран:</b> нулевая динамика, текст не держит внимание.",
-        psycho: "<b>Профиль текста: Алгоритмическое сглаживание.</b><br>Высокая предсказуемость слов и симметрия фраз указывают на участие языковой модели. Нажмите кнопку ниже, чтобы увидеть живую правку.",
-        cert: "STATUS: AI GENERATION DETECTED • AI INDEX: 78% (ABOVE 15% THRESHOLD)\nCONCEPT SCORE: XX CENTURY — 38/100\nRECOMMENDATION: APPLY HUMAN REVISION"
+        advice: "<b>Подсвечены ИИ-маркеры (78%):</b> канцелярский зачин, штампы и ровный ритм.<br><b>Рекомендация:</b> нажмите кнопку ниже или исправьте подсвеченные слова в окне слева — процент ИИ сразу упадёт."
       }
     };
-    let curKey = 'poetry';
-    function renderVerdict(aiVal, conceptTxt) {
+    let curKey = 'prose';
+    const AI_REGEX = /(В современном мире|важно отметить|тихий вечер|светлой грустью|гармонией|медленно опускался|наполняя душу)/gi;
+
+    function highlightText(raw) {
+      return raw.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                .replace(AI_REGEX, '<span class="ai-mark">$1</span>')
+                .replace(/\n/g, "<br>");
+    }
+    function renderVerdict(aiVal, tasteTxt) {
       const el = document.getElementById('verdict-ai');
       if (aiVal < 15) {
         el.className = 'verdict-val badge-ok';
@@ -358,7 +349,7 @@
         el.className = 'verdict-val badge-warn';
         el.textContent = `Процент ИИ-генерации: предположительно ${aiVal}% — обнаружены следы алгоритмического сглаживания`;
       }
-      document.getElementById('verdict-concept').textContent = conceptTxt;
+      document.getElementById('verdict-concept').textContent = tasteTxt;
     }
     function setSample(key, btn) {
       curKey = key;
@@ -366,17 +357,9 @@
       if (btn) btn.classList.add('active');
       const s = SAMPLES[key];
       document.getElementById('demo-input').value = s.text;
+      document.getElementById('demo-highlight').innerHTML = highlightText(s.text);
       document.getElementById('demo-advice').innerHTML = s.advice;
-      document.getElementById('demo-critics').innerHTML = s.critics;
-      document.getElementById('demo-psycho').innerHTML = s.psycho;
-      document.getElementById('demo-cert').textContent = s.cert;
-      renderVerdict(s.ai, s.concept);
-    }
-    function setSlide(name, btn) {
-      btn.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      document.querySelectorAll('.slide-panel').forEach(p => p.style.display = 'none');
-      document.getElementById('slide-' + name).style.display = 'block';
+      renderVerdict(s.ai, s.taste);
     }
     function applyAutoFix() {
       const s = SAMPLES[curKey];
@@ -384,17 +367,20 @@
       liveRecalc();
     }
     function liveRecalc() {
-      const val = document.getElementById('demo-input').value.trim();
-      const hasAiFiller = /современном мире|важно отметить|тихий вечер|светлой грустью|гармони/i.test(val);
-      if (hasAiFiller) {
-        renderVerdict(78, "В концепте XX века: 38/100");
+      const val = document.getElementById('demo-input').value;
+      document.getElementById('demo-highlight').innerHTML = highlightText(val);
+      const matches = val.match(AI_REGEX);
+      if (matches && matches.length > 0) {
+        const pct = Math.min(88, 35 + matches.length * 14);
+        renderVerdict(pct, "Предположительная оценка художественного вкуса: 38/100 (требуется правка)");
       } else {
-        renderVerdict(11, "В концепте XXI века: 92/100");
-        document.getElementById('demo-advice').innerHTML = "<b>Живая правка принята (До → После):</b> ИИ-маркеры удалены, ритм сбит, добавлено конкретное действие. Вероятность ИИ минимальна или исключена (11%).";
+        renderVerdict(11, "Предположительная оценка художественного вкуса: 91/100 (эталон современной прозы)");
+        document.getElementById('demo-advice').innerHTML = "<b>Живая правка принята (До → После):</b> подсветка ИИ-маркеров исчезла, текст обрёл живой ритм и предметность. Вероятность ИИ минимальна или исключена (11%).";
       }
     }
-    setSample('poetry');
+    setSample('prose');
   </script>
 </body>
 </html>
+
 
