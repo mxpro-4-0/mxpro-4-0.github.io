@@ -3,18 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MXPro 4.0 — ИИ детектор текстов и оценка авторского стиля</title>
-  <meta name="description" content="Бесплатный ИИ детектор текстов для поэтов, писателей, сценаристов GameDev и издательств. Проверка на генерацию нейросетью с порогом 15%, оценка восприятия в концепте XXI и XX веков, живой редактор До и После." />
-  <meta name="keywords" content="ИИ детектор текстов, проверить текст на ИИ, детектор нейросети онлайн, оценка стихов и прозы, проверка текста GameDev, MXPro 4.0" />
-  <link rel="canonical" href="https://mxpro-4-0.github.io/" />
+  <title>MXPro 4.0 — ИИ детектор текстов, GameDev Narrative IDE и стилометрия</title>
+  <meta name="description" content="Инженерная платформа нарратива и вычислительной стилометрии (CERN Zenodo DOI: 10.5281/zenodo.24208510). 15 модулей, 1 120 профилей, GameDev IDE с экспортом в движки и Zero AI Training." />
+  <meta name="keywords" content="ИИ детектор текстов, GameDev Narrative IDE, стилометрия, проверка текста на ИИ, Voice Fingerprint, MXPro 4.0, Метод Хакимуллина" />
+  <link rel="canonical" href="https://github.io" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="MXPro 4.0 — ИИ детектор текстов и оценка авторского стиля" />
-  <meta property="og:description" content="Определяем следы ИИ-генерации и оцениваем художественное восприятие текста в реальном времени." />
-  <meta property="og:url" content="https://mxpro-4-0.github.io/" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
-
+  <meta property="og:title" content="MXPro 4.0 — Инженерная платформа нарратива, GameDev IDE и стилометрии" />
+  <meta property="og:description" content="Единая среда для GameDev-студий, издательств и авторов. Локальные детерминированные алгоритмы, Zero Vendor Lock-In и сертификация SHA-256." />
+  <meta property="og:url" content="https://github.io" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "MXPro 4.0 — Computational Stylometry & GameDev Narrative IDE",
+    "applicationCategory": "DeveloperApplication, EnterpriseApplication",
+    "operatingSystem": "Web, Cloud, On-Premise",
+    "author": { "@type": "Person", "name": "Artur Khakimullin" },
+    "citation": "https://doi.org",
+    "description": "15-module deterministic stylometry suite and multiplayer GameDev Narrative IDE calibrated on 1,120 RU/EN profiles (RAS orthoepy, Burrows Delta, Gasparov metrics, SHA-256, Zero AI Training).",
+    "featureList": [
+      "Deterministic 13-Metric Stylometry Engine (No External LLM API)",
+      "GameDev Narrative IDE with Voice Fingerprint, Facial Animation & VO Timer",
+      "Direct Engine Export (.json, .csv with VO timings, .yarn) & Zero Vendor Lock-In",
+      "Cryptographic 1:1 Text Verification (SHA-256) & CERN Zenodo DOI"
+    ]
+  }
+  </script>
+  <link rel="preconnect" href="https://googleapis.com">
+  <link rel="preconnect" href="https://gstatic.com" crossorigin>
+  <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-page: #FAF9F5;
@@ -39,87 +56,56 @@
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
     }
-       .container {
-      max-width: 1080px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
     header {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(250, 249, 245, 0.9);
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(250, 249, 245, 0.92);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       padding: 16px 0;
     }
-    .nav-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-    }
-    .brand {
-      font-weight: 700;
-      font-size: 18px;
-      letter-spacing: -0.02em;
-    }
-    .nav-links {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      font-size: 14px;
-    }
+    .nav-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .brand { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
+    .brand-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border); }
+    .nav-links { display: flex; align-items: center; gap: 20px; font-size: 14px; }
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 10px 18px;
-      border-radius: 10px;
-      font-weight: 500;
-      font-size: 14px;
-      text-decoration: none;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: var(--bg-surface);
-      color: var(--text-main);
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 10px 18px; border-radius: 10px; font-weight: 500; font-size: 14px;
+      text-decoration: none; cursor: pointer; border: 1px solid var(--border);
+      background: var(--bg-surface); color: var(--text-main); transition: all 0.15s ease;
     }
-    .btn-accent {
-      background: var(--accent);
-      color: #FFFFFF;
-      border-color: var(--accent);
-    }
-    .btn-accent:hover {
-      background: var(--accent-hover);
-    }
-
-    .hero { padding: 64px 0 40px; text-align: center; }
+    .btn:hover { border-color: #C7C3B8; }
+    .btn-accent { background: var(--accent); color: #FFFFFF; border-color: var(--accent); }
+    .btn-accent:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+    .hero { padding: 56px 0 36px; text-align: center; }
     .pill {
       display: inline-block; padding: 6px 14px; border-radius: 999px;
       background: var(--bg-subtle); color: var(--text-muted);
-      font-size: 13px; font-weight: 500; margin-bottom: 20px;
-      border: 1px solid var(--border);
+      font-size: 13px; font-weight: 500; margin-bottom: 18px; border: 1px solid var(--border);
     }
     h1 {
       font-family: 'Newsreader', Georgia, serif;
-      font-size: clamp(34px, 5vw, 54px); font-weight: 600;
-      line-height: 1.12; letter-spacing: -0.02em;
-      max-width: 820px; margin: 0 auto 18px;
+      font-size: clamp(32px, 4.6vw, 50px); font-weight: 600;
+      line-height: 1.12; letter-spacing: -0.02em; max-width: 880px; margin: 0 auto 18px;
     }
-    .hero-sub {
-      font-size: 18px; color: var(--text-muted);
-      max-width: 640px; margin: 0 auto 32px;
+    .hero-sub { font-size: 17.5px; color: var(--text-muted); max-width: 720px; margin: 0 auto 24px; }
+    .trust-bar {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+      max-width: 920px; margin: 0 auto 36px;
+    }
+    .trust-chip {
+      font-size: 12.5px; font-weight: 500; color: var(--text-main);
+      background: var(--bg-surface); border: 1px solid var(--border);
+      padding: 6px 12px; border-radius: 8px;
     }
     .demo-shell {
       background: var(--bg-surface); border: 1px solid var(--border);
       border-radius: 20px; padding: 24px; text-align: left;
-      box-shadow: 0 12px 36px rgba(20, 20, 19, 0.05);
-      margin-bottom: 56px;
+      box-shadow: 0 12px 36px rgba(20, 20, 19, 0.05); margin-bottom: 48px;
     }
     .demo-bar {
       display: flex; flex-wrap: wrap; justify-content: space-between;
-      gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
-      margin-bottom: 20px;
+      gap: 12px; padding-bottom: 16px; border-bottom: 1px solid var(--border); margin-bottom: 20px;
     }
     .tab-group { display: flex; flex-wrap: wrap; gap: 6px; }
     .tab-btn {
@@ -127,228 +113,174 @@
       background: var(--bg-subtle); color: var(--text-muted);
       font-size: 13px; font-weight: 500; cursor: pointer;
     }
-    .tab-btn.active {
-      background: var(--text-main); color: #FFFFFF;
-    }
-    .verdict-row {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 12px; margin-bottom: 18px;
-    }
-    .verdict-box {
-      padding: 14px 16px; border-radius: 12px;
-      background: var(--bg-page); border: 1px solid var(--border);
-    }
+    .tab-btn.active { background: var(--text-main); color: #FFFFFF; }
+    .verdict-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .verdict-box { padding: 14px 16px; border-radius: 12px; background: var(--bg-page); border: 1px solid var(--border); }
     .verdict-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
-    .verdict-val { font-size: 16px; font-weight: 700; }
+    .verdict-val { font-size: 15.5px; font-weight: 700; }
     .badge-ok { color: var(--green-text); }
     .badge-warn { color: var(--amber-text); }
-    .split-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-    @media (max-width: 760px) {
-      .split-grid { grid-template-columns: 1fr; }
-    }
-    .pane {
-      background: var(--bg-page);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 16px;
-    }
-        .pane-title {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
+    .split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 760px) { .split-grid { grid-template-columns: 1fr; } }
+    .pane { background: var(--bg-page); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+    .pane-title { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 10px; text-transform: uppercase; }
     .editor-area {
-      width: 100%;
-      min-height: 150px;
-      border: none;
-      background: transparent;
-      font-family: 'Newsreader', Georgia, serif;
-      font-size: 17px;
-      line-height: 1.65;
-      color: var(--text-main);
-      resize: vertical;
-      outline: none;
+      width: 100%; min-height: 95px; border: none; background: transparent;
+      font-family: 'Newsreader', Georgia, serif; font-size: 16.5px; line-height: 1.65;
+      color: var(--text-main); resize: vertical; outline: none;
     }
-    .ai-mark {
-      background: #FDE8E1;
-      border-bottom: 2px solid var(--accent);
-      padding: 1px 4px;
-      border-radius: 4px;
-    }
-    .section {
-      padding: 56px 0;
-      border-top: 1px solid var(--border);
-    }
-    .cards-3 {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 18px;
-      margin-top: 28px;
-    }
+    .ai-mark { background: #FDE8E1; border-bottom: 2px solid var(--accent); padding: 1px 4px; border-radius: 4px; }
+    .section { padding: 52px 0; border-top: 1px solid var(--border); }
+    .cards-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 18px; margin-top: 26px; }
     .card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 22px;
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px; display: flex; flex-direction: column; justify-content: space-between;
     }
-    footer {
-      padding: 40px 0;
-      border-top: 1px solid var(--border);
-      color: var(--text-muted);
-      font-size: 13px;
+    .deliverable {
+      margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--border);
+      font-size: 12.5px; color: var(--text-main); font-weight: 500;
     }
+    .lockin-box {
+      background: var(--bg-surface); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+      border-radius: var(--radius); padding: 26px; margin-top: 24px;
+    }
+    footer { padding: 40px 0; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 13px; }
   </style>
 </head>
 <body>
   <header>
     <div class="container nav-bar">
-      <div class="brand">MXPro 4.0</div>
+      <div class="brand">MXPro 4.0 <span class="brand-tag">CERN DOI: 24208510</span></div>
       <div class="nav-links">
-        <a href="docs.html" style="color:var(--text-muted);text-decoration:none;">Документация</a>
-        <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn btn-accent">Открыть лабораторию →</a>
+        <a href="#lockin" style="color:var(--text-muted);text-decoration:none;">Zero Lock-In</a>
+        <a href="docs.html" style="color:var(--text-muted);text-decoration:none;">Научная база</a>
+        <a href="https://streamlit.app" target="_blank" class="btn btn-accent">Открыть лабораторию →</a>
       </div>
     </div>
   </header>
-
   <main class="container">
     <section class="hero">
-      <div class="pill">ИИ детектор текстов • Оценка художественного восприятия</div>
-      <h1>Отличаем живой голос автора от генерации нейросети</h1>
+      <div class="pill">MXPro 4.0 • ИИ детектор текстов, GameDev Narrative IDE и стилометрия</div>
+      <h1>Инженерная платформа нарратива и стилометрии: от сценария и мимики до криптографии текста</h1>
       <p class="hero-sub">
-        Точный детектор ИИ-следа для поэтов, писателей и сценаристов GameDev. Проверяйте рукописи с порогом 15% и улучшайте текст в режиме живого сравнения «До / После».
+        Единая среда для GameDev-студий, издательств и авторов. Командная работа над сценами, контроль голосов персонажей (Voice Fingerprint) и экспорт в движки без передачи данных в сторонние LLM.
       </p>
+      <div class="trust-bar">
+        <div class="trust-chip">15 вычислительных модулей</div>
+        <div class="trust-chip">1 120 авторских профилей (RU / EN)</div>
+        <div class="trust-chip">Нормы ИРЯ РАН и словарь Зализняка</div>
+        <div class="trust-chip">CERN Zenodo DOI</div>
+        <div class="trust-chip">Zero AI Training &amp; Zero Lock-In</div>
+      </div>
       <div class="demo-shell">
         <div class="demo-bar">
           <div class="tab-group">
-            <button class="tab-btn active" onclick="setSample('prose', this)">Проза и книги</button>
-            <button class="tab-btn" onclick="setSample('gamedev', this)">GameDev и сценарии</button>
+            <button class="tab-btn active" onclick="setSample('gamedev', this)">GameDev и сценарии</button>
+            <button class="tab-btn" onclick="setSample('prose', this)">Проза и книги</button>
             <button class="tab-btn" onclick="setSample('ai', this)">Текст от нейросети (Правка До/После)</button>
-
           </div>
-          <div style="font-size:12px;color:var(--text-muted);align-self:center;">Интерактивное демо • Попробуйте отредактировать текст ниже</div>
+          <div style="font-size:12px;color:var(--text-muted);align-self:center;">Интерактивное демо • Отредактируйте текст ниже</div>
         </div>
-
         <div class="verdict-row">
           <div class="verdict-box">
-            <div class="verdict-label">Детектор машинного следа</div>
-            <div id="verdict-ai" class="verdict-val badge-ok">Процент ИИ-генерации: предположительно 9% — вероятность ИИ минимальна или исключена</div>
+            <div class="verdict-label">Детектор машинного следа (порог 15%)</div>
+            <div id="verdict-ai" class="verdict-val badge-ok">Процент ИИ-генерации: предположительно 11% — вероятность ИИ минимальна</div>
           </div>
           <div class="verdict-box">
-            <div class="verdict-label">Эстетическая координата</div>
-            <div id="verdict-concept" class="verdict-val">В концепте XXI века: 94/100</div>
+            <div class="verdict-label">Эстетическая и речевая плотность</div>
+            <div id="verdict-concept" class="verdict-val">Оценка художественного вкуса: 90/100</div>
           </div>
         </div>
-       <div class="split-grid">
+        <div class="split-grid">
           <div class="pane">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-              <div class="pane-title" style="margin:0;">Подсветка и редактор (до 2 500 знаков в сервисе)</div>
+              <div class="pane-title" style="margin:0;">Подсветка и редактор (До / После)</div>
               <span style="font-size:11px;color:var(--text-muted);"><span class="ai-mark">ИИ-след / штамп</span></span>
             </div>
             <div id="demo-highlight" style="font-family:'Newsreader',Georgia,serif;font-size:16px;line-height:1.65;margin-bottom:10px;padding:10px;background:#FFFFFF;border:1px solid var(--border);border-radius:8px;"></div>
-            <textarea id="demo-input" class="editor-area" style="min-height:95px;border-top:1px dashed var(--border);padding-top:8px;" oninput="liveRecalc()"></textarea>
+            <textarea id="demo-input" class="editor-area" style="border-top:1px dashed var(--border);padding-top:8px;" oninput="liveRecalc()"></textarea>
           </div>
           <div class="pane">
-            <div class="pane-title">Что исправить и зачем (режим До / После)</div>
+            <div class="pane-title">Аудит реплики и рекомендация</div>
             <div id="demo-advice" style="font-size:14px;color:var(--text-main);line-height:1.6;"></div>
             <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
-              <button id="fix-btn" class="btn btn-outline" style="font-size:12px;padding:8px 12px;" onclick="applyAutoFix()">Применить правку (До → После)</button>
-              <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn btn-accent" style="font-size:12px;padding:8px 14px;">Загрузить свой текст →</a>
+              <button id="fix-btn" class="btn" style="font-size:12px;padding:8px 12px;" onclick="applyAutoFix()">Применить правку (До → После)</button>
+              <a href="https://streamlit.app" target="_blank" class="btn btn-accent" style="font-size:12px;padding:8px 14px;">Открыть GameDev IDE и редактор →</a>
             </div>
-          </div>
-        </div>
-
-
-        <div id="slide-psycho" class="slide-panel" style="display:none;">
-          <div class="pane">
-            <div class="pane-title">Психопоэтический портрет голоса</div>
-            <div id="demo-psycho" style="font-size:14px;line-height:1.65;"></div>
-          </div>
-        </div>
-
-        <div id="slide-cert" class="slide-panel" style="display:none;">
-          <div class="pane">
-            <div class="pane-title">Криптографический протокол верификации SHA-256</div>
-            <div id="demo-cert" style="font-family:monospace;font-size:13px;line-height:1.6;"></div>
           </div>
         </div>
       </div>
     </section>
     <section class="section">
-      <h2 style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;">Как работает проверка</h2>
-      <p style="color:var(--text-muted);margin-top:8px;max-width:620px;">Три простых шага, чтобы проверить текст на следы нейросети и усилить живой авторский голос.</p>
+      <h2 style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;">Три контура работы в едином ядре</h2>
+      <p style="color:var(--text-muted);margin-top:8px;max-width:680px;">Выберите рабочий режим под задачу студии, редакции или научного исследования.</p>
       <div class="cards-3">
         <div class="card">
-          <div style="font-weight:700;margin-bottom:8px;">1. Детектор ИИ с порогом 15%</div>
-          <p style="font-size:14px;color:var(--text-muted);">Определяем вероятность генерации языковой моделью. Если показатель ниже 15% — вероятность ИИ минимальна или исключена.</p>
+          <div>
+            <div style="font-weight:700;font-size:16px;margin-bottom:8px;">1. Для GameDev-студий и сценаристов</div>
+            <p style="font-size:14px;color:var(--text-muted);">Совместные облачные комнаты, контроль голосов героев (Voice Fingerprint), лимит UI-субтитров (140 зн.), превью мимики и озвучки.</p>
+          </div>
+          <div class="deliverable">Выход: .json (полный проект), .csv (озвучка с VO-таймингами) и .yarn.</div>
         </div>
         <div class="card">
-          <div style="font-weight:700;margin-bottom:8px;">2. Живой редактор «До / После»</div>
-          <p style="font-size:14px;color:var(--text-muted);">Подсвечиваем машинные связки и ровный ритм. Вы правите строку — и сразу видите, как падает процент ИИ и растёт балл восприятия.</p>
+          <div>
+            <div style="font-weight:700;font-size:16px;margin-bottom:8px;">2. Для писателей, поэтов и редакций</div>
+            <p style="font-size:14px;color:var(--text-muted);">3-цветная карта правок в реальном времени, фильтр 8 слоёв клише и точный детектор ИИ-следа с порогом отсечения 15%.</p>
+          </div>
+          <div class="deliverable">Выход: чистый .docx / .txt, печатный лист и крипто-сертификат SHA-256.</div>
         </div>
         <div class="card">
-          <div style="font-weight:700;margin-bottom:8px;">3. Для авторов, GameDev и редакций</div>
-          <p style="font-size:14px;color:var(--text-muted);">Подходит для стихов, художественной прозы, игровых диалогов и издательского скрининга с выдачей протокола SHA-256.</p>
+          <div>
+            <div style="font-weight:700;font-size:16px;margin-bottom:8px;">3. Научная стилометрия и экспертиза</div>
+            <p style="font-size:14px;color:var(--text-muted);">13 метрик Метода Хакимуллина, орфоэпия ИРЯ РАН, метрика Гаспарова, дельта Берроуза и сверка с 1 120 профилями (RU/EN).</p>
+          </div>
+          <div class="deliverable">Выход: академический протокол, транскрипция РАН и запись в реестре DOI.</div>
+        </div>
+      </div>
+    </section>
+    <section class="section" id="lockin">
+      <h2 style="font-family:'Newsreader',Georgia,serif;font-size:30px;font-weight:600;">Безопасность IP и Zero Vendor Lock-In</h2>
+      <p style="color:var(--text-muted);margin-top:8px;max-width:740px;">Инженерные гарантии для техлидов, продюсеров и издательств: полная автономность данных и локальное вычислительное ядро.</p>
+      <div class="lockin-box">
+        <div class="cards-3" style="margin-top:0;">
+          <div>
+            <div style="font-weight:700;margin-bottom:6px;">1. Локальный суверенитет и Git</div>
+            <p style="font-size:13.5px;color:var(--text-muted);">Весь проект (сцены, персонажи, настройки тембра) в 1 клик выгружается в открытый .json-файл для хранения в Git студии. Возможна работа полностью без облака.</p>
+          </div>
+          <div>
+            <div style="font-weight:700;margin-bottom:6px;">2. Прямой экспорт в движки</div>
+            <p style="font-size:13.5px;color:var(--text-muted);">Производственные форматы для Unity, Unreal Engine, Godot и Yarn Spinner: структурированный .json, таблица локализации и озвучки .csv (ID и тайминги VO) и .yarn.</p>
+          </div>
+          <div>
+            <div style="font-weight:700;margin-bottom:6px;">3. Zero AI Training (без внешних LLM)</div>
+            <p style="font-size:13.5px;color:var(--text-muted);">Тексты не передаются в сторонние языковые модели. Ядро работает на детерминированных математико-лингвистических алгоритмах. Доступен On-Premise контур.</p>
+          </div>
         </div>
       </div>
     </section>
   </main>
-
   <footer>
     <div class="container" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;">
-      <div>MXPro 4.0 — ИИ детектор текстов и лаборатория авторского стиля</div>
+      <div>MXPro 4.0 — Инженерная платформа нарратива и стилометрии (CERN DOI: 10.5281/zenodo.24208510)</div>
       <div style="display:flex;gap:18px;">
-        <a href="docs.html" style="color:var(--text-main);text-decoration:none;font-weight:500;">Научная документация →</a>
-        <a href="https://mx-pro.streamlit.app/" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600;">Открыть сервис →</a>
+        <a href="docs.html" style="color:var(--text-main);text-decoration:none;font-weight:500;">Спецификация и матрица →</a>
+        <a href="https://streamlit.app" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600;">Запустить платформу →</a>
       </div>
     </div>
   </footer>
-    <script>
+  <script>
     const SAMPLES = {
-      prose: {
-        ai: 8,
-        taste: "Предположительная оценка художественного вкуса: 93/100 (эталон современной прозы)",
-        text: "Дождь сек чёрный асфальт косо и зло. Марк сунул озябшие руки глубже в карманы драпового пальто и толкнул тяжёлую дверь подъезда.",
-        fixedText: "Дождь сек чёрный асфальт косо и зло. Марк сунул озябшие руки глубже в карманы драпового пальто и толкнул тяжёлую дверь подъезда.",
-        advice: "<b>Живой авторский слог:</b> точные глаголы действия, предметная деталь и естественная смена длины фраз. Вероятность ИИ минимальна или исключена."
-      },
-      gamedev: {
-        ai: 11,
-        taste: "Предположительная оценка художественного вкуса: 90/100 (высокая речевая компрессия)",
-        text: "— Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\n— А если не дёрну, мы через минуту задохнёмся в этом шлюзе.",
-        fixedText: "— Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\n— А если не дёрну, мы через минуту задохнёмся в этом шлюзе.",
-        advice: "<b>Отличный темпоритм сцены:</b> короткие реплики с конфликтом и конкретным действием без лишнего пересказа."
-      },
-      ai: {
-        ai: 78,
-        taste: "Предположительная оценка художественного вкуса: 36/100 (алгоритмическая гладкость)",
-        text: "В современном мире важно отметить, что тихий вечер медленно опускался на старый город, наполняя душу светлой грустью и гармонией.",
-        fixedText: "Холодный ветер резал пустой проспект. Стекло витрины дрогнуло от шагов — город глотал сумерки по кускам.",
-        advice: "<b>Подсвечены ИИ-маркеры (78%):</b> канцелярский зачин, штампы и ровный ритм.<br><b>Рекомендация:</b> нажмите кнопку ниже или исправьте подсвеченные слова в окне слева — процент ИИ сразу упадёт."
-      }
+      gamedev: { ai: 11, taste: "Оценка речевой плотности: 90/100 (высокая компрессия диалога)", text: "Глебов: [anim:angry] Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\nСалага: [anim:shock] А если не дёрну, мы через минуту задохнёмся в этом шлюзе!", fixedText: "Глебов: [anim:angry] Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\nСалага: [anim:shock] А если не дёрну, мы через минуту задохнёмся в этом шлюзе!", advice: "<b>Контроль Voice Fingerprint пройден:</b> разный ритм фраз героев, теги мимики [anim] распознаны, лимит UI-субтитров (140 зн.) соблюдён." },
+      prose: { ai: 8, taste: "Оценка художественного вкуса: 93/100 (эталон современной прозы)", text: "Дождь сек чёрный асфальт косо и зло. Марк сунул озябшие руки глубже в карманы драпового пальто и толкнул тяжёлую дверь подъезда.", fixedText: "Дождь сек чёрный асфальт косо и зло. Марк сунул озябшие руки глубже в карманы драпового пальто и толкнул тяжёлую дверь подъезда.", advice: "<b>Живой авторский слог:</b> точные глаголы действия и предметная деталь. Вероятность ИИ минимальна или исключена (8%)." },
+      ai: { ai: 78, taste: "Оценка художественного вкуса: 36/100 (алгоритмическая гладкость)", text: "В современном мире важно отметить, что тихий вечер медленно опускался на старый город, наполняя душу светлой грустью и гармонией.", fixedText: "Холодный ветер резал пустой проспект. Стекло витрины дрогнуло от шагов — город глотал сумерки по кускам.", advice: "<b>Подсвечены ИИ-маркеры (78%):</b> канцелярский зачин, штампы и монотонный ритм. Нажмите «Применить правку» для проверки живого слога." }
     };
-    let curKey = 'prose';
+    let curKey = 'gamedev';
     const AI_REGEX = /(В современном мире|важно отметить|тихий вечер|светлой грустью|гармонией|медленно опускался|наполняя душу)/gi;
-
-    function highlightText(raw) {
-      return raw.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                .replace(AI_REGEX, '<span class="ai-mark">$1</span>')
-                .replace(/\n/g, "<br>");
-    }
+    function highlightText(raw) { return raw.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(AI_REGEX,'<span class="ai-mark">$1</span>').replace(/\n/g,"<br>"); }
     function renderVerdict(aiVal, tasteTxt) {
       const el = document.getElementById('verdict-ai');
-      if (aiVal < 15) {
-        el.className = 'verdict-val badge-ok';
-        el.textContent = `Процент ИИ-генерации: предположительно ${aiVal}% — вероятность ИИ минимальна или исключена`;
-      } else {
-        el.className = 'verdict-val badge-warn';
-        el.textContent = `Процент ИИ-генерации: предположительно ${aiVal}% — обнаружены следы алгоритмического сглаживания`;
-      }
+      el.className = aiVal < 15 ? 'verdict-val badge-ok' : 'verdict-val badge-warn';
+      el.textContent = aiVal < 15 ? `Процент ИИ-генерации: предположительно ${aiVal}% — вероятность ИИ минимальна` : `Процент ИИ-генерации: предположительно ${aiVal}% — обнаружены следы сглаживания`;
       document.getElementById('verdict-concept').textContent = tasteTxt;
     }
     function setSample(key, btn) {
@@ -361,26 +293,15 @@
       document.getElementById('demo-advice').innerHTML = s.advice;
       renderVerdict(s.ai, s.taste);
     }
-    function applyAutoFix() {
-      const s = SAMPLES[curKey];
-      document.getElementById('demo-input').value = s.fixedText;
-      liveRecalc();
-    }
+    function applyAutoFix() { document.getElementById('demo-input').value = SAMPLES[curKey].fixedText; liveRecalc(); }
     function liveRecalc() {
       const val = document.getElementById('demo-input').value;
       document.getElementById('demo-highlight').innerHTML = highlightText(val);
-      const matches = val.match(AI_REGEX);
-      if (matches && matches.length > 0) {
-        const pct = Math.min(88, 35 + matches.length * 14);
-        renderVerdict(pct, "Предположительная оценка художественного вкуса: 38/100 (требуется правка)");
-      } else {
-        renderVerdict(11, "Предположительная оценка художественного вкуса: 91/100 (эталон современной прозы)");
-        document.getElementById('demo-advice').innerHTML = "<b>Живая правка принята (До → После):</b> подсветка ИИ-маркеров исчезла, текст обрёл живой ритм и предметность. Вероятность ИИ минимальна или исключена (11%).";
-      }
+      const m = val.match(AI_REGEX);
+      if (m && m.length > 0) { renderVerdict(Math.min(88, 35 + m.length * 14), "Оценка художественного вкуса: 38/100 (требуется правка)"); }
+      else { renderVerdict(11, "Оценка художественного вкуса: 91/100 (эталон живого текста)"); document.getElementById('demo-advice').innerHTML = "<b>Живая правка принята:</b> ИИ-маркеры удалены, ритм восстановлен (11%)."; }
     }
-    setSample('prose');
+    setSample('gamedev');
   </script>
 </body>
 </html>
-
-
