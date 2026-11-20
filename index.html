@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MXPro 4.0 (Open Beta) — ИИ детектор текстов, GameDev Narrative IDE и стилометрия</title>
-  <meta name="description" content="Открытый B2B-пилот инженерной платформы нарратива и вычислительной стилометрии (Team: Artur Khakimullin / Alex Dok, Zenodo DOI: 10.5281/zenodo.24208510). 15 модулей, 1 120 профилей, GameDev IDE и Zero AI Training." />
+  <meta name="description" content="Открытый B2B-пилот инженерной платформы нарратива и вычислительной стилометрии (Team: Artur Khakimullin / Alex Dok, Zenodo DOI: 10.5281/zenodo.24208510). Детерминированное лингвистическое ядро, GameDev IDE, нелинейные графы с кардиограммой ритма и Zero AI Training." />
   <meta name="keywords" content="ИИ детектор текстов, GameDev Narrative IDE, стилометрия, проверка текста на ИИ, Voice Fingerprint, MXPro 4.0, Метод Хакимуллина" />
   <link rel="canonical" href="https://mxpro-4-0.github.io/" />
   <meta property="og:type" content="website" />
@@ -23,7 +23,7 @@
       { "@type": "Person", "name": "Alex Dok" }
     ],
     "citation": "https://doi.org/10.5281/zenodo.24208510",
-    "description": "Open B2B Pilot of a 15-module deterministic stylometry suite and multiplayer GameDev Narrative IDE calibrated on 1,120 RU/EN profiles (RAS orthoepy, Burrows Delta, Gasparov metrics, SHA-256, Zero AI Training).",
+    "description": "Open B2B Pilot of a 15-module deterministic stylometry suite and multiplayer GameDev Narrative IDE calibrated on a proprietary RU/EN literary & GameDev reference corpus (RAS orthoepy, Burrows Delta, Gasparov metrics, SHA-256, Zero AI Training).",
     "featureList": [
       "Deterministic 13-Metric Stylometry Engine (No External LLM API)",
       "GameDev Narrative IDE with Voice Fingerprint, Facial Animation & VO Timer",
@@ -179,7 +179,7 @@
       <div class="trust-bar">
         <div class="trust-chip">Экспорт: .json / .csv (VO) / .yarn</div>
         <div class="trust-chip">Voice Fingerprint персонажей</div>
-        <div class="trust-chip">Детектор ИИ-штампов (порог 15%)</div>
+        <div class="trust-chip">Детектор ИИ-штампов (настраиваемый порог)</div>
         <div class="trust-chip">Zero AI Training &amp; On-Premise под NDA</div>
       </div>
         <div class="demo-shell">
@@ -192,7 +192,7 @@
           <div style="font-size:12px;color:var(--text-muted);align-self:center;">Интерактивное демо • Отредактируйте текст ниже</div>
         </div>
         <div class="verdict-box">
-          <div class="verdict-label">Детектор машинного следа (порог отсечения 15%)</div>
+          <div class="verdict-label">Детектор машинного следа (детерминированный аудит)</div>
           <div id="verdict-ai" class="verdict-val badge-ok">Процент ИИ-генерации: предположительно 11% — вероятность ИИ минимальна</div>
         </div>
                 <div class="split-grid">
@@ -237,14 +237,14 @@
       <div id="mode-ed" class="card" style="display:none;">
         <div>
           <div style="font-weight:700;font-size:18px;margin-bottom:10px;">Редакционный и авторский контур (Проза и поэзия)</div>
-          <p style="font-size:15px;color:var(--text-muted);margin-bottom:12px;">3-цветная карта диагностики текста в реальном времени, фильтр 8 слоёв речевых клише (~1 000 паттернов), детерминированный детектор машинного сглаживания (порог отсечения 15%) и работа с поэтической метрикой.</p>
+          <p style="font-size:15px;color:var(--text-muted);margin-bottom:12px;">3-цветная карта диагностики текста в реальном времени, детерминированный детектор машинного сглаживания и работа с поэтической метрикой.</p>
         </div>
         <div class="deliverable">Выход в пайплайн: чистый .docx / .txt, вёрстка печатного листа и протокол целостности текста с цифровым отпечатком SHA-256.</div>
       </div>
       <div id="mode-sci" class="card" style="display:none;">
         <div>
           <div style="font-weight:700;font-size:18px;margin-bottom:10px;">Вычислительная стилометрия и лингвистическая экспертиза</div>
-          <p style="font-size:15px;color:var(--text-muted);margin-bottom:12px;">13 детерминированных метрик Метода Хакимуллина, орфоэпия ИРЯ РАН, словарь Зализняка, послоговая метрика Гаспарова, фоносемантика Журавлёва, дельта Бёрроуза и сверка с 1 120 профилями (RU/EN).</p>
+        <p style="font-size:15px;color:var(--text-muted);margin-bottom:12px;">Многоуровневая цветовая карта диагностики текста в реальном времени, каскадный фильтр речевых клише, детерминированный детектор машинного сглаживания (с настраиваемым порогом) и анализ поэтической метрики.</p>
         </div>
         <div class="deliverable">Выход в пайплайн: академический протокол анализа, фонетическая транскрипция РАН и ссылка на спецификацию Zenodo DOI.</div>
       </div>
