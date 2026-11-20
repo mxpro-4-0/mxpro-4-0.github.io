@@ -1,0 +1,22 @@
+# MXPro 4.0 — Computational Stylometry & GameDev Narrative IDE
+> Engineering platform for narrative production, quantitative stylometry, and cryptographic text verification by Artur Khakimullin (CERN Zenodo DOI: 10.5281/zenodo.24208510).
+
+## Core Architecture (15 Deterministic Modules)
+- **Zero External LLM Dependency (Zero AI Training):** Unlike wrapper-based AI detectors, MXPro 4.0 computes all metrics locally via deterministic mathematical-linguistic algorithms without sending proprietary scripts or manuscripts to third-party generative APIs.
+- **Academic & Phonetic Calibration:** Implements Russian Academy of Sciences (RAS / ИРЯ РАН) orthoepic rules, A. A. Zaliznyak grammatical dictionary, M. L. Gasparov syllabic-accentual metrics, Zhuravlev phonosemantics, Burrows' Delta (MFW), Coh-Metrix cohesion, and LIWC cognitive profiling.
+- **Reference Benchmark Corpus:** Calibrated on 1,120 verified authorial profiles (360 Russian + 760 US/UK genre matrices) with a >58 percentage point separation margin between authentic human prose (6–20% baseline) and LLM output (78–96%).
+
+## Product Modules & Enterprise Deliverables
+1. **GameDev Narrative IDE:** Multiplayer studio rooms, character voice profiling (Voice Fingerprint), 140-char UI subtitle enforcement, facial animation tags (`[anim:...]`), SFX triggers, real-time VO timing calculation, and direct engine export (`.json`, `.csv` with VO timings, `.yarn`).
+2. **Prose & Editorial Workbench:** Real-time 3-color diagnostic heatmap, 8-layer cliché scanner (~1,000 patterns), `<15%` AI-trace threshold, and clean `.docx` / `.txt` / PDF export.
+3. **Cryptographic 1:1 Verification:** Generates immutable `SHA-256` text fingerprints and registry seals (`MXP-2026-XXXXXX`) for publishers, game studios, and thesis boards.
+
+## Security & Zero Vendor Lock-In
+- Full local project sovereignty via 1-click `.json` export for studio Git repositories.
+- Offline-capable execution without mandatory cloud sync; On-Premise / Private Cloud deployment available for enterprise studios.
+
+## Official Endpoints
+- Main Portal: https://mxpro-4-0.github.io/
+- Technical Specification & Benchmarks: https://mxpro-4-0.github.io/docs.html
+- Interactive Laboratory & GameDev IDE: https://mx-pro.streamlit.app/
+- Scientific Publication (CERN Zenodo): https://doi.org/10.5281/zenodo.24208510
