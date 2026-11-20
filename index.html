@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MXPro 4.0 — ИИ детектор текстов, GameDev Narrative IDE и стилометрия</title>
-  <meta name="description" content="Инженерная платформа нарратива и вычислительной стилометрии (CERN Zenodo DOI: 10.5281/zenodo.24208510). 15 модулей, 1 120 профилей, GameDev IDE с экспортом в движки и Zero AI Training." />
+  <meta name="description" content="Инженерная платформа нарратива и вычислительной стилометрии (Zenodo DOI: 10.5281/zenodo.24208510). 15 модулей, 1 120 профилей, GameDev IDE с экспортом в движки и Zero AI Training." />
   <meta name="keywords" content="ИИ детектор текстов, GameDev Narrative IDE, стилометрия, проверка текста на ИИ, Voice Fingerprint, MXPro 4.0, Метод Хакимуллина" />
   <link rel="canonical" href="https://mxpro-4-0.github.io" />
   <meta property="og:type" content="website" />
@@ -25,7 +25,7 @@
       "Deterministic 13-Metric Stylometry Engine (No External LLM API)",
       "GameDev Narrative IDE with Voice Fingerprint, Facial Animation & VO Timer",
       "Direct Engine Export (.json, .csv with VO timings, .yarn) & Zero Vendor Lock-In",
-      "Cryptographic 1:1 Text Verification (SHA-256) & CERN Zenodo DOI"
+      "Cryptographic 1:1 Text Verification (SHA-256) & Zenodo DOI"
     ]
   }
   </script>
@@ -150,7 +150,7 @@
 <body>
   <header>
     <div class="container nav-bar">
-      <div class="brand">MXPro 4.0 <span class="brand-tag">CERN DOI: 24208510</span></div>
+      <div class="brand">MXPro 4.0 <span class="brand-tag">Zenodo DOI: 24208510</span></div>
       <div class="nav-links">
         <a href="#lockin" style="color:var(--text-muted);text-decoration:none;">Zero Lock-In</a>
         <a href="docs.html" style="color:var(--text-muted);text-decoration:none;">Научная база</a>
@@ -169,7 +169,7 @@
         <div class="trust-chip">15 вычислительных модулей</div>
         <div class="trust-chip">1 120 авторских профилей (RU / EN)</div>
         <div class="trust-chip">Нормы ИРЯ РАН и словарь Зализняка</div>
-        <div class="trust-chip">CERN Zenodo DOI</div>
+        <div class="trust-chip">Zenodo Zenodo DOI</div>
         <div class="trust-chip">Zero AI Training &amp; Zero Lock-In</div>
       </div>
       <div class="demo-shell">
@@ -227,7 +227,8 @@
             <div style="font-weight:700;font-size:16px;margin-bottom:8px;">2. Для писателей, поэтов и редакций</div>
             <p style="font-size:14px;color:var(--text-muted);">3-цветная карта правок в реальном времени, фильтр 8 слоёв клише и точный детектор ИИ-следа с порогом отсечения 15%.</p>
           </div>
-          <div class="deliverable">Выход: чистый .docx / .txt, печатный лист и крипто-сертификат SHA-256.</div>
+          <div class="deliverable">Выход: чистый .docx / .txt, печатный лист и протокол целостности с отпечатком SHA-256.</div>
+
         </div>
         <div class="card">
           <div>
@@ -259,15 +260,19 @@
       </div>
     </section>
   </main>
-  <footer>
+   <footer>
     <div class="container" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;">
-      <div>MXPro 4.0 — Инженерная платформа нарратива и стилометрии (CERN DOI: 10.5281/zenodo.24208510)</div>
+      <div>
+        <div style="font-weight:600;color:var(--text-main);">MXPro 4.0 — Инженерная платформа нарратива и стилометрии (Метод А. Хакимуллина)</div>
+        <div style="margin-top:4px;">Регистрация ПО: Zenodo DOI 10.5281/zenodo.24208510 • B2B-подключение студий и издательств (РФ): a.k.khakimullin@gmail.com • Telegram: @ArturKhakimullin</div>
+      </div>
       <div style="display:flex;gap:18px;">
         <a href="docs.html" style="color:var(--text-main);text-decoration:none;font-weight:500;">Спецификация и матрица →</a>
-        <a href="https://mx-pro.streamlit.ap" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600;">Запустить платформу →</a>
+        <a href="https://mx-pro.streamlit.app /" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600;">Запустить платформу →</a>
       </div>
     </div>
   </footer>
+
   <script>
     const SAMPLES = {
       gamedev: { ai: 11, taste: "Оценка речевой плотности: 90/100 (высокая компрессия диалога)", text: "Глебов: [anim:angry] Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\nСалага: [anim:shock] А если не дёрну, мы через минуту задохнёмся в этом шлюзе!", fixedText: "Глебов: [anim:angry] Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\nСалага: [anim:shock] А если не дёрну, мы через минуту задохнёмся в этом шлюзе!", advice: "<b>Контроль Voice Fingerprint пройден:</b> разный ритм фраз героев, теги мимики [anim] распознаны, лимит UI-субтитров (140 зн.) соблюдён." },
