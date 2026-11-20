@@ -1,241 +1,186 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MXPro 4.0 — Спецификация ядра, детектор ИИ и матрица 13 метрик (Метод А. Хакимуллина)</title>
-  <meta name="description" content="Техническая документация и матрица калибровки MXPro 4.0 (CERN Zenodo DOI: 10.5281/zenodo.24208510). Сравнение с GPTZero, Originality.ai и Антиплагиат, верификация SHA-256 и соответствие IP / Fair Use." />
-  <meta name="keywords" content="MXPro 4.0 документация, детектор ИИ сравнение, Метод Хакимуллина 13 метрик, стилометрия, SHA-256 сертификация текста, CERN Zenodo 24208510" />
-  <meta name="author" content="Artur Khakimullin" />
-  <link rel="canonical" href="https://mxpro-4-0.github.io/" />
-  <meta property="og:type" content="article" />
-  <meta property="og:title" content="MXPro 4.0 — Спецификация ядра и матрица 13 метрик А. Хакимуллина" />
-  <meta property="og:description" content="Архитектура 13 метрик, сравнительный бенчмарк детекторов ИИ (зазор >58 п.п.), SHA-256 верификация и правовая чистота (ГК РФ / Fair Use)." />
-  <meta property="og:url" content="https://mxpro-4-0.github.io/" />
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "TechArticle",
-    "headline": "MXPro 4.0 Engine Specification & Calibration Matrix",
-    "author": {
-      "@type": "Person",
-      "name": "Artur Khakimullin"
-    },
-    "identifier": "https://doi.org/10.5281/zenodo.24208510",
-    "url": "https://mxpro-4-0.github.io/"
-  }
-  </script>
-
+  <title>Спецификация и архитектура MXPro 4.0 (Open Beta) — GameDev IDE и стилометрия</title>
+  <meta name="description" content="Техническая спецификация MXPro 4.0 (Open Beta): 15 детерминированных модулей, GameDev Narrative IDE (.json / .csv / .yarn), бенчмарки на 1 120 профилях, протокол SHA-256 и On-Premise развёртывание под NDA." />
+  <link rel="canonical" href="https://mxpro-4-0.github.io/docs.html"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   <style>
-    :root { --bg: #090d16; --card: #0f172a; --border: #1e293b; --accent: #38bdf8; --indigo: #818cf8; --text: #f1f5f9; --muted: #94a3b8; }
-    * { box-sizing: border-box; }
-    body { margin: 0; font-family: Inter, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.65; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 14px 28px; border-bottom: 1px solid var(--border); background: rgba(9,13,22,0.92); position: sticky; top: 0; z-index: 10; }
-    .brand { font-weight: 700; color: var(--accent); text-decoration: none; letter-spacing: 0.5px; }
-    .nav-actions { display: flex; gap: 10px; align-items: center; }
-    .btn { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text); text-decoration: none; font-size: 13px; cursor: pointer; }
-    .btn.active { border-color: var(--accent); color: var(--accent); }
-    .layout { max-width: 1120px; margin: 0 auto; display: grid; grid-template-columns: 230px 1fr; gap: 32px; padding: 32px 24px; }
-    .sidebar { position: sticky; top: 72px; align-self: start; border-left: 1px solid var(--border); padding-left: 16px; }
-    .sidebar a { display: block; color: var(--muted); text-decoration: none; font-size: 13px; padding: 6px 0; }
-    .sidebar a:hover { color: var(--accent); }
-    h1 { font-size: 28px; margin: 0 0 10px; }
-    h2 { font-size: 20px; color: var(--accent); margin: 32px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-    .lead { color: var(--muted); font-size: 15px; margin-bottom: 24px; }
-    table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; font-size: 13.5px; margin-bottom: 24px; }
-    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
-    th { background: #131c31; color: var(--accent); font-weight: 600; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .box { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--indigo); border-radius: 10px; padding: 16px; font-size: 14px; }
-    .lang-en { display: none; }
-    @media (max-width: 820px) { .layout { grid-template-columns: 1fr; } .sidebar { display: none; } .grid-2 { grid-template-columns: 1fr; } }
+    :root {
+      --bg-page: #FAF9F5;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F2F0E9;
+      --text-main: #141413;
+      --text-muted: #5E5D59;
+      --accent: #D97757;
+      --accent-hover: #C46343;
+      --green-bg: #EAF5EE;
+      --green-text: #1B6B3A;
+      --amber-bg: #FEF4E6;
+      --amber-text: #9A5513;
+      --border: #E5E2D9;
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(250, 249, 245, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+    .nav-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+    .brand { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--text-main); }
+    .brand-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--amber-bg); color: var(--amber-text); border: 1px solid #F3D9B8; }
+    .nav-links { display: flex; align-items: center; gap: 20px; font-size: 14px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 9px 16px; border-radius: 10px; font-weight: 500; font-size: 13.5px;
+      text-decoration: none; cursor: pointer; border: 1px solid var(--border);
+      background: var(--bg-surface); color: var(--text-main);
+    }
+    .btn-accent { background: var(--accent); color: #FFFFFF; border-color: var(--accent); }
+    .btn-accent:hover { background: var(--accent-hover); }
+    .doc-hero { padding: 48px 0 32px; border-bottom: 1px solid var(--border); }
+    .pill {
+      display: inline-block; padding: 5px 12px; border-radius: 999px;
+      background: var(--bg-subtle); color: var(--text-muted);
+      font-size: 12.5px; font-weight: 500; margin-bottom: 14px; border: 1px solid var(--border);
+    }
+    h1 {
+      font-family: 'Newsreader', Georgia, serif;
+      font-size: clamp(28px, 4vw, 42px); font-weight: 600;
+      line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 14px;
+    }
+    .lead { font-size: 16.5px; color: var(--text-muted); max-width: 780px; }
+    .doc-section { padding: 40px 0; border-bottom: 1px solid var(--border); }
+    h2 { font-family: 'Newsreader', Georgia, serif; font-size: 26px; font-weight: 600; margin-bottom: 14px; }
+    h3 { font-size: 16px; font-weight: 700; margin: 18px 0 8px; }
+    p { font-size: 15px; color: var(--text-muted); margin-bottom: 12px; }
+    ul { padding-left: 20px; margin-bottom: 14px; }
+    li { font-size: 14.5px; color: var(--text-muted); margin-bottom: 8px; }
+    li strong { color: var(--text-main); }
+    .box {
+      background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 22px; margin: 18px 0;
+    }
+    .box-accent { border-left: 4px solid var(--accent); }
+    table { width: 100%; border-collapse: collapse; margin: 18px 0; background: var(--bg-surface); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); font-size: 13.5px; }
+    th { background: var(--bg-subtle); font-weight: 600; color: var(--text-main); }
+    td { color: var(--text-muted); }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; background: var(--bg-subtle); padding: 2px 6px; border-radius: 5px; color: var(--text-main); }
+    footer { padding: 36px 0; color: var(--text-muted); font-size: 13px; }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <a class="brand" href="index.html">MXPro 4.0 • RESEARCH DOCS</a>
-    <div class="nav-actions">
-      <button class="btn active" id="btn-ru" onclick="setLang('ru')">RU</button>
-      <button class="btn" id="btn-en" onclick="setLang('en')">EN</button>
-      <a class="btn" href="index.html">← На главную / Home</a>
+  <header>
+    <div class="container nav-bar">
+      <a href="index.html" class="brand">MXPro 4.0 <span class="brand-tag">SPECIFICATION • OPEN BETA</span></a>
+      <div class="nav-links">
+        <a href="index.html" style="color:var(--text-muted);text-decoration:none;">← На главную</a>
+        <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn btn-accent">Открыть Sandbox →</a>
+      </div>
     </div>
   </header>
-
-  <main class="layout lang-ru" id="view-ru">
-    <aside class="sidebar">
-      <a href="#arch-ru">1. Архитектура ядра</a>
-      <a href="#matrix-ru">2. Матрица 5 родов текста</a>
-      <a href="#ai-ru">3. Детектор ИИ и 8 слоёв клише</a>
-      <a href="#cert-ru">4. Верификация 1:1 (SHA-256)</a>
-      <a href="#ip-ru">5. Правовая чистота (IP)</a>
-
-    </aside>
-    <section>
-      <h1>Спецификация ядра MXPro 4.0 и матрица калибровки</h1>
-      <p class="lead">Документация квантитативной платформы А. Хакимуллина (CERN Zenodo DOI: 10.5281/zenodo.24208510). Система перекалибровывает математические веса под род литературы, драматургию и академическую науку.</p>
-
-      <h2 id="arch-ru">1. Трёхступенчатая архитектура анализа</h2>
-      <div class="grid-2">
-        <div class="box"><b>Уровень I–II. Звук и Ритм (Метрики 1–8):</b> орфоэпия ИРЯ РАН, словарь А. А. Зализняка, послоговая дисперсия М. Л. Гаспарова, фоносемантика А. П. Журавлёва и энтропия Шеннона.</div>
-        <div class="box"><b>Уровень III. Смысл и Когезия (Метрики 9–13):</b> индекс остранения В. Шкловского, Дельта Берроуза (MFW), связность Coh-Metrix, психолингвистика LIWC и 8 слоёв штампов.</div>
-      </div>
-
-      <h2 id="matrix-ru">2. Матрица критериев для 5 категорий текстов</h2>
-      <table>
-        <thead>
-          <tr><th>Категория текста</th><th>Главные математические метрики</th><th>Что поощряется / За что штраф</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><b>Классическая поэзия</b></td><td>Метрика Гаспарова, пиррихии, клаузулы, фоносемантика ИРЯ РАН</td><td>Чистота размера и точная рифма; штраф за случайные сбои стопы и глагольные рифмы.</td></tr>
-          <tr><td><b>Классическая проза</b></td><td>Индекс когезии Coh-Metrix, словарь TTR (Хердан — Хипс), период</td><td>Глубокая синтаксическая связность; штраф за канцеляризмы и телеграфный обрыв.</td></tr>
-          <tr><td><b>Современная проза</b></td><td>Глагольная динамика (Show, Don't Tell), индекс остранения, 8 слоёв клише</td><td>Пластичность, свежесть образа и ритм фразы; жёсткий штраф за штампы и пассивный залог.</td></tr>
-          <tr><td><b>Пьесы, кино и GameDev</b></td><td>Речевая компрессия, темпоритм реплик, Дельта Берроуза по персонажам</td><td>Конфликтный субтекст и речевой портрет героя; штраф за «литературное» многословие.</td></tr>
-          <tr><td><b>Академическая наука</b></td><td>Терминологическая энтропия, когнитивный индекс LIWC, Дельта Берроуза</td><td>Плотность аргументации и строгий тезаурус; штраф за публицистическую «воду» и ИИ-рерайт.</td></tr>
-        </tbody>
-      </table>
-
-      
-      <p>В отличие от стандартных статистических детекторов, в ядро <b>MXPro 4.0</b> интегрирована закрытая математически откалиброванная модель <b>13 метрик Метода А. Хакимуллина</b> (CERN Zenodo DOI: 10.5281/zenodo.24208510). Система оценивает конструктивную плотность текста на фонологическом, ритмическом и лексико-семантическом уровнях вместе со сканером 8 слоёв клише (~1 000 штампов, плеоназмов и канцеляризмов).</p>
-      <p><b>Как устроена шкала верификации (0–100%):</b> в любом живом тексте присутствует естественный базовый процент стандартной грамматики и обычных речевых связок. Поэтому на шкале от 0% до 100% живая классическая и современная проза получает спокойный фоновый индекс <b style="color:#10b981;">6–20% (зелёная зона — «Подтверждён живой авторский голос»)</b>, тогда как нейросетевой текст — даже после чистки штампов — сразу уходит в <b style="color:#ef4444;">красную зону 78–96%</b>. Чистый зазор разделения превышает <b>58 процентных пунктов</b>.</p>
-
+  <main class="container">
+    <section class="doc-hero">
+      <div class="pill">Техническая документация и архитектура • Статус: Open Beta (B2B Pilot)</div>
+      <h1>Спецификация ядра MXPro 4.0: GameDev Narrative IDE, линтер диалогов и вычислительная стилометрия</h1>
+      <p class="lead">
+        Инженерное описание детерминированных алгоритмов анализа текста, производственных форматов экспорта для игровых движков и протоколов защиты интеллектуальной собственности (Zero AI Training и On-Premise под NDA).
+      </p>
+    </section>
+          <section class="doc-section">
+      <h2>1. Контуры развёртывания: Cloud Sandbox vs On-Premise под NDA</h2>
+      <p>Для удобства тестирования и соблюдения корпоративной безопасности студий платформа разделена на два контура работы:</p>
       <table>
         <thead>
           <tr>
-            <th>Критерий сравнения</th>
-            <th>Западные аналоги<br><span style="font-weight:400;font-size:11.5px;color:#94a3b8;">GPTZero, Originality.ai, Winston AI*</span></th>
-            <th>Российские аналоги<br><span style="font-weight:400;font-size:11.5px;color:#94a3b8;">Антиплагиат, Text.ru, ReText.ai*</span></th>
-            <th>Ядро MXPro 4.0<br><span style="font-weight:400;font-size:11.5px;color:#38bdf8;">Проприетарный стандарт</span></th>
+            <th>Контур</th>
+            <th>Назначение и сценарий</th>
+            <th>Безопасность и хранение данных</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td><b>Принцип анализа</b></td><td>Статистическая перплексия токенов и <i>burstiness</i></td><td>Вероятностные классификаторы RuBERT / n-грамм</td><td><b>Закрытая модель 13 метрик Хакимуллина</b> + фонетика ИРЯ РАН</td></tr>
-          <tr><td><b>Ошибки на художественной прозе</b></td><td style="color:#f59e0b;">Повышенные (25–45% ложных срабатываний)</td><td style="color:#f59e0b;">Умеренные (15–30% на классике и науке)</td><td style="color:#10b981;"><b>0% ошибок в контрольном тесте</b> (фоновый индекс 6–20%)</td></tr>
-          <tr><td><b>Устойчивость к «выровненному» рерайту</b></td><td style="color:#f59e0b;">Падает до 35–55% после чистки штампов</td><td style="color:#f59e0b;">Падает до 40–60% при правке связок</td><td style="color:#10b981;"><b>Высокая (78% на «стерильном» LLM-тексте)</b></td></tr>
-          <tr><td><b>Прозрачность отчёта</b></td><td>«Чёрный ящик» (только общий балл)</td><td>Только подсветка фрагментов</td><td><b>Многофакторный протокол и 1:1 SHA-256 печать</b></td></tr>
-        </tbody>
-      </table>
-      <p style="font-size:12px;color:#94a3b8;margin-top:-16px;margin-bottom:20px;">*Характеристики западных и российских систем приведены на основании их собственных заявленных спецификаций, публичных аннотаций и открытых академических обзоров.</p>
-
-      <table>
-        <thead>
-          <tr><th>Контрольный образец текста</th><th>Индекс ИИ (шкала 0–100%)</th><th>Интеграл 13 метрик MXPro 4.0</th><th>Вердикт ядра MXPro 4.0</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><b>Классика: М. А. Булгаков</b> (художественная проза)</td><td style="color:#10b981;"><b>20% (Зелёная зона)</b></td><td><b>73 / 100</b></td><td style="color:#10b981;">Подтверждён живой авторский голос</td></tr>
-          <tr><td><b>Классика: Л. Н. Толстой</b> (художественная проза)</td><td style="color:#10b981;"><b>18% (Зелёная зона)</b></td><td><b>67 / 100</b></td><td style="color:#10b981;">Подтверждён живой авторский голос</td></tr>
-          <tr><td><b>Классика: М. Горький</b> (художественная проза)</td><td style="color:#10b981;"><b>6% (Зелёная зона)</b></td><td><b>70 / 100</b></td><td style="color:#10b981;">Подтверждён живой авторский голос</td></tr>
-          <tr><td><b>Современная проза</b> (эталонный корпус, 2026)</td><td style="color:#10b981;"><b>18% (Зелёная зона)</b></td><td><b>70–74 / 100</b></td><td style="color:#10b981;">Подтверждён живой авторский голос</td></tr>
-          <tr><td><b>Нейросеть (типовой LLM-текст со штампами)</b></td><td style="color:#ef4444;"><b>96% (Красная зона)</b></td><td><b>28 / 100</b></td><td style="color:#ef4444;">Зафиксирована алгоритмическая генерация</td></tr>
-          <tr><td><b>Нейросеть («выровненный» рерайт без штампов)</b></td><td style="color:#ef4444;"><b>78% (Красная зона)</b></td><td><b>35 / 100</b></td><td style="color:#ef4444;">Зафиксирована алгоритмическая генерация</td></tr>
-        </tbody>
-      </table>
-      <p style="font-size:12.5px;color:#94a3b8;margin-top:-14px;margin-bottom:20px;"><b>Интеграл 13 метрик MXPro 4.0 (0–100 баллов)</b> — единый сводный индекс художественной и речевой плотности текста, объединяющий все 13 приёмов метода в один показатель: значения <b>65–100</b> подтверждают живой авторский голос, а падение ниже <b>40</b> указывает на монотонность и статистическую гладкость нейросети.</p>
-
-
-
-      <h2 id="cert-ru">4. Криптографическая верификация 1:1 (SHA-256)</h2>
-      <p>Каждому проверенному тексту присваивается уникальный отпечаток <b>SHA-256</b> и регистрационный номер <b>MXP-2026-XXXXXX</b>, подтверждающий подлинность авторского голоса для издательств, премий и диссоветов.</p>
-      <h2 id="ip-ru">5. Правовая чистота и защита авторских прав (IP Compliance)</h2>
-      <p>Архитектура <b>MXPro 4.0</b> спроектирована как детерминированный аналитический прибор, а не генеративная языковая модель. Система <b>не хранит, не индексирует и не воспроизводит</b> оригинальные произведения современных или классических авторов.</p>
-      <div style="background:rgba(15,23,42,0.75); border:1px solid #1e293b; border-left:4px solid #10b981; border-radius:8px; padding:14px 18px; margin:14px 0 24px;">
-        <p style="margin-bottom:8px;"><b>1. Соответствие законодательству РФ (ст. 1259 и ст. 1274 ГК РФ):</b> в ядре системы зашиты исключительно обезличенные математические векторы и статистические эталоны (не являющиеся объектами авторского права согласно п. 5 ст. 1259 ГК РФ). Вычислительный анализ правомерно обнародованных текстов в научных и аналитических целях полностью соответствует ст. 1274 ГК РФ.</p>
-        <p style="margin-bottom:0;"><b>2. Международные стандарты (США, Великобритания, ЕС):</b> построение агрегированных стилометрических профилей (760 жанровых матриц США и Великобритании) соответствует доктрине трансформативного добросовестного использования (<i>17 U.S.C. § 107, Fair Use</i>) и нормам интеллектуального анализа текста и данных (<i>Text and Data Mining — UK CDPA Sec. 29A / EU DSM Directive</i>).</p>
-      </div>
-
-    </section>
-  </main>
-
-  <main class="layout lang-en" id="view-en">
-    <aside class="sidebar">
-      <a href="#arch-en">1. Core Architecture</a>
-      <a href="#matrix-en">2. 5-Genre Calibration Matrix</a>
-      <a href="#ai-en">3. AI-Rewrite & Cliché Scan</a>
-      <a href="#cert-en">4. 1:1 SHA-256 Verification</a>
-      <a href="#ip-en">5. IP Compliance & Fair Use</a>
-
-    </aside>
-    <section>
-      <h1>MXPro 4.0 Engine Specification & Calibration Matrix</h1>
-      <p class="lead">Technical documentation for the Artur Khakimullin Quantitative Stylometry Suite (CERN Zenodo DOI: 10.5281/zenodo.24208510). Weights recalibrate dynamically across literature, screenwriting, GameDev, and academic research.</p>
-
-      <h2 id="arch-en">1. Three-Tier Computational Architecture</h2>
-      <div class="grid-2">
-        <div class="box"><b>Tier I–II. Sound & Rhythm (Metrics 1–8):</b> formal orthoepy, Gasparov inter-ictus dispersion, consonant cluster density, Zhuravlev phonosemantics, and Shannon entropy.</div>
-        <div class="box"><b>Tier III. Semantics & Cohesion (Metrics 9–13):</b> Shklovsky Ostranenie index, Burrows' Delta (MFW), Coh-Metrix local cohesion, LIWC cognitive focus, and 8 cliché layers.</div>
-      </div>
-
-      <h2 id="matrix-en">2. Calibration Matrix Across 5 Text Domains</h2>
-      <table>
-        <thead>
-          <tr><th>Text Domain</th><th>Primary Quantitative Metrics</th><th>Rewarded Traits / Penalties</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><b>Classical Poetry</b></td><td>Syllabic-accentual prosody, pyrrhic ratio, clausulae, phonetics</td><td>Metrical precision and rich rhyme; penalizes accidental meter breaks and stock rhymes.</td></tr>
-          <tr><td><b>Classical Prose</b></td><td>Coh-Metrix referential cohesion, Herdan–Heaps TTR, syntax depth</td><td>Sustained syntactic flow and lexical breadth; penalizes bureaucratic phrasing.</td></tr>
-          <tr><td><b>Contemporary Fiction</b></td><td>Verb dynamics (Show, Don't Tell), Ostranenie index, 8 cliché layers</td><td>Concrete imagery and rhythmic tension; strict penalty for clichés and passive voice.</td></tr>
-          <tr><td><b>Plays, Screen & GameDev</b></td><td>Dialogue compression, scene pacing, Burrows' Delta per character</td><td>Subtext, action cadence, and distinct character voices; penalizes verbose exposition.</td></tr>
-          <tr><td><b>Academic Research</b></td><td>Terminological entropy, LIWC cognitive score, Burrows' Delta</td><td>Argumentative rigor and domain precision; flags filler prose and LLM paraphrase.</td></tr>
-        </tbody>
-      </table>
-
-            
-      <p>Unlike standard statistical detectors, the <b>MXPro 4.0</b> core integrates a proprietary, mathematically calibrated model of the <b>13 Metrics of the Artur Khakimullin Method</b> (CERN Zenodo DOI: 10.5281/zenodo.24208510). It evaluates constructive text density across phonological, rhythmic, and lexical-semantic tiers alongside an 8-layer cliché scanner (~1,000 clichés, pleonasms, and bureaucratic patterns).</p>
-      <p><b>How the Verification Scale Works (0–100%):</b> Every authentic human text naturally contains a baseline share of standard grammar and everyday connective phrasing. Therefore, on a 0–100% scale, authentic classical and contemporary prose scores a calm baseline index of <b style="color:#10b981;">6–20% (Green Zone — "Authentic Authorial Voice Verified")</b>, whereas LLM-generated prose—even after cliché removal—immediately enters the <b style="color:#ef4444;">Red Zone of 78–96%</b>, maintaining a clean separation margin of <b>over 58 percentage points</b>.</p>
-
-      <table>
-        <thead>
           <tr>
-            <th>Evaluation Criterion</th>
-            <th>Western Detectors<br><span style="font-weight:400;font-size:11.5px;color:#94a3b8;">GPTZero, Originality.ai, Winston AI*</span></th>
-            <th>Russian Detectors<br><span style="font-weight:400;font-size:11.5px;color:#94a3b8;">Antiplagiat, Text.ru, ReText.ai*</span></th>
-            <th>MXPro 4.0 Core<br><span style="font-weight:400;font-size:11.5px;color:#38bdf8;">Proprietary Standard</span></th>
+            <td><strong>Cloud Sandbox</strong><br>(Публичная песочница)</td>
+            <td>Быстрый тест интерфейса, прогон открытых/обезличенных сцен, проверка экспорта и демо для команды без установки ПО.</td>
+            <td>Вычисления выполняются на Python-сервере без обращения к внешним LLM API. Тексты не сохраняются в базу и не используются для обучения.</td>
           </tr>
-        </thead>
-        <tbody>
-          <tr><td><b>Detection Architecture</b></td><td>Token perplexity (PPL) and sentence burstiness</td><td>Probabilistic RuBERT / n-gram classifiers</td><td><b>Proprietary 13-Metric Khakimullin Model</b> + formal orthoepy</td></tr>
-          <tr><td><b>False Positives on Literary Prose</b></td><td style="color:#f59e0b;">Elevated (25–45% on complex &amp; translated fiction)</td><td style="color:#f59e0b;">Moderate (15–30% on classics &amp; formal prose)</td><td style="color:#10b981;"><b>0% errors in benchmark test</b> (baseline index 6–20%)</td></tr>
-          <tr><td><b>Resilience to "Smoothed" AI Rewrite</b></td><td style="color:#f59e0b;">Drops to 35–55% after synonymization</td><td style="color:#f59e0b;">Drops to 40–60% when transitions are edited</td><td style="color:#10b981;"><b>High (78% detection even on "sterile" LLM prose)</b></td></tr>
-          <tr><td><b>Audit Transparency</b></td><td>"Black box" (single score only)</td><td>Fragment highlighting without rationale</td><td><b>Multi-factor diagnostic protocol &amp; 1:1 SHA-256 seal</b></td></tr>
+          <tr>
+            <td><strong>Local / On-Premise</strong><br>(B2B-пилот под NDA)</td>
+            <td>Работа над неанонсированными тайтлами, закрытым лором и коммерческими рукописями внутри сети студии.</td>
+            <td>Локальный запуск на сервере или рабочей станции студии (Python / Docker), полный оффлайн-режим, версионирование через корпоративный Git.</td>
+          </tr>
         </tbody>
       </table>
-      <p style="font-size:12px;color:#94a3b8;margin-top:-16px;margin-bottom:20px;">*Metrics for third-party Western and Russian systems are cited from their own published specifications, product annotations, and open academic benchmarks.</p>
+    </section>
 
-      <table>
-        <thead>
-          <tr><th>Benchmark Text Sample</th><th>AI Index (0–100% Scale)</th><th>MXPro 4.0 13-Metric Integral</th><th>MXPro 4.0 Verification Verdict</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><b>Classic: Mikhail Bulgakov</b> (Literary Prose)</td><td style="color:#10b981;"><b>20% (Green Zone)</b></td><td><b>73 / 100</b></td><td style="color:#10b981;">Authentic Authorial Voice Verified</td></tr>
-          <tr><td><b>Classic: Leo Tolstoy</b> (Literary Prose)</td><td style="color:#10b981;"><b>18% (Green Zone)</b></td><td><b>67 / 100</b></td><td style="color:#10b981;">Authentic Authorial Voice Verified</td></tr>
-          <tr><td><b>Classic: Maxim Gorky</b> (Literary Prose)</td><td style="color:#10b981;"><b>6% (Green Zone)</b></td><td><b>70 / 100</b></td><td style="color:#10b981;">Authentic Authorial Voice Verified</td></tr>
-          <tr><td><b>Contemporary Fiction</b> (2026 Reference Corpus)</td><td style="color:#10b981;"><b>18% (Green Zone)</b></td><td><b>70–74 / 100</b></td><td style="color:#10b981;">Authentic Authorial Voice Verified</td></tr>
-          <tr><td><b>LLM Output (Standard AI Text with Clichés)</b></td><td style="color:#ef4444;"><b>96% (Red Zone)</b></td><td><b>28 / 100</b></td><td style="color:#ef4444;">Algorithmic Generation Detected</td></tr>
-          <tr><td><b>LLM Output ("Smoothed" Rewrite without Clichés)</b></td><td style="color:#ef4444;"><b>78% (Red Zone)</b></td><td><b>35 / 100</b></td><td style="color:#ef4444;">Algorithmic Generation Detected</td></tr>
-        </tbody>
-      </table>
-      <p style="font-size:12.5px;color:#94a3b8;margin-top:-14px;margin-bottom:20px;"><b>MXPro 4.0 13-Metric Integral (0–100 scale)</b> is a unified composite index of literary and rhythmic text density combining all 13 method parameters into a single score: values of <b>65–100</b> confirm an authentic human voice, whereas scores below <b>40</b> indicate neural monotony and statistical flatness.</p>
-
-
-
-      <h2 id="cert-en">4. Cryptographic 1:1 Verification (SHA-256)</h2>
-      <p>Each audit generates an immutable <b>SHA-256</b> text fingerprint and a <b>MXP-2026-XXXXXX</b> registry seal for publishers, literary contests, and university thesis boards.</p>
-      <h2 id="ip-en">5. Intellectual Property Compliance &amp; Non-Consumptive Research</h2>
-      <p><b>MXPro 4.0</b> operates strictly as a deterministic analytical instrument rather than a generative language model. The system <b>does not store, redistribute, or reconstruct</b> copyrighted literary or academic works.</p>
-      <div style="background:rgba(15,23,42,0.75); border:1px solid #1e293b; border-left:4px solid #10b981; border-radius:8px; padding:14px 18px; margin:14px 0 24px;">
-        <p style="margin-bottom:8px;"><b>1. Non-Consumptive Mathematical Vectors:</b> The proprietary core retains only anonymized numerical parameters and statistical reference distributions, which are mathematical methods and concepts excluded from copyright protection.</p>
-        <p style="margin-bottom:0;"><b>2. International Legal Alignment (US, UK &amp; EU):</b> Calibration of the 760 US/UK genre-stylometric matrices complies with U.S. transformative Fair Use precedent for computational text analysis (<i>17 U.S.C. § 107</i>) and statutory Text and Data Mining (TDM) frameworks under <i>UK CDPA Section 29A</i> and <i>EU DSM Directive Art. 3–4</i>.</p>
+    <section class="doc-section">
+      <h2>2. GameDev Narrative IDE и форматы экспорта в движки</h2>
+      <p>Модуль разработан как автоматизированный линтер и редактор диалогов для лид-сценаристов, нарративных дизайнеров и саунд-продюсеров:</p>
+      <ul>
+        <li><strong>Voice Fingerprint (контроль голосов персонажей):</strong> профилирование лексического и ритмического рисунка каждого героя, проверка табу-слов и выявление стилистического смешения реплик при работе нескольких авторов.</li>
+        <li><strong>UI-лимит субтитров и теги разметки:</strong> автоматический контроль длины реплики (по умолчанию 140 знаков для игровых интерфейсов), парсинг тегов лицевой анимации (<code>[anim:angry]</code>) и звуковых триггеров.</li>
+        <li><strong>Расчёт таймингов озвучки (VO):</strong> вычисление хронометража каждой реплики в секундах с учётом пауз и темпоритма для планирования студийных смен актёров.</li>
+      </ul>
+      <div class="box">
+        <strong>Производственные форматы выгрузки (Zero Vendor Lock-In):</strong>
+        <ul style="margin-top:8px;margin-bottom:0;">
+          <li><code>project_full.json</code> — полный открытый дамп проекта (сцены, ветвления, карточки персонажей и настройки) для хранения в Git / Perforce.</li>
+          <li><code>localization_vo.csv</code> — таблица со сквозными ID реплик (<code>SCN001_L001</code>), спикерами, текстом для локализации и расчётным таймингом VO.</li>
+          <li><code>dialogue_export.yarn</code> — готовый сценарный файл для прямого импорта в Yarn Spinner, Unity, Unreal Engine и Godot.</li>
+        </ul>
       </div>
+    </section>
+          <section class="doc-section">
+      <h2>3. Вычислительное ядро (15 модулей) и калибровка</h2>
+      <p>В отличие от облачных нейросетевых детекторов, MXPro 4.0 использует детерминированные математико-лингвистические алгоритмы, разделённые по масштабу текста:</p>
+      <ul>
+        <li><strong>Анализ коротких игровых реплик и сцен:</strong> фоносемантика Журавлёва, орфоэпические нормы ИРЯ РАН, словарь А. А. Зализняка, 8-слойный сканер канцелярита и ИИ-штампов (~1 000 паттернов), дисперсия длины синтагм и ритмическая вариативность.</li>
+        <li><strong>Анализ крупных рукописей и корпусов:</strong> дельта Бёрроуза (Burrows' Delta MFW), послоговая метрика М. Л. Гаспарова, индекс когезии Coh-Metrix и когнитивное профилирование LIWC.</li>
+        <li><strong>Эталонный корпус калибровки:</strong> 1 120 верифицированных авторских профилей (360 русскоязычных и 760 англоязычных жанровых матриц). Порог отсечения машинного сглаживания установлен на уровне <strong>15%</strong>.</li>
+      </ul>
+      <div class="box box-accent">
+        <strong>Научный препринт и алгоритмическая спецификация:</strong> описание математического аппарата опубликовано в открытом репозитории препринтов Zenodo (DOI: <code>10.5281/zenodo.24208510</code>). Статус продукта: открытый B2B-пилот (Open Beta).
+      </div>
+    </section>
 
+    <section class="doc-section" style="border-bottom:none;">
+      <h2>4. Протокол целостности текста (SHA-256) и защита IP</h2>
+      <ul>
+        <li><strong>Zero AI Training:</strong> загружаемые сценарии и рукописи не передаются в сторонние генеративные модели (OpenAI, Anthropic, Google и др.) и не используются для дообучения алгоритмов.</li>
+        <li><strong>Криптографический отпечаток SHA-256:</strong> при финальной выгрузке система формирует протокол верификации с уникальным хешем <code>SHA-256</code> и регистрационным номером сессии (<code>MXP-2026-XXXXXX</code>) для фиксации неизменности версии текста в редакционном или студийном архиве.</li>
+      </ul>
     </section>
   </main>
-
-  <script>
-    function setLang(l) {
-      document.getElementById('view-ru').style.display = l === 'ru' ? 'grid' : 'none';
-      document.getElementById('view-en').style.display = l === 'en' ? 'grid' : 'none';
-      document.getElementById('btn-ru').classList.toggle('active', l === 'ru');
-      document.getElementById('btn-en').classList.toggle('active', l === 'en');
-    }
-  </script>
+  <footer>
+    <div class="container" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;">
+      <div>
+        <div style="font-weight:600;color:var(--text-main);">MXPro 4.0 — Техническая спецификация (Team: Artur Khakimullin / Alex Dok)</div>
+        <div style="margin-top:4px;">Статус: Open Beta (B2B-пилот) • Zenodo DOI: 10.5281/zenodo.24208510 • B2B / NDA: a.k.khakimullin@gmail.com • Telegram: @ArturKhakimullin</div>
+      </div>
+      <div style="display:flex;gap:18px;">
+        <a href="index.html" style="color:var(--text-main);text-decoration:none;font-weight:500;">← На главную</a>
+        <a href="https://mx-pro.streamlit.app/" target="_blank" style="color:var(--accent);text-decoration:none;font-weight:600;">Открыть Sandbox →</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
+
+
+
