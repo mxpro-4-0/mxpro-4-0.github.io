@@ -4,11 +4,11 @@
 ## Core Architecture (15 Deterministic Modules)
 - **Zero External LLM Dependency (Zero AI Training):** Computes all metrics locally via deterministic mathematical-linguistic algorithms without sending proprietary scripts or manuscripts to third-party generative APIs.
 - **Academic & Phonetic Calibration:** Implements Russian Academy of Sciences (RAS / ИРЯ РАН) orthoepic rules, A. A. Zaliznyak grammatical dictionary, M. L. Gasparov syllabic-accentual metrics, Zhuravlev phonosemantics, Burrows' Delta (MFW), Coh-Metrix cohesion, and LIWC cognitive profiling.
-- **Reference Benchmark Corpus:** Calibrated on 1,120 verified authorial profiles (360 Russian + 760 US/UK genre matrices) with a >58 percentage point separation margin between authentic human prose (6–20% baseline) and LLM output (78–96%).
+- **Reference Benchmark Corpus:** Calibrated on a proprietary verified corpus of Russian and English literary, dramatic, and GameDev profiles (closed weights and thresholds).
 
 ## Product Modules & Enterprise Deliverables
 1. **GameDev Narrative IDE:** Multiplayer studio rooms, character voice profiling (Voice Fingerprint), 140-char UI subtitle enforcement, facial animation tags (`[anim:...]`), SFX triggers, real-time VO timing calculation, and direct engine export (`.json`, `.csv` with VO timings, `.yarn`).
-2. **Prose & Editorial Workbench:** Real-time 3-color diagnostic heatmap, 8-layer cliché scanner (~1,000 patterns), `<15%` AI-trace threshold, and clean `.docx` / `.txt` / PDF export.
+2. **Prose & Editorial Workbench:** Real-time multi-color diagnostic heatmap, cascading cliché filter, configurable AI-trace threshold, and clean `.docx` / `.txt` / PDF export.
 3. **Cryptographic 1:1 Integrity Protocol:** Generates immutable `SHA-256` text fingerprints and registry verification logs (`MXP-2026-XXXXXX`) for publishers, game studios, and thesis boards.
 
 ## Security & Zero Vendor Lock-In
