@@ -10,7 +10,7 @@
   <meta property="og:type" content="website" />
   <meta property="og:title" content="MXPro 4.0 (Open Beta) — Платформа нарратива, GameDev IDE и стилометрии" />
   <meta property="og:description" content="Единая среда для GameDev-студий, издательств и авторов. Локальные детерминированные алгоритмы, Zero Vendor Lock-In и протокол SHA-256." />
-  <meta property="og:url" content="https://mxpro-4-0.github.io /" />
+  <meta property="og:url" content="https://mxpro-4-0.github.io/"/>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -34,7 +34,7 @@
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com / css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-page: #FAF9F5;
@@ -148,29 +148,29 @@
 <body>
   <header>
     <div class="container nav-bar">
-      <div class="brand">MXPro 4.0 <span class="brand-tag">OPEN BETA • B2B PILOT</span></div>
+      <div class="brand">MXPro 4.0 <span class="brand-tag">GAMEDEV IDE • OPEN BETA</span></div>
       <div class="nav-links">
-        <a href="#lockin" style="color:var(--text-muted);text-decoration:none;">Zero Lock-In</a>
-        <a href="docs.html" style="color:var(--text-muted);text-decoration:none;">Научная база</a>
-        <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn btn-accent">Открыть лабораторию →</a>
+        <a href="#modes" style="color:var(--text-muted);text-decoration:none;">Режимы (GameDev / Проза / Наука)</a>
+        <a href="#lockin" style="color:var(--text-muted);text-decoration:none;">NDA и Zero Lock-In</a>
+        <a href="docs.html" style="color:var(--text-muted);text-decoration:none;">Спецификация</a>
+        <a href="https://mx-pro.streamlit.app/" target="_blank" class="btn btn-accent">Открыть GameDev Sandbox →</a>
       </div>
     </div>
   </header>
   <main class="container">
     <section class="hero">
-      <div class="pill">MXPro 4.0 (Open Beta) • ИИ детектор текстов, GameDev Narrative IDE и стилометрия</div>
-      <h1>Инженерная платформа нарратива и стилометрии: от сценария и мимики до криптографии текста</h1>
+      <div class="pill">MXPro 4.0 (Open Beta) • GameDev Narrative IDE, линтер диалогов и стилометрия</div>
+      <h1>Нарративная IDE и детерминированный линтер диалогов для GameDev-студий</h1>
       <p class="hero-sub">
-        Единая среда для GameDev-студий, издательств и авторов. Командная работа над сценами, контроль голосов персонажей (Voice Fingerprint) и экспорт в движки без передачи данных в сторонние LLM.
+        Контроль голосов персонажей (Voice Fingerprint), лимит UI-субтитров (140 зн.), теги мимики, расчёт VO-таймингов и прямой экспорт в Unity, Unreal, Godot и Yarn без отправки сценариев во внешние LLM.
       </p>
       <div class="trust-bar">
-        <div class="trust-chip">15 вычислительных модулей</div>
-        <div class="trust-chip">1 120 авторских профилей (RU / EN)</div>
-        <div class="trust-chip">Нормы ИРЯ РАН и словарь Зализняка</div>
-        <div class="trust-chip">Спецификация: Zenodo DOI</div>
-        <div class="trust-chip">Zero AI Training &amp; Zero Lock-In</div>
+        <div class="trust-chip">Экспорт: .json / .csv (VO) / .yarn</div>
+        <div class="trust-chip">Voice Fingerprint персонажей</div>
+        <div class="trust-chip">Детектор ИИ-штампов (порог 15%)</div>
+        <div class="trust-chip">Zero AI Training &amp; On-Premise под NDA</div>
       </div>
-      <div class="demo-shell">
+        <div class="demo-shell">
         <div class="demo-bar">
           <div class="tab-group">
             <button class="tab-btn active" onclick="setSample('gamedev', this)">GameDev и сценарии</button>
@@ -203,33 +203,41 @@
         </div>
       </div>
     </section>
-    <section class="section">
-      <h2 style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;">Три контура работы в едином ядре</h2>
-      <p style="color:var(--text-muted);margin-top:8px;max-width:680px;">Выберите рабочий режим под задачу студии, редакции или научного исследования.</p>
-      <div class="cards-3">
-        <div class="card">
-          <div>
-            <div style="font-weight:700;font-size:16px;margin-bottom:8px;">1. Для GameDev-студий и сценаристов</div>
-            <p style="font-size:14px;color:var(--text-muted);">Совместные облачные комнаты, контроль голосов героев (Voice Fingerprint), лимит UI-субтитров (140 зн.), превью мимики и озвучки.</p>
-          </div>
-          <div class="deliverable">Выход: .json (полный проект), .csv (озвучка с VO-таймингами) и .yarn.</div>
+       <section class="section" id="modes">
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px;">
+        <div>
+          <h2 style="font-family:'Newsreader',Georgia,serif;font-size:32px;font-weight:600;">Рабочие контуры платформы</h2>
+          <p style="color:var(--text-muted);margin-top:4px;">Основной профиль — GameDev Narrative IDE. Переключите вкладку для просмотра смежных модулей.</p>
         </div>
-        <div class="card">
-          <div>
-            <div style="font-weight:700;font-size:16px;margin-bottom:8px;">2. Для писателей, поэтов и редакций</div>
-            <p style="font-size:14px;color:var(--text-muted);">3-цветная карта правок в реальном времени, фильтр 8 слоёв клише и точный детектор ИИ-следа с порогом отсечения 15%.</p>
-          </div>
-          <div class="deliverable">Выход: чистый .docx / .txt, печатный лист и протокол целостности с отпечатком SHA-256.</div>
-        </div>
-        <div class="card">
-          <div>
-            <div style="font-weight:700;font-size:16px;margin-bottom:8px;">3. Научная стилометрия и экспертиза</div>
-            <p style="font-size:14px;color:var(--text-muted);">13 метрик Метода Хакимуллина, орфоэпия ИРЯ РАН, метрика Гаспарова, дельта Берроуза и сверка с 1 120 профилями (RU/EN).</p>
-          </div>
-          <div class="deliverable">Выход: академический протокол, транскрипция РАН и запись в реестре DOI.</div>
+        <div class="tab-group">
+          <button class="tab-btn active" onclick="switchMode('gd', this)">1. GameDev-студии (Основной)</button>
+          <button class="tab-btn" onclick="switchMode('ed', this)">2. Проза и издательства</button>
+          <button class="tab-btn" onclick="switchMode('sci', this)">3. Научная стилометрия</button>
         </div>
       </div>
+      <div id="mode-gd" class="card">
+        <div>
+          <div style="font-weight:700;font-size:18px;margin-bottom:10px;">GameDev Narrative IDE и линтер игровых диалогов</div>
+          <p style="font-size:15px;color:var(--text-muted);margin-bottom:12px;">Среда для лид-сценаристов и нарративных дизайнеров: проверка реплик на канцелярит и ИИ-штампы от фрилансеров, контроль уникальности речи каждого героя (Voice Fingerprint), жёсткий контроль длины UI-субтитров (140 знаков), разметка эмоций ([anim:...]) и автоматический расчёт хронометража для студии озвучки.</p>
+        </div>
+        <div class="deliverable">Выход в пайплайн: .json (полное дерево проекта для Git), .csv (таблица локализации с ID реплик и таймингами VO) и .yarn (Yarn Spinner).</div>
+      </div>
+      <div id="mode-ed" class="card" style="display:none;">
+        <div>
+          <div style="font-weight:700;font-size:18px;margin-bottom:10px;">Редакционный и авторский контур (Проза и поэзия)</div>
+          <p style="font-size:15px;color:var(--text-muted);margin-bottom:12px;">3-цветная карта диагностики текста в реальном времени, фильтр 8 слоёв речевых клише (~1 000 паттернов), детерминированный детектор машинного сглаживания (порог отсечения 15%) и работа с поэтической метрикой.</p>
+        </div>
+        <div class="deliverable">Выход в пайплайн: чистый .docx / .txt, вёрстка печатного листа и протокол целостности текста с цифровым отпечатком SHA-256.</div>
+      </div>
+      <div id="mode-sci" class="card" style="display:none;">
+        <div>
+          <div style="font-weight:700;font-size:18px;margin-bottom:10px;">Вычислительная стилометрия и лингвистическая экспертиза</div>
+          <p style="font-size:15px;color:var(--text-muted);margin-bottom:12px;">13 детерминированных метрик Метода Хакимуллина, орфоэпия ИРЯ РАН, словарь Зализняка, послоговая метрика Гаспарова, фоносемантика Журавлёва, дельта Бёрроуза и сверка с 1 120 профилями (RU/EN).</p>
+        </div>
+        <div class="deliverable">Выход в пайплайн: академический протокол анализа, фонетическая транскрипция РАН и ссылка на спецификацию Zenodo DOI.</div>
+      </div>
     </section>
+
         <section class="section" id="lockin">
       <h2 style="font-family:'Newsreader',Georgia,serif;font-size:30px;font-weight:600;">Безопасность IP и Zero Vendor Lock-In</h2>
       <p style="color:var(--text-muted);margin-top:8px;max-width:740px;">Инженерные гарантии для техлидов, продюсеров и издательств: полная автономность данных и локальное вычислительное ядро.</p>
@@ -323,6 +331,7 @@
         document.getElementById('demo-advice').innerHTML = "<b>Живая правка принята:</b> ИИ-маркеры удалены, ритм восстановлен (11%).";
       }
     }
+    function switchMode(id, btn){ ['gd','ed','sci'].forEach(k=>document.getElementById('mode-'+k).style.display=(k===id?'flex':'none')); btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
     setSample('gamedev');
   </script>
 </body>
