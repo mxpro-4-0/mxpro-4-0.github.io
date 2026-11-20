@@ -3,35 +3,38 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MXPro 4.0 — ИИ детектор текстов, GameDev Narrative IDE и стилометрия</title>
-  <meta name="description" content="Инженерная платформа нарратива и вычислительной стилометрии (Zenodo DOI: 10.5281/zenodo.24208510). 15 модулей, 1 120 профилей, GameDev IDE с экспортом в движки и Zero AI Training." />
+  <title>MXPro 4.0 (Open Beta) — ИИ детектор текстов, GameDev Narrative IDE и стилометрия</title>
+  <meta name="description" content="Открытый B2B-пилот инженерной платформы нарратива и вычислительной стилометрии (Team: Artur Khakimullin / Alex Dok, Zenodo DOI: 10.5281/zenodo.24208510). 15 модулей, 1 120 профилей, GameDev IDE и Zero AI Training." />
   <meta name="keywords" content="ИИ детектор текстов, GameDev Narrative IDE, стилометрия, проверка текста на ИИ, Voice Fingerprint, MXPro 4.0, Метод Хакимуллина" />
-  <link rel="canonical" href="https://mxpro-4-0.github.io" />
+  <link rel="canonical" href="https://mxpro-4-0.github.io/" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="MXPro 4.0 — Инженерная платформа нарратива, GameDev IDE и стилометрии" />
-  <meta property="og:description" content="Единая среда для GameDev-студий, издательств и авторов. Локальные детерминированные алгоритмы, Zero Vendor Lock-In и сертификация SHA-256." />
-  <meta property="og:url" content="https://mxpro-4-0.github.io" />
+  <meta property="og:title" content="MXPro 4.0 (Open Beta) — Платформа нарратива, GameDev IDE и стилометрии" />
+  <meta property="og:description" content="Единая среда для GameDev-студий, издательств и авторов. Локальные детерминированные алгоритмы, Zero Vendor Lock-In и протокол SHA-256." />
+  <meta property="og:url" content="https://mxpro-4-0.github.io /" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": "MXPro 4.0 — Computational Stylometry & GameDev Narrative IDE",
+    "name": "MXPro 4.0 — Computational Stylometry & GameDev Narrative IDE (Open Beta)",
     "applicationCategory": "DeveloperApplication, EnterpriseApplication",
     "operatingSystem": "Web, Cloud, On-Premise",
-    "author": { "@type": "Person", "name": "Artur Khakimullin" },
+    "author": [
+      { "@type": "Person", "name": "Artur Khakimullin" },
+      { "@type": "Person", "name": "Alex Dok" }
+    ],
     "citation": "https://doi.org/10.5281/zenodo.24208510",
-    "description": "15-module deterministic stylometry suite and multiplayer GameDev Narrative IDE calibrated on 1,120 RU/EN profiles (RAS orthoepy, Burrows Delta, Gasparov metrics, SHA-256, Zero AI Training).",
+    "description": "Open B2B Pilot of a 15-module deterministic stylometry suite and multiplayer GameDev Narrative IDE calibrated on 1,120 RU/EN profiles (RAS orthoepy, Burrows Delta, Gasparov metrics, SHA-256, Zero AI Training).",
     "featureList": [
       "Deterministic 13-Metric Stylometry Engine (No External LLM API)",
       "GameDev Narrative IDE with Voice Fingerprint, Facial Animation & VO Timer",
       "Direct Engine Export (.json, .csv with VO timings, .yarn) & Zero Vendor Lock-In",
-      "Cryptographic 1:1 Text Verification (SHA-256) & Zenodo DOI"
+      "Cryptographic 1:1 Text Integrity Protocol (SHA-256) & Zenodo Preprint DOI"
     ]
   }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com / css2?family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-page: #FAF9F5;
@@ -48,7 +51,7 @@
       --border: #E5E2D9;
       --radius: 14px;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg-page);
@@ -66,7 +69,7 @@
     }
     .nav-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
     .brand { font-weight: 700; font-size: 18px; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px; }
-    .brand-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--bg-subtle); color: var(--text-muted); border: 1px solid var(--border); }
+    .brand-tag { font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--amber-bg); color: var(--amber-text); border: 1px solid #F3D9B8; }
     .nav-links { display: flex; align-items: center; gap: 20px; font-size: 14px; }
     .btn {
       display: inline-flex; align-items: center; justify-content: center;
@@ -89,14 +92,10 @@
       line-height: 1.12; letter-spacing: -0.02em; max-width: 880px; margin: 0 auto 18px;
     }
     .hero-sub { font-size: 17.5px; color: var(--text-muted); max-width: 720px; margin: 0 auto 24px; }
-    .trust-bar {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
-      max-width: 920px; margin: 0 auto 36px;
-    }
+    .trust-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; max-width: 920px; margin: 0 auto 36px; }
     .trust-chip {
       font-size: 12.5px; font-weight: 500; color: var(--text-main);
-      background: var(--bg-surface); border: 1px solid var(--border);
-      padding: 6px 12px; border-radius: 8px;
+      background: var(--bg-surface); border: 1px solid var(--border); padding: 6px 12px; border-radius: 8px;
     }
     .demo-shell {
       background: var(--bg-surface); border: 1px solid var(--border);
@@ -114,8 +113,7 @@
       font-size: 13px; font-weight: 500; cursor: pointer;
     }
     .tab-btn.active { background: var(--text-main); color: #FFFFFF; }
-    .verdict-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-bottom: 18px; }
-    .verdict-box { padding: 14px 16px; border-radius: 12px; background: var(--bg-page); border: 1px solid var(--border); }
+    .verdict-box { padding: 14px 16px; border-radius: 12px; background: var(--bg-page); border: 1px solid var(--border); margin-bottom: 18px; }
     .verdict-label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
     .verdict-val { font-size: 15.5px; font-weight: 700; }
     .badge-ok { color: var(--green-text); }
@@ -150,17 +148,17 @@
 <body>
   <header>
     <div class="container nav-bar">
-      <div class="brand">MXPro 4.0 <span class="brand-tag">Zenodo DOI: 24208510</span></div>
+      <div class="brand">MXPro 4.0 <span class="brand-tag">OPEN BETA • B2B PILOT</span></div>
       <div class="nav-links">
         <a href="#lockin" style="color:var(--text-muted);text-decoration:none;">Zero Lock-In</a>
         <a href="docs.html" style="color:var(--text-muted);text-decoration:none;">Научная база</a>
-        <a href="https://mx-pro.streamlit.app" target="_blank" class="btn btn-accent">Открыть лабораторию →</a>
+        <a href="https://mx-pro.streamlit.app /" target="_blank" class="btn btn-accent">Открыть лабораторию →</a>
       </div>
     </div>
   </header>
   <main class="container">
     <section class="hero">
-      <div class="pill">MXPro 4.0 • ИИ детектор текстов, GameDev Narrative IDE и стилометрия</div>
+      <div class="pill">MXPro 4.0 (Open Beta) • ИИ детектор текстов, GameDev Narrative IDE и стилометрия</div>
       <h1>Инженерная платформа нарратива и стилометрии: от сценария и мимики до криптографии текста</h1>
       <p class="hero-sub">
         Единая среда для GameDev-студий, издательств и авторов. Командная работа над сценами, контроль голосов персонажей (Voice Fingerprint) и экспорт в движки без передачи данных в сторонние LLM.
@@ -169,7 +167,7 @@
         <div class="trust-chip">15 вычислительных модулей</div>
         <div class="trust-chip">1 120 авторских профилей (RU / EN)</div>
         <div class="trust-chip">Нормы ИРЯ РАН и словарь Зализняка</div>
-        <div class="trust-chip">Zenodo Zenodo DOI</div>
+        <div class="trust-chip">Спецификация: Zenodo DOI</div>
         <div class="trust-chip">Zero AI Training &amp; Zero Lock-In</div>
       </div>
       <div class="demo-shell">
@@ -181,17 +179,11 @@
           </div>
           <div style="font-size:12px;color:var(--text-muted);align-self:center;">Интерактивное демо • Отредактируйте текст ниже</div>
         </div>
-        <div class="verdict-row">
-          <div class="verdict-box">
-            <div class="verdict-label">Детектор машинного следа (порог 15%)</div>
-            <div id="verdict-ai" class="verdict-val badge-ok">Процент ИИ-генерации: предположительно 11% — вероятность ИИ минимальна</div>
-          </div>
-          <div class="verdict-box">
-            <div class="verdict-label">Эстетическая и речевая плотность</div>
-            <div id="verdict-concept" class="verdict-val">Оценка художественного вкуса: 90/100</div>
-          </div>
+        <div class="verdict-box">
+          <div class="verdict-label">Детектор машинного следа (порог отсечения 15%)</div>
+          <div id="verdict-ai" class="verdict-val badge-ok">Процент ИИ-генерации: предположительно 11% — вероятность ИИ минимальна</div>
         </div>
-        <div class="split-grid">
+                <div class="split-grid">
           <div class="pane">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
               <div class="pane-title" style="margin:0;">Подсветка и редактор (До / После)</div>
@@ -205,7 +197,7 @@
             <div id="demo-advice" style="font-size:14px;color:var(--text-main);line-height:1.6;"></div>
             <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;">
               <button id="fix-btn" class="btn" style="font-size:12px;padding:8px 12px;" onclick="applyAutoFix()">Применить правку (До → После)</button>
-              <a href="https://mx-pro.streamlit.ap" target="_blank" class="btn btn-accent" style="font-size:12px;padding:8px 14px;">Открыть GameDev IDE и редактор →</a>
+              <a href="https://mx-pro.streamlit.app /" target="_blank" class="btn btn-accent" style="font-size:12px;padding:8px 14px;">Открыть GameDev IDE и редактор →</a>
             </div>
           </div>
         </div>
@@ -228,7 +220,6 @@
             <p style="font-size:14px;color:var(--text-muted);">3-цветная карта правок в реальном времени, фильтр 8 слоёв клише и точный детектор ИИ-следа с порогом отсечения 15%.</p>
           </div>
           <div class="deliverable">Выход: чистый .docx / .txt, печатный лист и протокол целостности с отпечатком SHA-256.</div>
-
         </div>
         <div class="card">
           <div>
@@ -239,7 +230,7 @@
         </div>
       </div>
     </section>
-    <section class="section" id="lockin">
+        <section class="section" id="lockin">
       <h2 style="font-family:'Newsreader',Georgia,serif;font-size:30px;font-weight:600;">Безопасность IP и Zero Vendor Lock-In</h2>
       <p style="color:var(--text-muted);margin-top:8px;max-width:740px;">Инженерные гарантии для техлидов, продюсеров и издательств: полная автономность данных и локальное вычислительное ядро.</p>
       <div class="lockin-box">
@@ -260,11 +251,12 @@
       </div>
     </section>
   </main>
-   <footer>
+  <footer>
     <div class="container" style="display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;align-items:center;">
       <div>
-        <div style="font-weight:600;color:var(--text-main);">MXPro 4.0 — Инженерная платформа нарратива и стилометрии (Метод А. Хакимуллина)</div>
-        <div style="margin-top:4px;">Регистрация ПО: Zenodo DOI 10.5281/zenodo.24208510 • B2B-подключение студий и издательств (РФ): a.k.khakimullin@gmail.com • Telegram: @ArturKhakimullin</div>
+        <div style="font-weight:600;color:var(--text-main);">MXPro 4.0 — Инженерная платформа нарратива и стилометрии (Team: Artur Khakimullin / Alex Dok)</div>
+        <div style="margin-top:4px;">Статус: Open Beta (B2B-пилот для студий и редакций РФ) • Спецификация алгоритмов: Zenodo DOI 10.5281/zenodo.24208510</div>
+        <div style="margin-top:4px;">B2B-подключение и демо: a.k.khakimullin@gmail.com • Telegram: @ArturKhakimullin</div>
       </div>
       <div style="display:flex;gap:18px;">
         <a href="docs.html" style="color:var(--text-main);text-decoration:none;font-weight:500;">Спецификация и матрица →</a>
@@ -272,21 +264,38 @@
       </div>
     </div>
   </footer>
-
   <script>
     const SAMPLES = {
-      gamedev: { ai: 11, taste: "Оценка речевой плотности: 90/100 (высокая компрессия диалога)", text: "Глебов: [anim:angry] Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\nСалага: [anim:shock] А если не дёрну, мы через минуту задохнёмся в этом шлюзе!", fixedText: "Глебов: [anim:angry] Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\nСалага: [anim:shock] А если не дёрну, мы через минуту задохнёмся в этом шлюзе!", advice: "<b>Контроль Voice Fingerprint пройден:</b> разный ритм фраз героев, теги мимики [anim] распознаны, лимит UI-субтитров (140 зн.) соблюдён." },
-      prose: { ai: 8, taste: "Оценка художественного вкуса: 93/100 (эталон современной прозы)", text: "Дождь сек чёрный асфальт косо и зло. Марк сунул озябшие руки глубже в карманы драпового пальто и толкнул тяжёлую дверь подъезда.", fixedText: "Дождь сек чёрный асфальт косо и зло. Марк сунул озябшие руки глубже в карманы драпового пальто и толкнул тяжёлую дверь подъезда.", advice: "<b>Живой авторский слог:</b> точные глаголы действия и предметная деталь. Вероятность ИИ минимальна или исключена (8%)." },
-      ai: { ai: 78, taste: "Оценка художественного вкуса: 36/100 (алгоритмическая гладкость)", text: "В современном мире важно отметить, что тихий вечер медленно опускался на старый город, наполняя душу светлой грустью и гармонией.", fixedText: "Холодный ветер резал пустой проспект. Стекло витрины дрогнуло от шагов — город глотал сумерки по кускам.", advice: "<b>Подсвечены ИИ-маркеры (78%):</b> канцелярский зачин, штампы и монотонный ритм. Нажмите «Применить правку» для проверки живого слога." }
+      gamedev: {
+        ai: 11,
+        text: "Глебов: [anim:angry] Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\nСалага: [anim:shock] А если не дёрну, мы через минуту задохнёмся в этом шлюзе!",
+        fixedText: "Глебов: [anim:angry] Не трогай вентиль, салага. Давление в контуре на нуле, рванёт — костей не соберём.\nСалага: [anim:shock] А если не дёрну, мы через минуту задохнёмся в этом шлюзе!",
+        advice: "<b>Контроль Voice Fingerprint пройден:</b> разный ритм фраз героев, теги мимики [anim] распознаны, лимит UI-субтитров (140 зн.) соблюдён."
+      },
+      prose: {
+        ai: 8,
+        text: "Дождь сек чёрный асфальт косо и зло. Марк сунул озябшие руки глубже в карманы драпового пальто и толкнул тяжёлую дверь подъезда.",
+        fixedText: "Дождь сек чёрный асфальт косо и зло. Марк сунул озябшие руки глубже в карманы драпового пальто и толкнул тяжёлую дверь подъезда.",
+        advice: "<b>Живой авторский слог:</b> точные глаголы действия и предметная деталь. Вероятность ИИ минимальна или исключена (8%)."
+      },
+      ai: {
+        ai: 78,
+        text: "В современном мире важно отметить, что тихий вечер медленно опускался на старый город, наполняя душу светлой грустью и гармонией.",
+        fixedText: "Холодный ветер резал пустой проспект. Стекло витрины дрогнуло от шагов — город глотал сумерки по кускам.",
+        advice: "<b>Подсвечены ИИ-маркеры (78%):</b> канцелярский зачин, штампы и монотонный ритм. Нажмите «Применить правку» для проверки живого слога."
+      }
     };
     let curKey = 'gamedev';
     const AI_REGEX = /(В современном мире|важно отметить|тихий вечер|светлой грустью|гармонией|медленно опускался|наполняя душу)/gi;
-    function highlightText(raw) { return raw.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(AI_REGEX,'<span class="ai-mark">$1</span>').replace(/\n/g,"<br>"); }
-    function renderVerdict(aiVal, tasteTxt) {
+    function highlightText(raw) {
+      return raw.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(AI_REGEX, '<span class="ai-mark">$1</span>').replace(/\n/g, "<br>");
+    }
+    function renderVerdict(aiVal) {
       const el = document.getElementById('verdict-ai');
       el.className = aiVal < 15 ? 'verdict-val badge-ok' : 'verdict-val badge-warn';
-      el.textContent = aiVal < 15 ? `Процент ИИ-генерации: предположительно ${aiVal}% — вероятность ИИ минимальна` : `Процент ИИ-генерации: предположительно ${aiVal}% — обнаружены следы сглаживания`;
-      document.getElementById('verdict-concept').textContent = tasteTxt;
+      el.textContent = aiVal < 15
+        ? `Процент ИИ-генерации: предположительно ${aiVal}% — вероятность ИИ минимальна`
+        : `Процент ИИ-генерации: предположительно ${aiVal}% — обнаружены следы сглаживания`;
     }
     function setSample(key, btn) {
       curKey = key;
@@ -296,17 +305,29 @@
       document.getElementById('demo-input').value = s.text;
       document.getElementById('demo-highlight').innerHTML = highlightText(s.text);
       document.getElementById('demo-advice').innerHTML = s.advice;
-      renderVerdict(s.ai, s.taste);
+      renderVerdict(s.ai);
     }
-    function applyAutoFix() { document.getElementById('demo-input').value = SAMPLES[curKey].fixedText; liveRecalc(); }
+    function applyAutoFix() {
+      document.getElementById('demo-input').value = SAMPLES[curKey].fixedText;
+      liveRecalc();
+    }
     function liveRecalc() {
       const val = document.getElementById('demo-input').value;
       document.getElementById('demo-highlight').innerHTML = highlightText(val);
       const m = val.match(AI_REGEX);
-      if (m && m.length > 0) { renderVerdict(Math.min(88, 35 + m.length * 14), "Оценка художественного вкуса: 38/100 (требуется правка)"); }
-      else { renderVerdict(11, "Оценка художественного вкуса: 91/100 (эталон живого текста)"); document.getElementById('demo-advice').innerHTML = "<b>Живая правка принята:</b> ИИ-маркеры удалены, ритм восстановлен (11%)."; }
+      if (m && m.length > 0) {
+        renderVerdict(Math.min(88, 35 + m.length * 14));
+        document.getElementById('demo-advice').innerHTML = "<b>Обнаружены следы сглаживания:</b> присутствуют шаблонные обороты, рекомендуется живая редактура.";
+      } else {
+        renderVerdict(11);
+        document.getElementById('demo-advice').innerHTML = "<b>Живая правка принята:</b> ИИ-маркеры удалены, ритм восстановлен (11%).";
+      }
     }
     setSample('gamedev');
   </script>
 </body>
 </html>
+
+
+
+
