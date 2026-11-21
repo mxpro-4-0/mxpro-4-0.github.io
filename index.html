@@ -348,6 +348,133 @@
     function switchMode(id, btn){ ['gd','ed','sci'].forEach(k=>document.getElementById('mode-'+k).style.display=(k===id?'flex':'none')); btn.parentElement.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
     setSample('gamedev');
   </script>
+  <!-- Локальный AI-навигатор MXPro 4.0 (в стиле Anthropic, без внешних LLM) -->
+  <style>
+    .mx-ai-fab {
+      position: fixed; right: 20px; bottom: 20px; z-index: 999;
+      background: #141413; color: #FAF9F5; border: 1px solid #2E2D2B;
+      padding: 11px 16px; border-radius: 999px; font-family: 'Inter', sans-serif;
+      font-size: 13.5px; font-weight: 600; cursor: pointer;
+      box-shadow: 0 8px 24px rgba(20, 20, 19, 0.18); display: flex; align-items: center; gap: 8px;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+    .mx-ai-fab:hover { background: #D97757; border-color: #D97757; transform: translateY(-1px); }
+    .mx-ai-panel {
+      position: fixed; right: 20px; bottom: 72px; z-index: 1000;
+      width: 370px; max-width: calc(100vw - 32px); max-height: 76vh;
+      background: #FAF9F5; border: 1px solid #E5E2D9; border-radius: 16px;
+      box-shadow: 0 18px 48px rgba(20, 20, 19, 0.16); display: none; flex-direction: column; overflow: hidden;
+    }
+    .mx-ai-head {
+      background: #F2F0E9; padding: 13px 16px; border-bottom: 1px solid #E5E2D9;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .mx-ai-body { padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+    .mx-ai-input {
+      width: 100%; padding: 9px 12px; border-radius: 10px; border: 1px solid #E5E2D9;
+      background: #FFFFFF; font-size: 13px; color: #141413; outline: none;
+    }
+    .mx-ai-input:focus { border-color: #D97757; }
+    .mx-ai-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .mx-ai-chip {
+      background: #FFFFFF; border: 1px solid #E5E2D9; border-radius: 8px;
+      padding: 5px 9px; font-size: 11.5px; color: #141413; cursor: pointer; text-align: left;
+    }
+    .mx-ai-chip:hover { border-color: #D97757; color: #D97757; }
+    .mx-ai-ans {
+      background: #FFFFFF; border: 1px solid #E5E2D9; border-left: 3px solid #D97757;
+      border-radius: 10px; padding: 11px 13px; font-size: 13px; color: #141413; line-height: 1.55;
+    }
+  </style>
+
+  <button class="mx-ai-fab" onclick="toggleMxAssistant()">
+    <span style="color:#D97757;">✦</span> Помощник MXPro 4.0
+  </button>
+
+  <div id="mx-ai-panel" class="mx-ai-panel">
+    <div class="mx-ai-head">
+      <div>
+        <div style="font-weight:700;font-size:13.5px;color:#141413;">Навигатор по MXPro 4.0</div>
+        <div style="font-size:11px;color:#5E5D59;">Локальная база знаний • Без внешних LLM</div>
+      </div>
+      <button onclick="toggleMxAssistant()" style="background:none;border:none;font-size:18px;color:#5E5D59;cursor:pointer;">×</button>
+    </div>
+    <div class="mx-ai-body">
+      <input id="mx-ai-search" class="mx-ai-input" placeholder="Спросите: метод Хакимуллина, NDA, кардиограмма..." oninput="searchMxFaq(this.value)" />
+      <div id="mx-ai-chips" class="mx-ai-chips"></div>
+      <div id="mx-ai-answer" class="mx-ai-ans">
+        Выберите вопрос выше или введите ключевое слово — я объясню архитектуру, метрики или условия пилота.
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const MX_FAQ = [
+      {
+        q: "Что такое Метод Хакимуллина?",
+        tags: ["метод", "хакимуллина", "13", "приемов", "стилометрия", "ядро"],
+        a: "<b>Метод Хакимуллина</b> — детерминированная система вычислительной стилометрии, оценивающая текст на трёх уровнях: звуковом (нормы ИРЯ РАН, аллитерации, паронимическая аттракция), ритмическом (послоговая метрика М. Л. Гаспарова, синкопы, дольник) и смысловом (остранение В. Шкловского, рифмовка концептов, сенсомоторные связки)."
+      },
+      {
+        q: "Как работает Кардиограмма (ECG) в GameDev?",
+        tags: ["кардиограмма", "ecg", "граф", "ветки", "монте-карло", "симулятор", "gamedev"],
+        a: "<b>Кардиограмма напряжения (Narrative ECG)</b> переносит ритмический анализ на нелинейные игровые графы: строит пульс напряжения между узлами, ловит «мёртвые зоны» скуки и проводит симуляцию Монте-Карло (1 000 виртуальных игроков) со скрытыми переменными для поиска недостижимых концовок."
+      },
+      {
+        q: "Как защищены сценарии под NDA?",
+        tags: ["nda", "безопасность", "утечка", "локально", "on-premise", "облако", "llm"],
+        a: "<b>Zero AI Training & On-Premise:</b> ваши тексты не передаются в сторонние нейросети. В песочнице расчёт идёт в оперативной памяти без сохранения на диск, а для проектов под NDA поставляется автономная локальная сборка (Windows / Linux / macOS, без GPU) для закрытой сети студии."
+      },
+      {
+        q: "Как оценивается классическая поэзия?",
+        tags: ["классика", "пушкин", "есенин", "школа", "иря", "ран", "штамп"],
+        a: "<b>Академическая шкала (ИРЯ им. В. В. Виноградова РАН и ИРЛИ / Пушкинский Дом РАН):</b> в режиме «Классическая поэзия» эталоном выступают силлабо-тонический метр, эвфония и строфика. Учитывается историческая эволюция языка: словообразования классиков XIX века сформировали литературную норму, которая в поэтике XXI века избегается как штамп."
+      },
+      {
+        q: "Из чего складывается процент ИИ и рерайта?",
+        tags: ["ии", "проценты", "рерайт", "вероятность", "сканер", "детектор"],
+        a: "<b>Детерминированный расчёт (не угадывание LLM):</b> индекс оценивает наличие речевых штампов, симметрию ритма, монотонность синтаксиса, грамматическую инерцию, артикуляционную гладкость и дефицит предметной конкретики. <i>Алгоритмический рерайт</i> — это машинный пересказ, стирающий авторскую аритмию и детали."
+      },
+      {
+        q: "Экспорт в Unity, Unreal и Yarn Spinner?",
+        tags: ["экспорт", "unity", "unreal", "godot", "yarn", "csv", "json", "git"],
+        a: "<b>Zero Vendor Lock-In:</b> проект в 1 клик выгружается в открытый <code>.json</code> с атомарными ID для Git/Perforce, таблицу локализации и озвучки <code>.csv</code> (с расчётом секунд VO) и готовый файл <code>.yarn</code> для Unity, Unreal Engine и Godot."
+      }
+    ];
+
+    function initMxAssistant() {
+      const box = document.getElementById('mx-ai-chips');
+      if (!box) return;
+      box.innerHTML = MX_FAQ.map((item, idx) =>
+        `<button class="mx-ai-chip" onclick="showMxAns(${idx})">${item.q}</button>`
+      ).join('');
+    }
+    function toggleMxAssistant() {
+      const p = document.getElementById('mx-ai-panel');
+      p.style.display = (p.style.display === 'flex') ? 'none' : 'flex';
+    }
+    function showMxAns(idx) {
+      document.getElementById('mx-ai-answer').innerHTML = MX_FAQ[idx].a;
+    }
+    function searchMxFaq(val) {
+      const q = val.toLowerCase().trim();
+      const ansEl = document.getElementById('mx-ai-answer');
+      if (!q) { ansEl.innerHTML = MX_FAQ[0].a; return; }
+      const words = q.split(/\s+/).filter(w => w.length >= 2);
+      let best = null, bestScore = 0;
+      MX_FAQ.forEach(item => {
+        const hay = (item.q + ' ' + item.tags.join(' ') + ' ' + item.a).toLowerCase();
+        let sc = 0;
+        words.forEach(w => { if (hay.includes(w)) sc++; });
+        if (sc > bestScore) { bestScore = sc; best = item; }
+      });
+      ansEl.innerHTML = best
+        ? best.a
+        : "По этому запросу в базе нет точной карточки. Выберите тему выше или напишите разработчикам: <b>@ArturKhakimullin</b>.";
+    }
+    initMxAssistant();
+  </script>
+
 </body>
 </html>
 
