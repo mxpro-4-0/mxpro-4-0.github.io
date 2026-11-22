@@ -84,6 +84,44 @@
     code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; background: var(--bg-subtle); padding: 2px 6px; border-radius: 5px; color: var(--text-main); }
     footer { padding: 36px 0; color: var(--text-muted); font-size: 13px; }
   </style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "MXPro 4.0",
+      "applicationCategory": "Game Development IDE, Computational Stylometry, Pre-Production",
+      "operatingSystem": "Web, Linux, Windows (On-Premise Docker / CPU-only)",
+      "author": [{"@type": "Person", "name": "Artur Khakimullin"}, {"@type": "Person", "name": "Alex Dok"}],
+      "offers": {"@type": "Offer", "price": "0", "priceCurrency": "RUB", "description": "Open Beta Sandbox & 60-day B2B Pilot"},
+      "featureList": "Yarn Spinner (.yarn), Ink (.ink), Unity/Unreal JSON, Final Draft (.fdx), Fountain (.fountain), Monte Carlo Branch Testing, SHA-256 Authorship Registry, On-Premise Air-Gapped"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Чем MXPro 4.0 отличается от Story Architect, КИТ Сценарист и articy:draft?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "MXPro 4.0 объединяет нелинейный GameDev-движок (Монте-Карло прогон 1000 игроков, экспорт в .yarn, .ink, .json, .fdx), детерминированный анти-ИИ линтер для выявления нейросетевого текста фрилансеров и визуальный пре-продакшн Studio Canvas в едином локальном ядре без передачи данных в облако."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Как решается вопрос стабильности, защиты NDA и масштабирования в 2027 году?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Все три направления работают на едином оптимизированном CPU-ядре. Для студий и издательств доступен бесплатный 60-дневный B2B-пилот в закрытом контуре (On-Premise без GPU, 152-ФЗ). В 2027 году запланирован переход промышленного контура на выделенные серверы и домены крупных российских компаний."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+
 </head>
 <body>
   <header>
@@ -223,6 +261,39 @@
       </div>
     </div>
   </footer>
+  <section id="advantages-and-audit" style="max-width:960px;margin:32px auto;padding:24px;background:#FFFFFF;border:1px solid #E5E2D9;border-radius:16px;font-family:Inter,sans-serif;color:#141413;">
+  <h2 style="font-size:22px;margin-bottom:12px;">В чём ключевые отличия MXPro 4.0 от привычных российских и западных программ</h2>
+  <p style="color:#5E5D59;font-size:14px;line-height:1.5;">Обычный отечественный софт для авторов (Story Architect, «КИТ Сценарист») ориентирован на линейное кино и прозу. MXPro 4.0 объединяет в <b>едином детерминированном ядре (Single Core Engine)</b> технические задачи геймдева, академическую стилометрию и визуальный пре-продакшн:</p>
+  <div style="overflow-x:auto;margin:16px 0;">
+    <table style="width:100%;border-collapse:collapse;font-size:13.5px;border:1px solid #E5E2D9;">
+      <thead>
+        <tr style="background:#F2F0E9;text-align:left;">
+          <th style="padding:10px;border-bottom:1px solid #E5E2D9;">Критерий</th>
+          <th style="padding:10px;border-bottom:1px solid #E5E2D9;">MXPro 4.0</th>
+          <th style="padding:10px;border-bottom:1px solid #E5E2D9;">Классические редакторы (Story Architect и др.)</th>
+          <th style="padding:10px;border-bottom:1px solid #E5E2D9;">Вердикт для пайплайна</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:10px;border-bottom:1px solid #E5E2D9;"><b>Нелинейность и ветвления</b></td><td style="padding:10px;border-bottom:1px solid #E5E2D9;">Графы со скрытыми переменными и прогон 1000 виртуальных игроков (Монте-Карло) для поиска тупиков</td><td style="padding:10px;border-bottom:1px solid #E5E2D9;">Линейная структура сцен, карточки и пробковые доски</td><td style="padding:10px;border-bottom:1px solid #E5E2D9;color:#1B6B3A;"><b>MXPro 4.0 выигрывает</b> для RPG и визуальных новелл</td></tr>
+        <tr><td style="padding:10px;border-bottom:1px solid #E5E2D9;"><b>Интеграция в движки и кино</b></td><td style="padding:10px;border-bottom:1px solid #E5E2D9;">Прямой экспорт в <code>.yarn</code> (Yarn Spinner), <code>.ink</code>, <code>.json</code> (Unity/Unreal/Godot), <code>.fountain</code>, <code>.fdx</code> и <code>.csv</code></td><td style="padding:10px;border-bottom:1px solid #E5E2D9;">Экспорт в киноформаты (PDF, FDX, DOCX), нет нативной связки с игровыми движками</td><td style="padding:10px;border-bottom:1px solid #E5E2D9;color:#1B6B3A;"><b>Экономит часы</b> на переносе диалогов в билд</td></tr>
+        <tr><td style="padding:10px;border-bottom:1px solid #E5E2D9;"><b>Технический контроль реплик</b></td><td style="padding:10px;border-bottom:1px solid #E5E2D9;">Автопроверка лимита субтитров (140 знаков), тегов эмоций <code>[anim:...]</code> и таймингов озвучки (VO)</td><td style="padding:10px;border-bottom:1px solid #E5E2D9;">Только подсчёт страниц и примерного экранного времени</td><td style="padding:10px;border-bottom:1px solid #E5E2D9;color:#1B6B3A;"><b>Незаменим</b> при подготовке к записи голоса</td></tr>
+        <tr><td style="padding:10px;border-bottom:1px solid #E5E2D9;"><b>Проверка стиля и ИИ-следа</b></td><td style="padding:10px;border-bottom:1px solid #E5E2D9;">Детерминированный линтер (ИРЯ РАН, Гаспаров): ловит штампы ИИ и сверяет Voice Fingerprint персонажа оффлайн</td><td style="padding:10px;border-bottom:1px solid #E5E2D9;">Облачные ИИ-генераторы текста или базовый спеллчекер</td><td style="padding:10px;border-bottom:1px solid #E5E2D9;color:#1B6B3A;"><b>Лучше для лид-сценаристов</b>, принимающих текст от фрилансеров</td></tr>
+        <tr><td style="padding:10px;"><b>Пре-продакшн и Studio Canvas</b></td><td style="padding:10px;">Разделение сцен на персонажей и локации, режиссёрские камеры (Ричи/Нолан/Тарантино), титры <code>.srt</code> и BYOK-промпты</td><td style="padding:10px;">Ручное описание сцен без генерации аудиовизуального аниматика</td><td style="padding:10px;color:#1B6B3A;"><b>Мгновенный аниматик</b> без дорогой подписки</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <h3 style="font-size:17px;margin-top:20px;">Архитектурная надёжность, безопасность NDA и дорожная карта 2027</h3>
+  <ul style="font-size:14px;line-height:1.6;color:#2E2D2B;">
+    <li><b>Защита NDA и автономность (On-Premise без GPU):</b> система не передаёт рукописи во внешние LLM (Zero AI Training) и работает на стандартных CPU-серверах внутри закрытого контура студии (152-ФЗ).</li>
+    <li><b>Бесплатный вход и B2B-пилот:</b> открыта песочница MXPro 4.0 Open Beta (до 250 000 знаков бесплатно) и бесплатный B2B-пилот на 30–60 дней (LOI) для тестирования на реальных скриптах объёмом от 2+ млн знаков.</li>
+    <li><b>Масштабирование в 2027 году:</b> в следующем году запланирован перевод промышленного контура на выделенные российские серверы и домены крупных российских компаний (Private Cloud / Enterprise), а также развитие двуязычного стандарта (RU/EN).</li>
+  </ul>
+  <div style="margin-top:16px;padding:14px;background:#FAF9F5;border-left:4px solid #D97757;border-radius:8px;font-size:13.5px;">
+    <b>Кому стоит внедрять:</b> игровым студиям на Unity/Unreal/Godot, книжным издательствам, толстым журналам, вузам (ВАК) и кинопродакшенам, работающим с большим потоком текстов, озвучкой и жёсткими требованиями к защите интеллектуальной собственности.
+  </div>
+</section>
+
 </body>
 </html>
 
