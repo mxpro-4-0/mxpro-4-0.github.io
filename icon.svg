@@ -1,0 +1,11 @@
+<svg xmlns="http://w3.org" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#FAF9F5"/>
+  <rect x="16" y="16" width="480" height="480" rx="98" fill="none" stroke="#E5E2D9" stroke-width="8"/>
+  <ellipse cx="256" cy="222" rx="145" ry="54" transform="rotate(-30 256 222)" fill="none" stroke="#D97757" stroke-width="14"/>
+  <ellipse cx="256" cy="222" rx="145" ry="54" transform="rotate(30 256 222)" fill="none" stroke="#D97757" stroke-width="14"/>
+  <ellipse cx="256" cy="222" rx="145" ry="54" transform="rotate(90 256 222)" fill="none" stroke="#141413" stroke-width="10" stroke-opacity="0.22"/>
+  <circle cx="256" cy="222" r="34" fill="#D97757"/>
+  <circle cx="256" cy="222" r="14" fill="#FAF9F5"/>
+  <rect x="156" y="388" width="200" height="54" rx="16" fill="#141413"/>
+  <text x="256" y="424" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="30" letter-spacing="4" fill="#FAF9F5">BETA</text>
+</svg>
