@@ -4,8 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="manifest" href="manifest.json" />
-  <link rel="icon" type="image/svg+xml" href="icon.svg" />
-  <link rel="apple-touch-icon" href="icon.svg" />
+  <link id="dyn-icon" rel="icon" type="image/png" href="icon.svg" />
+  <link id="dyn-apple" rel="apple-touch-icon" href="icon.svg" />
+
   <meta name="theme-color" content="#D97757" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="MXPro 4.0" />
@@ -533,6 +534,29 @@
       if (savedDraft) { demoBox.value = savedDraft; liveRecalc(); }
       demoBox.addEventListener('input', () => localStorage.setItem('mxpro4_draft', demoBox.value));
     }
+    // Генерация растровой иконки 512x512 PNG (атом + BETA) для Android/iOS лаунчеров
+    (function buildRasterIcon() {
+      const c = document.createElement('canvas'); c.width = 512; c.height = 512;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#FAF9F5'; ctx.beginPath(); ctx.roundRect(0, 0, 512, 512, 110); ctx.fill();
+      ctx.strokeStyle = '#E5E2D9'; ctx.lineWidth = 10; ctx.stroke();
+      [-Math.PI/6, Math.PI/6, Math.PI/2].forEach((ang, i) => {
+        ctx.save(); ctx.translate(256, 220); ctx.rotate(ang);
+        ctx.strokeStyle = i === 2 ? 'rgba(20,20,19,0.25)' : '#D97757';
+        ctx.lineWidth = i === 2 ? 10 : 14;
+        ctx.beginPath(); ctx.ellipse(0, 0, 148, 54, 0, 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+      });
+      ctx.fillStyle = '#D97757'; ctx.beginPath(); ctx.arc(256, 220, 34, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#FAF9F5'; ctx.beginPath(); ctx.arc(256, 220, 13, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#141413'; ctx.beginPath(); ctx.roundRect(156, 386, 200, 54, 16); ctx.fill();
+      ctx.fillStyle = '#FAF9F5'; ctx.font = '800 30px sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('BETA', 256, 423);
+      const pngUrl = c.toDataURL('image/png');
+      const ic = document.getElementById('dyn-icon'); if (ic) ic.href = pngUrl;
+      const ap = document.getElementById('dyn-apple'); if (ap) ap.href = pngUrl;
+    })();
+    let deferredPrompt;
+
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
