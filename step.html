@@ -87,10 +87,14 @@
       <input type="file" id="in-photo" accept="image/*" style="margin-bottom:8px; font-size:12px;" />
       <canvas id="fx-canvas" width="360" height="480" style="display:none; width:100%; border-radius:12px; margin-bottom:8px;"></canvas>
       <textarea id="in-text" rows="3" placeholder="Реплика героя..." style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px;"></textarea>
-      <input id="in-c1" placeholder="Кнопка выбора 1 (например: Открыть дверь)" style="width:100%; padding:9px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:6px; font-size:13px;" />
-      <input id="in-c1-res" placeholder="Финал выбора 1" style="width:100%; padding:9px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:10px; font-size:13px;" />
-      <button onclick="publishStory()" style="width:100%; padding:12px; border-radius:12px; border:none; background:#D97757; color:#FFF; font-weight:700; font-size:15px; cursor:pointer;">Опубликовать в ленту (+15 000 Искр)</button>
+      <input id="in-c1" placeholder="Кнопка выбора (например: Открыть дверь)" style="width:100%; padding:9px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:13px;" />
+      <div id="draft-count" style="font-size:12px; font-weight:700; color:#D97757; margin-bottom:8px;">Собрано сцен в новелле: 0 (добавьте минимум 2 сцены)</div>
+      <div style="display:flex; gap:6px;">
+        <button onclick="addSceneStep()" style="flex:1; padding:11px; border-radius:11px; border:1px solid #141413; background:#FFF; color:#141413; font-weight:700; font-size:13px; cursor:pointer;">+ Добавить сцену</button>
+        <button onclick="publishStory()" style="flex:1; padding:11px; border-radius:11px; border:none; background:#D97757; color:#FFF; font-weight:700; font-size:13px; cursor:pointer;">Опубликовать (+15к ⚡)</button>
+      </div>
     </div>
+
     <div id="scr-top" class="screen" style="background:#FAF9F5; color:#141413; padding:56px 14px 16px;">
       <div style="font-size:20px; font-weight:800; margin-bottom:8px;">Топ авторов MX-Step</div>
       <div style="background:#FFF; border:1px solid #E5E2D9; border-radius:12px; padding:12px; margin-bottom:8px;"><b>1. @Alisa_Novels</b> <span style="color:#D97757; font-size:12px;">VIP #004</span><br><span style="font-size:12px; color:#5E5D59;">Рейтинг ядра: 96/100 • 14 200 прохождений</span></div>
@@ -252,19 +256,34 @@
       applyToonFilter();
     });
 
-    function publishStory() {
-      const title = document.getElementById('in-title').value.trim();
+    let draftSteps = [];
+    function addSceneStep() {
       const text = document.getElementById('in-text').value.trim();
-      const c1 = document.getElementById('in-c1').value.trim() || 'Продолжить путь';
-      const r1 = document.getElementById('in-c1-res').value.trim() || 'История успешно пройдена!';
-      if (!title || !text) return;
-      const st = document.getElementById('in-style').value;
-      stories.unshift({ title, genre: st === 'manga' ? 'Манга • Автор' : 'Аниме • Автор', steps: [{ img: photoData, speaker: uid, text, choices: [{ t: c1, next: 1 }] }, { img: photoData, speaker: 'Финал', text: r1, choices: [] }] });
+      if (!text) return;
+      const btnText = document.getElementById('in-c1').value.trim() || 'Далее';
+      const stepNum = draftSteps.length;
+      draftSteps.push({ img: photoData, speaker: uid, text, choices: [{ t: btnText, next: stepNum + 1 }] });
+      document.getElementById('in-text').value = '';
+      document.getElementById('in-c1').value = '';
+      document.getElementById('fx-canvas').style.display = 'none';
       if (rawBmp && rawBmp.close) { rawBmp.close(); rawBmp = null; }
       photoData = '';
+      document.getElementById('draft-count').textContent = 'Собрано сцен в новелле: ' + draftSteps.length + ' (можно добавить ещё или опубликовать)';
+    }
+    function publishStory() {
+      const title = document.getElementById('in-title').value.trim();
+      if (document.getElementById('in-text').value.trim()) addSceneStep();
+      if (!title || !draftSteps.length) return;
+      draftSteps[draftSteps.length - 1].choices = [];
+      const st = document.getElementById('in-style').value;
+      stories.unshift({ title, genre: st === 'manga' ? 'Манга • Автор' : 'Аниме • Автор', steps: draftSteps });
+      draftSteps = [];
+      document.getElementById('in-title').value = '';
+      document.getElementById('draft-count').textContent = 'Собрано сцен в новелле: 0';
       updateSparks(15000);
       idx = 0; stepIdx = 0; renderStory(); switchTab('feed');
     }
+
 
     let touchStartY = 0;
     document.addEventListener('touchstart', e => { if (document.getElementById('scr-feed').classList.contains('active') && e.touches.length) touchStartY = e.touches.item(0).clientY; }, { passive: true });
