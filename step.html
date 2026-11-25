@@ -232,20 +232,40 @@
       if (navigator.clipboard) navigator.clipboard.writeText(link);
       alert('Ссылка приглашения скопирована! Когда друг откроет её, вы оба получите +25 000 Искр:\n' + link);
     }
+    let rawLoadedImg = null;
+    function applyToonFilter() {
+      if (!rawLoadedImg) return;
+      const cv = document.getElementById('fx-canvas'), cx = cv.getContext('2d');
+      const st = document.getElementById('in-style').value;
+      cx.drawImage(rawLoadedImg, 0, 0, 360, 480);
+      const id = cx.getImageData(0, 0, 360, 480), d = id.data;
+      for (let i = 0; i < d.length; i += 4) {
+        if (st === 'manga') {
+          const g = 0.3 * d[i] + 0.59 * d[i + 1] + 0.11 * d[i + 2];
+          const v = g > 135 ? 245 : (g > 85 ? 130 : 20);
+          d[i] = d[i + 1] = d[i + 2] = v;
+        } else {
+          d[i] = Math.min(255, Math.round(d[i] / 52) * 52 + 18);
+          d[i + 1] = Math.min(255, Math.round(d[i + 1] / 52) * 52 + 12);
+          d[i + 2] = Math.min(255, Math.round(d[i + 2] / 52) * 52 + 22);
+        }
+      }
+      cx.putImageData(id, 0, 0);
+      cv.style.display = 'block';
+      photoData = cv.toDataURL('image/jpeg', 0.72);
+    }
+    document.getElementById('in-style').addEventListener('change', applyToonFilter);
     document.getElementById('in-photo').addEventListener('change', function(e) {
       const file = e.target.files[0]; if (!file) return;
-
-      const img = new Image();
-      img.onload = () => {
-        const cv = document.getElementById('fx-canvas'), cx = cv.getContext('2d');
-        const st = document.getElementById('in-style').value;
-        cx.filter = st === 'manga' ? 'grayscale(100%) contrast(210%) brightness(105%)' : 'saturate(185%) contrast(125%) blur(0.6px)';
-        cx.drawImage(img, 0, 0, 360, 480);
-        cv.style.display = 'block';
-        photoData = cv.toDataURL('image/webp', 0.72);
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const img = new Image();
+        img.onload = () => { rawLoadedImg = img; applyToonFilter(); };
+        img.src = ev.target.result;
       };
-      img.src = URL.createObjectURL(file);
+      reader.readAsDataURL(file);
     });
+
     function cleanProfanity(str) {
       return str.replace(/\b[а-яё]*(?:хуй|хуе|хуя|пизд|бляд|блят|ебат|ебан|ёбан|сук[аи]|мудак)[а-яё]*\b/gi, '***');
     }
