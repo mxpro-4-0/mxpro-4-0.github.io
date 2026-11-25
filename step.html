@@ -14,6 +14,7 @@
     * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
     body { font-family:'Inter',sans-serif; background:#0D0D0C; color:#FAF9F5; height:100dvh; display:flex; justify-content:center; overflow:hidden; }
     .app-shell { width:100%; max-width:440px; height:100dvh; background:var(--dark); position:relative; display:flex; flex-direction:column; border-left:1px solid #262523; border-right:1px solid #262523; overflow:hidden; }
+
     .top-hud { position:absolute; top:0; left:0; right:0; z-index:20; padding:12px 14px; background:linear-gradient(180deg, rgba(13,13,12,0.88) 0%, rgba(13,13,12,0) 100%); display:flex; justify-content:space-between; align-items:center; gap:8px; }
     .brand-pill { display:flex; align-items:center; gap:6px; font-weight:800; font-size:15px; letter-spacing:-0.02em; }
     .vip-badge { background:rgba(217,119,87,0.2); border:1px solid var(--accent); color:#FFB89E; font-size:10.5px; font-weight:700; padding:3px 7px; border-radius:999px; }
@@ -190,7 +191,8 @@
       alert('Ссылка приглашения скопирована! Когда друг откроет её, вы оба получите +25 000 Искр:\n' + link);
     }
     document.getElementById('in-photo').addEventListener('change', function(e) {
-      const file = e.target.files; if (!file) return;
+      const file = e.target.files[0]; if (!file) return;
+
       const img = new Image();
       img.onload = () => {
         const cv = document.getElementById('fx-canvas'), cx = cv.getContext('2d');
