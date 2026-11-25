@@ -45,8 +45,10 @@
     </div>
 
     <!-- Экран 1: Вертикальная свайп-лента 9:16 -->
-    <div id="scr-feed" class="screen active" style="justify-content:flex-end; padding:58px 14px 16px; background:#111827;">
-      <div id="story-stage" style="background:rgba(16,16,15,0.86); border-left:4px solid #D97757; border-radius:14px; padding:15px; backdrop-filter:blur(10px); position:relative; z-index:5;">
+    <div id="scr-feed" class="screen active" style="justify-content:flex-end; padding:58px 14px 16px; background:linear-gradient(160deg,#1e293b,#0f172a);">
+      <img id="st-bg-img" alt="" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:1; display:none;" />
+      <div id="story-stage" style="background:rgba(16,16,15,0.84); border-left:4px solid #D97757; border-radius:14px; padding:15px; backdrop-filter:blur(10px); position:relative; z-index:5;">
+
         <div id="st-dots" class="step-dots"></div>
 
 
@@ -168,12 +170,27 @@
     ];
     let stories = JSON.parse(localStorage.getItem('mxs_stories_v3') || 'null') || DEFAULT_STORIES;
     let idx = 0, stepIdx = 0, photoData = '';
+       function loadSmartImage(imgEl, src) {
+      if (!src) { imgEl.style.display = 'none'; return; }
+      if (src.startsWith('data:')) { imgEl.src = src; imgEl.style.display = 'block'; return; }
+      const base = src.replace(/\.[^.]+$/, '');
+      const cap = base.charAt(0).toUpperCase() + base.slice(1);
+      const variants = [src, cap + '.jpg', base + '.jpeg', base + '.png', cap + '.png', 'img/' + src];
+      let attempt = 0;
+      imgEl.onerror = () => {
+        attempt++;
+        if (attempt < variants.length) imgEl.src = variants[attempt];
+        else imgEl.style.display = 'none';
+      };
+      imgEl.onload = () => { imgEl.style.display = 'block'; };
+      imgEl.src = variants[0];
+    }
     function renderStory() {
       const s = stories[idx % stories.length];
       const steps = s.steps || [{ img: s.img, speaker: s.speaker, text: s.text, choices: s.c1 ? [{ t: s.c1, res: s.r1 }] : [] }];
-      const cur = steps[stepIdx] || steps;
-      const stage = document.getElementById('scr-feed');
-      stage.style.backgroundImage = cur.img ? `url('${cur.img}')` : (s.bg || 'linear-gradient(155deg,#1f2937,#111827)');
+      const cur = steps[stepIdx] || steps[0];
+      loadSmartImage(document.getElementById('st-bg-img'), cur.img);
+
       const dots = document.getElementById('st-dots');
       dots.innerHTML = steps.map((_, i) => `<div class="step-dot ${i <= stepIdx ? 'on' : ''}"></div>`).join('');
       document.getElementById('st-meta').textContent = `${s.genre} • «${s.title}» (${stepIdx + 1}/${steps.length})`;
