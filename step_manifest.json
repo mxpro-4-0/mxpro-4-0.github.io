@@ -2,18 +2,18 @@
   "name": "MX-Step Beta — Свайп-лента новелл и историй",
   "short_name": "MX-Step",
   "description": "Вертикальная свайп-лента интерактивных Аниме/Манга-новелл и конструктор историй за 3 минуты.",
-  "start_url": "/step.html?source=pwa",
-  "scope": "/step.html",
+  "start_url": "step.html?source=pwa",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#141413",
   "theme_color": "#141413",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/step_icon.png",
+      "src": "step_icon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
