@@ -231,6 +231,7 @@
       const link = location.origin + location.pathname + '?ref=' + uid;
       if (navigator.clipboard) navigator.clipboard.writeText(link);
       alert('Ссылка приглашения скопирована! Когда друг откроет её, вы оба получите +25 000 Искр:\n' + link);
+    }
     let rawLoadedImg = null;
     function applyToonFilter() {
       if (!rawLoadedImg) return;
@@ -266,11 +267,9 @@
       cv.style.display = 'block';
       photoData = cv.toDataURL('image/jpeg', 0.68);
     }
+    document.getElementById('in-style').addEventListener('change', applyToonFilter);
     document.getElementById('in-photo').addEventListener('change', function(e) {
       const file = e.target.files.item(0); if (!file) return;
-
-
-      const file = e.target.files[0]; if (!file) return;
       const objUrl = URL.createObjectURL(file);
       const img = new Image();
       img.onload = () => {
@@ -280,6 +279,8 @@
       };
       img.src = objUrl;
     });
+
+
 
 
     function cleanProfanity(str) {
