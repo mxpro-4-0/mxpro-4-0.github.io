@@ -46,8 +46,9 @@
 
     <!-- Экран 1: Вертикальная свайп-лента 9:16 -->
     <div id="scr-feed" class="screen active" style="justify-content:flex-end; padding:44px 8px 4px; background:#111827; touch-action:none;">
-      <img id="st-bg-img" alt="" style="position:absolute; top:0; left:0; width:112%; height:112%; object-fit:cover; object-position:left top; z-index:1; display:none;" />
+      <img id="st-bg-img" src="story1_1.jpg" alt="" style="position:absolute; top:0; left:0; width:112%; height:112%; object-fit:cover; object-position:left top; z-index:1;" />
       <div id="story-stage" style="background:rgba(14,14,13,0.38); border-left:3px solid #D97757; border-radius:12px; padding:8px 10px; backdrop-filter:blur(4px); position:relative; z-index:5;">
+
         <div id="st-dots" class="step-dots" style="margin-bottom:4px;"></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
           <div id="st-speaker" style="font-size:13px; font-weight:800; color:#FF9E7D; text-shadow:0 1px 4px #000;"></div>
@@ -286,6 +287,7 @@
         if (Math.abs(dy) > 35) nextStory(dy > 0 ? 1 : -1);
       }
     }, { passive: true });
+
 
 
 ;
