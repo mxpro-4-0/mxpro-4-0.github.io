@@ -275,12 +275,14 @@
     // Жест свайпа пальцем вверх/вниз на смартфоне (как в TikTok / Shorts)
     let touchStartY = 0;
     const feedEl = document.getElementById('scr-feed');
-    feedEl.addEventListener('touchstart', e => { if (e.changedTouches.length) touchStartY = e.changedTouches.clientY; }, { passive: true });
+    feedEl.style.touchAction = 'none';
+    feedEl.addEventListener('touchstart', e => { if (e.changedTouches.length) touchStartY = e.changedTouches[0].clientY; }, { passive: true });
     feedEl.addEventListener('touchend', e => {
       if (!e.changedTouches.length) return;
-      const dy = touchStartY - e.changedTouches.clientY;
-      if (Math.abs(dy) > 48) nextStory(dy > 0 ? 1 : -1);
+      const dy = touchStartY - e.changedTouches[0].clientY;
+      if (Math.abs(dy) > 40) nextStory(dy > 0 ? 1 : -1);
     }, { passive: true });
+;
     // Озвучка реплики голосом при нажатии на имя говорящего
     document.getElementById('st-speaker').style.cursor = 'pointer';
     document.getElementById('st-speaker').title = 'Нажмите для озвучки реплики';
