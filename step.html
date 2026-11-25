@@ -236,11 +236,16 @@
       if (!rawLoadedImg) return;
       const cv = document.getElementById('fx-canvas'), cx = cv.getContext('2d');
       const st = document.getElementById('in-style').value;
-      const w = 360, h = 480;
-      // Сглаживаем реальные детали через уменьшение и растягивание (эффект рисунка)
+      const w = 360, h = 480, targetRatio = w / h;
+      const iw = rawLoadedImg.width, ih = rawLoadedImg.height, imgRatio = iw / ih;
+      let sx = 0, sy = 0, sw = iw, sh = ih;
+      if (imgRatio > targetRatio) { sw = ih * targetRatio; sx = (iw - sw) / 2; }
+      else { sh = iw / targetRatio; sy = (ih - sh) / 2; }
+      const swSmall = st === 'anime' ? 90 : 110, shSmall = st === 'anime' ? 120 : 146;
       cx.imageSmoothingEnabled = true;
-      cx.drawImage(rawLoadedImg, 0, 0, 120, 160);
-      cx.drawImage(cv, 0, 0, 120, 160, 0, 0, w, h);
+      cx.drawImage(rawLoadedImg, sx, sy, sw, sh, 0, 0, swSmall, shSmall);
+      cx.drawImage(cv, 0, 0, swSmall, shSmall, 0, 0, w, h);
+
       const src = cx.getImageData(0, 0, w, h), d = src.data;
       const copy = new Uint8ClampedArray(d);
       for (let y = 1; y < h - 1; y++) {
