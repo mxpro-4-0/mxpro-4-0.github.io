@@ -28,6 +28,8 @@
     .nav-item.active { color:var(--accent); }
     .nav-ico { font-size:18px; line-height:1; }
     .danger-banner { display:none; background:#FDECEA; border:2px solid var(--danger); color:var(--danger); padding:10px 12px; border-radius:10px; font-size:13px; font-weight:700; margin-bottom:10px; text-align:center; }
+    @keyframes breathe { 0%,100% { transform:translateY(0) scale(1); } 50% { transform:translateY(-5px) scale(1.02); } }
+    .char-sprite { width:130px; height:150px; margin:0 auto -12px; display:block; animation:breathe 3.2s ease-in-out infinite; filter:drop-shadow(0 8px 16px rgba(0,0,0,0.65)); }
   </style>
 </head>
 <body>
@@ -38,8 +40,10 @@
     </div>
 
     <!-- Экран 1: Вертикальная свайп-лента 9:16 -->
-    <div id="scr-feed" class="screen active" style="justify-content:flex-end; padding:64px 14px 16px; background:linear-gradient(160deg,#1f2937,#111827);">
-      <div id="story-stage" style="background:rgba(20,20,19,0.88); border-left:4px solid #D97757; border-radius:14px; padding:16px; backdrop-filter:blur(10px);">
+    <div id="scr-feed" class="screen active" style="justify-content:flex-end; padding:58px 14px 16px; background:linear-gradient(160deg,#1f2937,#111827);">
+      <div id="st-sprite"></div>
+      <div id="story-stage" style="background:rgba(20,20,19,0.9); border-left:4px solid #D97757; border-radius:14px; padding:15px; backdrop-filter:blur(10px); position:relative; z-index:5;">
+
         <div id="st-meta" style="font-size:11px; color:#FFB89E; font-weight:700; margin-bottom:4px;"></div>
         <div id="st-speaker" style="font-size:15px; font-weight:800; color:#D97757; margin-bottom:6px;"></div>
         <div id="st-text" style="font-size:15px; line-height:1.5; margin-bottom:14px;"></div>
@@ -116,27 +120,43 @@
     document.getElementById('my-id-top').textContent = uid;
     updateSparks(0);
 
-    let stories = JSON.parse(localStorage.getItem('mxs_stories') || 'null') || [
-      { title: 'Попаданец в 8 «Б»', genre: 'Аниме • Школа', speaker: 'Марк (из XII века)', text: 'Я очнулся за деревянной партой. В руках у соседа светится плоское зеркало без рамки, а к доске выходит женщина с мелом...', bg: 'linear-gradient(155deg,#1e3a8a,#be185d)', c1: 'Спросить соседа, какой сейчас год', r1: 'Сосед покрутил пальцем у виска и показал экран: 2026 год! Придётся сдавать алгебру вместо стрельбы из лука.' },
-      { title: 'Шёпот за окном в 03:15', genre: 'Манга • Хоррор', speaker: 'Алиса', text: 'Снег за стеклом шёл снизу вверх. На подоконнике остались три мокрых следа, но окно было заперто изнутри на шпингалет.', bg: 'linear-gradient(155deg,#111827,#374151)', c1: 'Посветить фонариком в темноту', r1: 'В луче фонаря на стекле проступила надпись изнутри: «Не оборачивайся до рассвета». Секретный финал открыт!' }
+    function getSpriteSVG(mood, isManga) {
+      const hair = isManga ? '#1F2937' : '#D97757';
+      const skin = isManga ? '#F3F4F6' : '#FDE6D8';
+      const eyes = mood === 'shock' ? 'r="5"' : (mood === 'angry' ? 'r="3.5"' : 'r="4"');
+      const mouth = mood === 'smile' ? 'M56 76 Q65 84 74 76' : (mood === 'shock' ? 'M61 78 A4 4 0 1 0 69 78 A4 4 0 1 0 61 78' : 'M57 80 L73 78');
+      return `<svg class="char-sprite" viewBox="0 0 130 150"><path d="M25 150 C25 110 105 110 105 150 Z" fill="${isManga?'#111827':'#292524'}"/><circle cx="65" cy="62" r="26" fill="${skin}"/><path d="M37 58 C37 26 93 26 93 58 C88 42 74 38 65 44 C54 38 42 44 37 58 Z" fill="${hair}"/><circle cx="55" cy="62" ${eyes} fill="#141413"/><circle cx="75" cy="62" ${eyes} fill="#141413"/><path d="${mouth}" stroke="#141413" stroke-width="2.5" fill="none" stroke-linecap="round"/></svg>`;
+    }
+    const DEFAULT_STORIES = [
+      { title: 'Попаданец в 8 «Б»', genre: 'Аниме • Школа', speaker: 'Марк (из XII века)', mood: 'shock', text: 'Я очнулся за деревянной партой. В руках у соседа светится плоское зеркало без рамки, а к доске выходит женщина с мелом...', bg: 'linear-gradient(155deg,#1e3a8a,#be185d)', c1: 'Спросить соседа, какой сейчас год', r1: 'Сосед покрутил пальцем у виска и показал экран: 2026 год! Придётся сдавать алгебру вместо стрельбы из лука.', c2: 'Достать деревянный меч из сумки', r2: 'Весь класс замер и начал снимать тебя на телефоны. Через час ты стал главной звездой школы!' },
+      { title: 'Шёпот за окном в 03:15', genre: 'Манга • Хоррор', speaker: 'Алиса', mood: 'shock', text: 'Снег за стеклом шёл снизу вверх. На подоконнике остались три мокрых следа, но окно было заперто изнутри на шпингалет.', bg: 'linear-gradient(155deg,#111827,#374151)', c1: 'Посветить фонариком в темноту', r1: 'В луче фонаря на стекле проступила надпись изнутри: «Не оборачивайся до рассвета». Секретный финал открыт!', c2: 'Резко распахнуть шторы', r2: 'За стеклом никого не было — только маска белого зайца лежала прямо на сугробе.' },
+      { title: 'Автобус № 410 в лето', genre: 'Аниме • Романтика', speaker: 'Лена', mood: 'smile', text: 'Ты уснул в зимней электричке, а проснулся от запаха хвои и солнечных бликов. Девушка в пионерском галстуке протягивает тебе билет.', bg: 'linear-gradient(155deg,#065f46,#d97706)', c1: 'Взять билет и выйти на остановке', r1: 'За воротами лагеря шумело бесконечное лето. Кажется, домой ты вернёшься не скоро.', c2: 'Остаться в автобусе до конечной', r2: 'Автобус тронулся в туман, а на твоей ладони остался тёплый ключ от музыкального кружка.' },
+      { title: 'Детектив за 60 секунд', genre: 'Манга • Детектив', speaker: 'Следователь Громов', mood: 'angry', text: 'Из сейфа пропал алмаз. Подозреваемых двое: повар говорит, что резал лед для коктейлей, а садовник — что поливал розы в грозу.', bg: 'linear-gradient(155deg,#1f2937,#7f1d1d)', c1: 'Арестовать садовника', r1: 'Верно! Зачем поливать розы во время грозы? Дело раскрыто за 15 секунд (+500 Искр)!', c2: 'Арестовать повара', r2: 'Ошибка! Повар действительно готовил напитки. Настоящий вор скрылся в саду.' },
+      { title: 'Курьер Нео-Уфы 2099', genre: 'Аниме • Киберпанк', speaker: 'Кира', mood: 'smile', text: 'Дрон-перехватчик прижал твой байк к краю эстакады. В рюкзаке — чип памяти, за который корпорация даёт миллион кредитов.', bg: 'linear-gradient(155deg,#311042,#0284c7)', c1: 'Включить форсаж и прыгнуть с моста', r1: 'Магнитные подушки сработали в метре от воды! Ты ушёл от погони в нижний уровень города.', c2: 'Взломать частоту дрона', r2: 'Дрон перешёл на твою сторону и стал твоим личным телохранителем!' },
+      { title: 'Последний вагон на Север', genre: 'Манга • Мистика', speaker: 'Проводник', mood: 'mystery', text: 'В твоём билете указан 13-й вагон, но за 12-м сразу начинается открытая площадка с ледяным ветром и фонарём.', bg: 'linear-gradient(155deg,#0f172a,#1e293b)', c1: 'Шагнуть на площадку со старым фонарём', r1: 'Вспышка света — и дверь 13-го вагона проявилась из воздуха. Внутри тебя уже ждали.', c2: 'Вернуться в купе и лечь спать', r2: 'Утром поезд прибыл на станцию, которой нет ни на одной карте мира.' }
     ];
+    let stories = JSON.parse(localStorage.getItem('mxs_stories_v2') || 'null') || DEFAULT_STORIES;
     let idx = 0, photoData = '';
-
     function renderStory() {
       const s = stories[idx % stories.length];
       const stage = document.getElementById('scr-feed');
       stage.style.background = s.img ? `url(${s.img}) center/cover no-repeat` : s.bg;
+      document.getElementById('st-sprite').innerHTML = getSpriteSVG(s.mood || 'smile', s.genre.includes('Манга'));
       document.getElementById('st-meta').textContent = `${s.genre} • «${s.title}»`;
-      document.getElementById('st-speaker').textContent = s.speaker;
+      document.getElementById('st-speaker').textContent = '🔊 ' + s.speaker;
       document.getElementById('st-text').textContent = s.text;
       const box = document.getElementById('st-choices');
       box.innerHTML = '';
-      const b1 = document.createElement('button');
-      b1.textContent = '▸ ' + s.c1;
-      b1.style.cssText = 'padding:11px 14px;border-radius:10px;border:1px solid #D97757;background:rgba(217,119,87,0.22);color:#FFF;font-weight:600;text-align:left;cursor:pointer;';
-      b1.onclick = () => { document.getElementById('st-text').textContent = s.r1; box.innerHTML = ''; updateSparks(500); };
-      box.appendChild(b1);
+      [[s.c1, s.r1], [s.c2, s.r2]].forEach(([ch, res]) => {
+        if (!ch) return;
+        const b = document.createElement('button');
+        b.textContent = '▸ ' + ch;
+        b.style.cssText = 'padding:10px 13px;border-radius:10px;border:1px solid #D97757;background:rgba(217,119,87,0.22);color:#FFF;font-weight:600;text-align:left;cursor:pointer;font-size:13.5px;';
+        b.onclick = () => { document.getElementById('st-text').textContent = res; box.innerHTML = ''; updateSparks(500); };
+        box.appendChild(b);
+      });
     }
+
     function nextStory(d) { idx = (idx + d + stories.length) % stories.length; renderStory(); }
     function switchTab(t) {
       ['feed','create','top','profile'].forEach(k => {
@@ -186,7 +206,7 @@
       alertBox.style.display = 'none';
       const st = document.getElementById('in-style').value;
       stories.unshift({ title, genre: st === 'manga' ? 'Манга • Автор' : 'Аниме • Автор', speaker: uid, text, img: photoData, bg: 'linear-gradient(155deg,#7c2d12,#141413)', c1, r1 });
-      localStorage.setItem('mxs_stories', JSON.stringify(stories));
+      localStorage.setItem('mxs_stories_v2', JSON.stringify(stories));
       updateSparks(15000);
       idx = 0; renderStory(); switchTab('feed');
     }
