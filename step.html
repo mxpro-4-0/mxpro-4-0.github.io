@@ -45,22 +45,24 @@
     </div>
 
     <!-- Экран 1: Вертикальная свайп-лента 9:16 -->
-    <div id="scr-feed" class="screen active" style="justify-content:flex-end; padding:48px 10px 8px; background:#111827; touch-action:none;">
-      <div id="story-stage" style="background:rgba(14,14,13,0.78); border-left:3px solid #D97757; border-radius:12px; padding:10px 12px; backdrop-filter:blur(8px); position:relative; z-index:5;">
-        <div id="st-dots" class="step-dots" style="margin-bottom:5px;"></div>
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:3px;">
-          <div id="st-speaker" style="font-size:13.5px; font-weight:800; color:#D97757;"></div>
-          <div id="st-meta" style="font-size:10px; color:#FFB89E; font-weight:600;"></div>
+    <div id="scr-feed" class="screen active" style="justify-content:flex-end; padding:44px 8px 4px; background:#111827; touch-action:none;">
+      <img id="st-bg-img" alt="" style="position:absolute; top:0; left:0; width:112%; height:112%; object-fit:cover; object-position:left top; z-index:1; display:none;" />
+      <div id="story-stage" style="background:rgba(14,14,13,0.38); border-left:3px solid #D97757; border-radius:12px; padding:8px 10px; backdrop-filter:blur(4px); position:relative; z-index:5;">
+        <div id="st-dots" class="step-dots" style="margin-bottom:4px;"></div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
+          <div id="st-speaker" style="font-size:13px; font-weight:800; color:#FF9E7D; text-shadow:0 1px 4px #000;"></div>
+          <div id="st-meta" style="font-size:10px; color:rgba(255,255,255,0.75); font-weight:600; text-shadow:0 1px 3px #000;"></div>
         </div>
-        <div id="st-text" style="font-size:13.5px; line-height:1.4; margin-bottom:8px;"></div>
-        <div id="st-choices" style="display:flex; flex-direction:column; gap:5px;"></div>
+        <div id="st-text" style="font-size:12.5px; line-height:1.35; color:rgba(255,255,255,0.85); text-shadow:0 1px 4px #000; margin-bottom:6px;"></div>
+        <div id="st-choices" style="display:flex; flex-direction:column; gap:4px;"></div>
       </div>
-      <div style="display:flex; justify-content:space-between; margin-top:6px; gap:6px;">
-        <button onclick="nextStory(-1)" style="padding:7px 10px; border-radius:8px; border:1px solid #333; background:rgba(26,25,24,0.85); color:#FAF9F5; font-size:12px; font-weight:600; cursor:pointer;">↑ Назад</button>
-        <button onclick="shareStory()" style="flex:1; padding:7px 10px; border-radius:8px; border:1px solid #D97757; background:rgba(217,119,87,0.22); color:#FFB89E; font-size:12px; font-weight:700; cursor:pointer;">Поделиться (+25к ⚡)</button>
-        <button onclick="nextStory(1)" style="padding:7px 10px; border-radius:8px; border:none; background:#D97757; color:#FFF; font-size:12px; font-weight:700; cursor:pointer;">Вперёд ↓</button>
+      <div style="display:flex; justify-content:space-between; margin-top:4px; gap:5px; position:relative; z-index:5;">
+        <button onclick="nextStory(-1)" style="padding:5px 9px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(20,20,19,0.5); color:rgba(255,255,255,0.85); font-size:11.5px; font-weight:600; cursor:pointer;">↑ Назад</button>
+        <button onclick="shareStory()" style="flex:1; padding:5px 9px; border-radius:8px; border:1px solid rgba(217,119,87,0.65); background:rgba(217,119,87,0.3); color:#FFD6C7; font-size:11.5px; font-weight:700; cursor:pointer;">Поделиться (+25к ⚡)</button>
+        <button onclick="nextStory(1)" style="padding:5px 9px; border-radius:8px; border:none; background:rgba(217,119,87,0.85); color:#FFF; font-size:11.5px; font-weight:700; cursor:pointer;">Вперёд ↓</button>
       </div>
     </div>
+
 
     <!-- Экран 2: Конструктор за 3 минуты + авто-фильтр Аниме/Манга + Цензор РФ -->
     <div id="scr-create" class="screen" style="background:#FAF9F5; color:#141413; padding:62px 14px 16px;">
@@ -275,15 +277,16 @@
     let touchStartY = 0;
     document.addEventListener('touchstart', e => {
       if (document.getElementById('scr-feed').classList.contains('active') && e.touches.length) {
-        touchStartY = e.touches.clientY;
+        touchStartY = e.touches[0].clientY;
       }
     }, { passive: true });
     document.addEventListener('touchend', e => {
       if (document.getElementById('scr-feed').classList.contains('active') && e.changedTouches.length) {
-        const dy = touchStartY - e.changedTouches.clientY;
+        const dy = touchStartY - e.changedTouches[0].clientY;
         if (Math.abs(dy) > 35) nextStory(dy > 0 ? 1 : -1);
       }
     }, { passive: true });
+
 
 ;
     // Озвучка реплики голосом при нажатии на имя говорящего
