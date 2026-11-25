@@ -231,29 +231,44 @@
       const link = location.origin + location.pathname + '?ref=' + uid;
       if (navigator.clipboard) navigator.clipboard.writeText(link);
       alert('Ссылка приглашения скопирована! Когда друг откроет её, вы оба получите +25 000 Искр:\n' + link);
-    }
-    let rawLoadedImg = null;
+    }    let rawLoadedImg = null;
     function applyToonFilter() {
       if (!rawLoadedImg) return;
       const cv = document.getElementById('fx-canvas'), cx = cv.getContext('2d');
       const st = document.getElementById('in-style').value;
-      cx.drawImage(rawLoadedImg, 0, 0, 360, 480);
-      const id = cx.getImageData(0, 0, 360, 480), d = id.data;
-      for (let i = 0; i < d.length; i += 4) {
-        if (st === 'manga') {
-          const g = 0.3 * d[i] + 0.59 * d[i + 1] + 0.11 * d[i + 2];
-          const v = g > 135 ? 245 : (g > 85 ? 130 : 20);
-          d[i] = d[i + 1] = d[i + 2] = v;
-        } else {
-          d[i] = Math.min(255, Math.round(d[i] / 52) * 52 + 18);
-          d[i + 1] = Math.min(255, Math.round(d[i + 1] / 52) * 52 + 12);
-          d[i + 2] = Math.min(255, Math.round(d[i + 2] / 52) * 52 + 22);
+      const w = 360, h = 480;
+      // Сглаживаем реальные детали через уменьшение и растягивание (эффект рисунка)
+      cx.imageSmoothingEnabled = true;
+      cx.drawImage(rawLoadedImg, 0, 0, 120, 160);
+      cx.drawImage(cv, 0, 0, 120, 160, 0, 0, w, h);
+      const src = cx.getImageData(0, 0, w, h), d = src.data;
+      const copy = new Uint8ClampedArray(d);
+      for (let y = 1; y < h - 1; y++) {
+        for (let x = 1; x < w - 1; x++) {
+          const i = (y * w + x) * 4;
+          const r = copy[i], g = copy[i + 1], b = copy[i + 2];
+          const lum = 0.3 * r + 0.59 * g + 0.11 * b;
+          const lumR = 0.3 * copy[i + 4] + 0.59 * copy[i + 5] + 0.11 * copy[i + 6];
+          const lumD = 0.3 * copy[i + w * 4] + 0.59 * copy[i + w * 4 + 1] + 0.11 * copy[i + w * 4 + 2];
+          const edge = Math.abs(lum - lumR) + Math.abs(lum - lumD);
+          if (edge > 28) {
+            d[i] = d[i + 1] = d[i + 2] = 18; // Чёрная обводка тушью
+          } else if (st === 'manga') {
+            const v = lum > 145 ? 250 : (lum > 95 ? 155 : 25);
+            d[i] = d[i + 1] = d[i + 2] = v;
+          } else {
+            // Плоская 4-уровневая аниме-заливка с усилением сочности
+            d[i] = Math.min(255, Math.floor(r / 64) * 75 + 25);
+            d[i + 1] = Math.min(255, Math.floor(g / 64) * 72 + 20);
+            d[i + 2] = Math.min(255, Math.floor(b / 64) * 78 + 30);
+          }
         }
       }
-      cx.putImageData(id, 0, 0);
+      cx.putImageData(src, 0, 0);
       cv.style.display = 'block';
       photoData = cv.toDataURL('image/jpeg', 0.72);
     }
+
     document.getElementById('in-style').addEventListener('change', applyToonFilter);
     document.getElementById('in-photo').addEventListener('change', function(e) {
       const file = e.target.files[0]; if (!file) return;
