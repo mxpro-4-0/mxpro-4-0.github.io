@@ -3,38 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline' https://googleapis.com; font-src https://gstatic.com; script-src 'self' 'unsafe-inline';" />
-  <title>MX-Step (Beta) — Интерактивная свайп-лента микро-новелл и Аниме-историй</title>
+  <title>MX-Step (Beta) — Свайп-лента новелл</title>
   <link rel="icon" type="image/png" href="icon.png" />
   <link rel="apple-touch-icon" href="icon.png" />
   <meta name="theme-color" content="#141413" />
-  <link href="https://googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,600;1,6..72,400&display=swap" rel="stylesheet">
   <style>
-    :root { --bg:#FAF9F5; --dark:#141413; --accent:#D97757; --accent-h:#C46343; --muted:#5E5D59; --border:#E5E2D9; --danger:#C62828; }
     * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-    html, body { font-family:'Inter',sans-serif; background:#0D0D0C; color:#FAF9F5; margin:0; padding:0; width:100%; height:100%; overflow:hidden; }
-    .app-shell { position:fixed; inset:0; width:100%; height:100%; background:var(--dark); display:flex; flex-direction:column; overflow:hidden; }
+    html, body { font-family:system-ui,sans-serif; background:#0D0D0C; color:#FAF9F5; width:100%; height:100%; overflow:hidden; }
+    .app-shell { position:fixed; inset:0; width:100%; height:100%; background:#141413; display:flex; flex-direction:column; overflow:hidden; }
     @media (min-width: 600px) { .app-shell { max-width:460px; left:50%; transform:translateX(-50%); border-left:1px solid #262523; border-right:1px solid #262523; } }
-
-
-    .top-hud { position:absolute; top:0; left:0; right:0; z-index:20; padding:12px 14px; background:linear-gradient(180deg, rgba(13,13,12,0.88) 0%, rgba(13,13,12,0) 100%); display:flex; justify-content:space-between; align-items:center; gap:8px; }
-    .brand-pill { display:flex; align-items:center; gap:6px; font-weight:800; font-size:15px; letter-spacing:-0.02em; }
-    .vip-badge { background:rgba(217,119,87,0.2); border:1px solid var(--accent); color:#FFB89E; font-size:10.5px; font-weight:700; padding:3px 7px; border-radius:999px; }
-    .wallet-pill { background:rgba(250,249,245,0.12); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.18); padding:5px 10px; border-radius:999px; font-size:12px; font-weight:700; color:#FFD580; cursor:pointer; }
+    .top-hud { position:absolute; top:0; left:0; right:0; z-index:20; padding:10px 12px; background:linear-gradient(180deg, rgba(13,13,12,0.85) 0%, rgba(13,13,12,0) 100%); display:flex; justify-content:space-between; align-items:center; }
+    .brand-pill { display:flex; align-items:center; gap:6px; font-weight:800; font-size:15px; }
+    .vip-badge { background:rgba(217,119,87,0.25); border:1px solid #D97757; color:#FFB89E; font-size:10px; font-weight:700; padding:2px 7px; border-radius:999px; }
+    .wallet-pill { background:rgba(20,20,19,0.75); border:1px solid rgba(255,255,255,0.2); padding:5px 10px; border-radius:999px; font-size:12px; font-weight:700; color:#FFD580; cursor:pointer; }
     .screen { flex:1; position:relative; display:none; flex-direction:column; overflow-y:auto; }
     .screen.active { display:flex; }
-    .bottom-nav { height:62px; background:#141413; border-top:1px solid #262523; display:grid; grid-template-columns:repeat(4,1fr); z-index:30; flex-shrink:0; }
-    .nav-item { background:none; border:none; color:#8E8C86; font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; cursor:pointer; }
-    .nav-item.active { color:var(--accent); }
-    .nav-ico { font-size:18px; line-height:1; }
-    .danger-banner { display:none; background:#FDECEA; border:2px solid var(--danger); color:var(--danger); padding:10px 12px; border-radius:10px; font-size:13px; font-weight:700; margin-bottom:10px; text-align:center; }
-    @keyframes kenburns { 0%,100% { background-size:100% auto; } 50% { background-size:106% auto; } }
-    #scr-feed { background-position:0% 0%; background-size:112% 112%; transition:background-image 0.45s ease-in-out; }
-    .step-dots { display:flex; gap:5px; margin-bottom:8px; }
-    .step-dot { height:3px; flex:1; border-radius:2px; background:rgba(255,255,255,0.22); }
+    .bottom-nav { height:58px; background:#141413; border-top:1px solid #262523; display:grid; grid-template-columns:repeat(4,1fr); z-index:30; flex-shrink:0; }
+    .nav-item { background:none; border:none; color:#8E8C86; font-size:11px; font-weight:600; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; cursor:pointer; }
+    .nav-item.active { color:#D97757; }
+    .nav-ico { font-size:17px; line-height:1; }
+    .step-dots { display:flex; gap:4px; margin-bottom:4px; }
+    .step-dot { height:3px; flex:1; border-radius:2px; background:rgba(255,255,255,0.25); }
     .step-dot.on { background:#D97757; }
-
-
+    .danger-banner { display:none; background:#FDECEA; border:2px solid #C62828; color:#C62828; padding:9px; border-radius:10px; font-size:13px; font-weight:700; margin-bottom:8px; text-align:center; }
   </style>
 </head>
 <body>
@@ -43,32 +34,26 @@
       <div class="brand-pill">MX-Step <span class="vip-badge">VIP 1000</span></div>
       <div class="wallet-pill" id="wallet-display" onclick="switchTab('profile')">⚡ 250 000 Искр</div>
     </div>
-
-    <!-- Экран 1: Вертикальная свайп-лента 9:16 -->
-    <div id="scr-feed" class="screen active" style="justify-content:flex-end; padding:44px 8px 4px; background:#111827; touch-action:none;">
+    <div id="scr-feed" class="screen active" style="justify-content:flex-end; padding:44px 8px 6px; background:#111827; touch-action:none;">
       <img id="st-bg-img" src="story1_1.jpg" alt="" style="position:absolute; top:0; left:0; width:112%; height:112%; object-fit:cover; object-position:left top; z-index:1;" />
-      <div id="story-stage" style="background:rgba(14,14,13,0.38); border-left:3px solid #D97757; border-radius:12px; padding:8px 10px; backdrop-filter:blur(4px); position:relative; z-index:5;">
-
-        <div id="st-dots" class="step-dots" style="margin-bottom:4px;"></div>
+      <div id="story-stage" style="background:rgba(14,14,13,0.52); border-left:3px solid #D97757; border-radius:12px; padding:8px 10px; position:relative; z-index:5;">
+        <div id="st-dots" class="step-dots"></div>
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2px;">
-          <div id="st-speaker" style="font-size:13px; font-weight:800; color:#FF9E7D; text-shadow:0 1px 4px #000;"></div>
-          <div id="st-meta" style="font-size:10px; color:rgba(255,255,255,0.75); font-weight:600; text-shadow:0 1px 3px #000;"></div>
+          <div id="st-speaker" style="font-size:13px; font-weight:800; color:#FF9E7D; text-shadow:0 1px 3px #000;"></div>
+          <div id="st-meta" style="font-size:10px; color:rgba(255,255,255,0.8); font-weight:600; text-shadow:0 1px 3px #000;"></div>
         </div>
-        <div id="st-text" style="font-size:12.5px; line-height:1.35; color:rgba(255,255,255,0.85); text-shadow:0 1px 4px #000; margin-bottom:6px;"></div>
+        <div id="st-text" style="font-size:12.5px; line-height:1.35; color:rgba(255,255,255,0.92); text-shadow:0 1px 3px #000; margin-bottom:6px;"></div>
         <div id="st-choices" style="display:flex; flex-direction:column; gap:4px;"></div>
       </div>
       <div style="display:flex; justify-content:space-between; margin-top:4px; gap:5px; position:relative; z-index:5;">
-        <button onclick="nextStory(-1)" style="padding:5px 9px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); background:rgba(20,20,19,0.5); color:rgba(255,255,255,0.85); font-size:11.5px; font-weight:600; cursor:pointer;">↑ Назад</button>
-        <button onclick="shareStory()" style="flex:1; padding:5px 9px; border-radius:8px; border:1px solid rgba(217,119,87,0.65); background:rgba(217,119,87,0.3); color:#FFD6C7; font-size:11.5px; font-weight:700; cursor:pointer;">Поделиться (+25к ⚡)</button>
-        <button onclick="nextStory(1)" style="padding:5px 9px; border-radius:8px; border:none; background:rgba(217,119,87,0.85); color:#FFF; font-size:11.5px; font-weight:700; cursor:pointer;">Вперёд ↓</button>
+        <button onclick="nextStory(-1)" style="padding:6px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.25); background:rgba(20,20,19,0.7); color:#FFF; font-size:11.5px; font-weight:600; cursor:pointer;">↑ Назад</button>
+        <button onclick="shareStory()" style="flex:1; padding:6px 10px; border-radius:8px; border:1px solid #D97757; background:rgba(217,119,87,0.4); color:#FFD6C7; font-size:11.5px; font-weight:700; cursor:pointer;">Поделиться (+25к ⚡)</button>
+        <button onclick="nextStory(1)" style="padding:6px 10px; border-radius:8px; border:none; background:#D97757; color:#FFF; font-size:11.5px; font-weight:700; cursor:pointer;">Вперёд ↓</button>
       </div>
     </div>
-
-
-    <!-- Экран 2: Конструктор за 3 минуты + авто-фильтр Аниме/Манга + Цензор РФ -->
-    <div id="scr-create" class="screen" style="background:#FAF9F5; color:#141413; padding:62px 14px 16px;">
-      <div style="font-family:'Newsreader',serif; font-size:22px; font-weight:600; margin-bottom:4px;">Создать микро-новеллу</div>
-      <div style="font-size:12px; color:#5E5D59; margin-bottom:10px;">Фото с камеры автоматом перерисовывается в Аниме или Мангу (152-ФЗ)</div>
+    <div id="scr-create" class="screen" style="background:#FAF9F5; color:#141413; padding:56px 14px 16px;">
+      <div style="font-size:20px; font-weight:800; margin-bottom:4px;">Создать микро-новеллу</div>
+      <div style="font-size:12px; color:#5E5D59; margin-bottom:10px;">Фото с камеры автоматом переводится в Аниме или Мангу (152-ФЗ)</div>
       <div id="censor-alert" class="danger-banner">Данный контент запрещено размещать</div>
       <input id="in-title" placeholder="Название истории (например: Попаданец в 8Б)" style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px;" />
       <select id="in-style" style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px; background:#FFF;">
@@ -76,27 +61,24 @@
         <option value="manga">Стиль: Ч/Б Манга-хоррор (Зайчик)</option>
       </select>
       <input type="file" id="in-photo" accept="image/*" style="margin-bottom:8px; font-size:12px;" />
-      <canvas id="fx-canvas" width="480" height="640" style="display:none; width:100%; border-radius:12px; margin-bottom:8px;"></canvas>
-      <textarea id="in-text" rows="3" placeholder="Реплика героя (мат и запрещённый контент блокируются)..." style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px;"></textarea>
+      <canvas id="fx-canvas" width="360" height="480" style="display:none; width:100%; border-radius:12px; margin-bottom:8px;"></canvas>
+      <textarea id="in-text" rows="3" placeholder="Реплика героя..." style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px;"></textarea>
       <input id="in-c1" placeholder="Кнопка выбора 1 (например: Открыть дверь)" style="width:100%; padding:9px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:6px; font-size:13px;" />
       <input id="in-c1-res" placeholder="Финал выбора 1" style="width:100%; padding:9px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:10px; font-size:13px;" />
       <button onclick="publishStory()" style="width:100%; padding:12px; border-radius:12px; border:none; background:#D97757; color:#FFF; font-weight:700; font-size:15px; cursor:pointer;">Опубликовать в ленту (+15 000 Искр)</button>
     </div>
-
-    <!-- Экран 3: Топ авторов -->
-    <div id="scr-top" class="screen" style="background:#FAF9F5; color:#141413; padding:62px 14px 16px;">
-      <div style="font-family:'Newsreader',serif; font-size:22px; font-weight:600; margin-bottom:8px;">Топ авторов MX-Step</div>
+    <div id="scr-top" class="screen" style="background:#FAF9F5; color:#141413; padding:56px 14px 16px;">
+      <div style="font-size:20px; font-weight:800; margin-bottom:8px;">Топ авторов MX-Step</div>
       <div style="background:#FFF; border:1px solid #E5E2D9; border-radius:12px; padding:12px; margin-bottom:8px;"><b>1. @Alisa_Novels</b> <span style="color:#D97757; font-size:12px;">VIP #004</span><br><span style="font-size:12px; color:#5E5D59;">Рейтинг ядра: 96/100 • 14 200 прохождений</span></div>
       <div style="background:#FFF; border:1px solid #E5E2D9; border-radius:12px; padding:12px; margin-bottom:8px;"><b>2. @DarkBunny_Ufa</b> <span style="color:#D97757; font-size:12px;">VIP #019</span><br><span style="font-size:12px; color:#5E5D59;">Рейтинг ядра: 94/100 • 9 850 прохождений</span></div>
       <div style="background:#FFF; border:1px solid #E5E2D9; border-radius:12px; padding:12px;"><b>3. Вы (<span id="my-id-top"></span>)</b><br><span style="font-size:12px; color:#5E5D59;">Статус: Клуб первых 1 000 VIP-основателей</span></div>
     </div>
 
-    <!-- Экран 4: Профиль, кошелёк Искр и замороженный вывод по СБП -->
-    <div id="scr-profile" class="screen" style="background:#FAF9F5; color:#141413; padding:62px 14px 16px;">
+    <div id="scr-profile" class="screen" style="background:#FAF9F5; color:#141413; padding:56px 14px 16px;">
       <div style="background:#141413; color:#FAF9F5; border-radius:14px; padding:16px; margin-bottom:12px;">
         <div style="font-size:12px; color:#FFB89E;">Клуб первых 1 000 VIP-основателей</div>
         <div style="font-size:24px; font-weight:800; color:#FFD580; margin:4px 0;" id="prof-sparks">250 000 Искр</div>
-        <div style="font-size:12px; opacity:0.8;">Ваш реферальный код: <b id="my-ref-code"></b> (+25 000 Искр обоим за друга)</div>
+        <div style="font-size:12px; opacity:0.85;">Ваш реферальный код: <b id="my-ref-code"></b> (+25 000 Искр обоим за друга)</div>
       </div>
       <button disabled style="width:100%; padding:11px; border-radius:10px; border:1px solid #E5E2D9; background:#EFECE6; color:#8E8C86; font-weight:700; margin-bottom:8px;">Вывод по СБП по номеру телефона (Открытие в феврале 2027)</button>
       <button disabled style="width:100%; padding:11px; border-radius:10px; border:1px solid #E5E2D9; background:#EFECE6; color:#8E8C86; font-weight:700; margin-bottom:12px;">Коммерческий статус и платные главы (Скоро — Бета 0 ₽)</button>
@@ -111,7 +93,6 @@
     </nav>
   </div>
   <script>
-
     const uid = localStorage.getItem('mxs_uid') || ('MX-' + Math.floor(1000 + Math.random() * 9000));
     localStorage.setItem('mxs_uid', uid);
     let sparks = parseInt(localStorage.getItem('mxs_sparks') || '250000', 10);
@@ -146,11 +127,13 @@
         steps: [
           { img: 'story2_1.jpg', speaker: 'Алиса', text: 'Снег за стеклом шёл снизу вверх. На подоконнике остались три мокрых следа, хотя окно было заперто изнутри на шпингалет.', choices: [{ t: 'Посветить фонариком в темноту', next: 1 }, { t: 'Выйти на крыльцо к опушке леса', next: 2 }] },
           { img: 'story2_1.jpg', speaker: 'Голос из-за стекла', text: 'В луче фонаря на ледяном узоре проступила надпись: «Я оставил подарок под старой сосной. Не буди взрослых».', choices: [{ t: 'Выйти на опушку леса', next: 2 }] },
-          { img: 'story2_2.jpg', speaker: 'Лесной лес', text: 'Лунный свет резал сугробы. Прямо у кромки хвойного леса на белом снегу лежала фарфоровая маска зайца с чёрными прорезями глаз.', choices: [{ t: 'Надеть маску на лицо', next: 3 }, { t: 'Разбить маску каблуком и бежать домой', next: 4 }] },
+          { img: 'story2_2.jpg', speaker: 'Зимний лес', text: 'Лунный свет резал сугробы. Прямо у кромки хвойного леса на белом снегу лежала фарфоровая маска зайца с чёрными прорезями глаз.', choices: [{ t: 'Надеть маску на лицо', next: 3 }, { t: 'Разбить маску каблуком и бежать домой', next: 4 }] },
           { img: 'story2_2.jpg', speaker: 'Финал • Хозяин леса', text: 'Лес вокруг зашептал сотней голосов — ты стал частью зимней сказки. Тайный финал «Зайчика» (+500 Искр)!', choices: [] },
           { img: 'story2_1.jpg', speaker: 'Финал • Рассвет', text: 'Маска рассыпалась в снежную пыль, а первые лучи солнца растопили узоры на окне. Ты спасся (+500 Искр)!', choices: [] }
         ]
-      },
+      }
+    ];
+    DEFAULT_STORIES.push(
       {
         title: 'Автобус № 410 в лето', genre: 'Аниме • Романтика',
         steps: [
@@ -169,32 +152,18 @@
           { img: 'story4_2.jpg', speaker: 'Финал • Свободная сеть', text: 'Код загружен в общую сеть города! Ты сорвал куш и стал легендой Нео-Уфы (+500 Искр)!', choices: [] }
         ]
       }
-    ];
-    let stories = JSON.parse(localStorage.getItem('mxs_stories_v3') || 'null') || DEFAULT_STORIES;
-    let idx = 0, stepIdx = 0, photoData = '';
-       function loadSmartImage(imgEl, src) {
-      if (!src) { imgEl.style.display = 'none'; return; }
-      if (src.startsWith('data:')) { imgEl.src = src; imgEl.style.display = 'block'; return; }
-      const base = src.replace(/\.[^.]+$/, '');
-      const cap = base.charAt(0).toUpperCase() + base.slice(1);
-      const variants = [src, cap + '.jpg', base + '.jpeg', base + '.png', cap + '.png', 'img/' + src];
-      let attempt = 0;
-      imgEl.onerror = () => {
-        attempt++;
-        if (attempt < variants.length) imgEl.src = variants[attempt];
-        else imgEl.style.display = 'none';
-      };
-      imgEl.onload = () => { imgEl.style.display = 'block'; };
-      imgEl.src = variants[0];
-    }
+    );
+
+    try { localStorage.removeItem('mxs_stories_v3'); } catch (e) {}
+    let stories = DEFAULT_STORIES, idx = 0, stepIdx = 0, photoData = '', rawBmp = null;
+
     function renderStory() {
       const s = stories[idx % stories.length];
-      const steps = s.steps || [{ img: s.img, speaker: s.speaker, text: s.text, choices: s.c1 ? [{ t: s.c1, res: s.r1 }] : [] }];
-      const cur = steps[stepIdx] || steps[0];
-      loadSmartImage(document.getElementById('st-bg-img'), cur.img);
-
-      const dots = document.getElementById('st-dots');
-      dots.innerHTML = steps.map((_, i) => `<div class="step-dot ${i <= stepIdx ? 'on' : ''}"></div>`).join('');
+      const steps = s.steps;
+      const cur = steps.item ? steps.item(stepIdx) : steps[stepIdx];
+      const imgEl = document.getElementById('st-bg-img');
+      if (cur.img) { imgEl.src = cur.img; imgEl.style.display = 'block'; } else { imgEl.style.display = 'none'; }
+      document.getElementById('st-dots').innerHTML = steps.map((_, i) => `<div class="step-dot ${i <= stepIdx ? 'on' : ''}"></div>`).join('');
       document.getElementById('st-meta').textContent = `${s.genre} • «${s.title}» (${stepIdx + 1}/${steps.length})`;
       document.getElementById('st-speaker').textContent = '🔊 ' + cur.speaker;
       document.getElementById('st-text').textContent = cur.text;
@@ -204,17 +173,14 @@
         cur.choices.forEach(ch => {
           const b = document.createElement('button');
           b.textContent = '▸ ' + ch.t;
-          b.style.cssText = 'padding:10px 13px;border-radius:10px;border:1px solid #D97757;background:rgba(217,119,87,0.28);color:#FFF;font-weight:600;text-align:left;cursor:pointer;font-size:13.5px;';
-          b.onclick = () => {
-            if (typeof ch.next === 'number') { stepIdx = ch.next; renderStory(); if (!steps[stepIdx].choices.length) updateSparks(500); }
-            else { document.getElementById('st-text').textContent = ch.res; box.innerHTML = ''; updateSparks(500); }
-          };
+          b.style.cssText = 'padding:9px 12px;border-radius:9px;border:1px solid #D97757;background:rgba(217,119,87,0.32);color:#FFF;font-weight:600;text-align:left;cursor:pointer;font-size:13px;';
+          b.onclick = () => { stepIdx = ch.next; renderStory(); if (!(steps[stepIdx].choices && steps[stepIdx].choices.length)) updateSparks(500); };
           box.appendChild(b);
         });
       } else {
         const bNext = document.createElement('button');
         bNext.textContent = '↻ Пройти заново или свайпни вниз к следующей';
-        bNext.style.cssText = 'padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);color:#FFB89E;font-weight:600;text-align:center;cursor:pointer;font-size:12.5px;';
+        bNext.style.cssText = 'padding:8px 12px;border-radius:9px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.12);color:#FFB89E;font-weight:600;text-align:center;cursor:pointer;font-size:12px;';
         bNext.onclick = () => { stepIdx = 0; renderStory(); };
         box.appendChild(bNext);
       }
@@ -227,129 +193,60 @@
         document.getElementById('nav-' + k).classList.toggle('active', k === t);
       });
     }
+
     function shareStory() {
       const link = location.origin + location.pathname + '?ref=' + uid;
       if (navigator.clipboard) navigator.clipboard.writeText(link);
-      alert('Ссылка приглашения скопирована! Когда друг откроет её, вы оба получите +25 000 Искр:\n' + link);
+      alert('Ссылка скопирована! Вы оба получите +25 000 Искр:\n' + link);
     }
-    let rawLoadedImg = null;
+
     function applyToonFilter() {
-      if (!rawLoadedImg) return;
+      if (!rawBmp) return;
       const cv = document.getElementById('fx-canvas'), cx = cv.getContext('2d');
       const st = document.getElementById('in-style').value;
-      const w = 480, h = 640, targetRatio = w / h;
-      const iw = rawLoadedImg.width, ih = rawLoadedImg.height, imgRatio = iw / ih;
+      const w = 360, h = 480, targetRatio = w / h;
+      const iw = rawBmp.width, ih = rawBmp.height, imgRatio = iw / ih;
       let sx = 0, sy = 0, sw = iw, sh = ih;
       if (imgRatio > targetRatio) { sw = ih * targetRatio; sx = (iw - sw) / 2; }
       else { sh = iw / targetRatio; sy = (ih - sh) / 2; }
       cx.save();
       cx.clearRect(0, 0, w, h);
-      cx.drawImage(rawLoadedImg, sx, sy, sw, sh, 0, 0, w, h);
-      if (st === 'manga') {
-        cx.globalCompositeOperation = 'saturation';
-        cx.fillStyle = '#000';
-        cx.fillRect(0, 0, w, h);
-        cx.globalCompositeOperation = 'overlay';
-        cx.fillStyle = 'rgba(255,255,255,0.45)';
-        cx.fillRect(0, 0, w, h);
-        cx.globalCompositeOperation = 'multiply';
-        cx.fillStyle = 'rgba(210,215,225,0.85)';
-        cx.fillRect(0, 0, w, h);
-      } else {
-        cx.globalCompositeOperation = 'overlay';
-        cx.fillStyle = 'rgba(255, 200, 130, 0.35)';
-        cx.fillRect(0, 0, w, h);
-        cx.globalCompositeOperation = 'screen';
-        cx.fillStyle = 'rgba(45, 95, 190, 0.16)';
-        cx.fillRect(0, 0, w, h);
-      }
+      cx.drawImage(rawBmp, sx, sy, sw, sh, 0, 0, w, h);
+      cx.globalCompositeOperation = st === 'manga' ? 'saturation' : 'overlay';
+      cx.fillStyle = st === 'manga' ? '#000' : 'rgba(255, 200, 130, 0.35)';
+      cx.fillRect(0, 0, w, h);
       cx.restore();
       cv.style.display = 'block';
-      photoData = cv.toDataURL('image/jpeg', 0.68);
+      photoData = cv.toDataURL('image/jpeg', 0.6);
     }
     document.getElementById('in-style').addEventListener('change', applyToonFilter);
-    document.getElementById('in-photo').addEventListener('change', function(e) {
-      const file = e.target.files.item(0); if (!file) return;
-      const objUrl = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = () => {
-        rawLoadedImg = img;
-        applyToonFilter();
-        URL.revokeObjectURL(objUrl);
-      };
-      img.src = objUrl;
+    document.getElementById('in-photo').addEventListener('change', async function(e) {
+      const file = e.target.files.item(0);
+      if (!file) return;
+      if (rawBmp && rawBmp.close) rawBmp.close();
+      rawBmp = await createImageBitmap(file, { resizeWidth: 420, resizeQuality: 'medium' });
+      applyToonFilter();
     });
 
-
-
-
-    function cleanProfanity(str) {
-      return str.replace(/\b[а-яё]*(?:хуй|хуе|хуя|пизд|бляд|блят|ебат|ебан|ёбан|сук[аи]|мудак)[а-яё]*\b/gi, '***');
-    }
-    function isContentBlocked(raw) {
-      const low = raw.toLowerCase();
-      const bannedRoots = ['теракт', 'взрывчат', 'экстремизм', 'суицид', 'наркотик', 'убийств призыв'];
-      if (bannedRoots.some(r => low.includes(r))) return 'danger';
-      return 'ok';
-    }
     function publishStory() {
-      const title = cleanProfanity(document.getElementById('in-title').value.trim());
-      const text = cleanProfanity(document.getElementById('in-text').value.trim());
-      const c1 = cleanProfanity(document.getElementById('in-c1').value.trim() || 'Продолжить путь');
-      const r1 = cleanProfanity(document.getElementById('in-c1-res').value.trim() || 'История успешно пройдена!');
-      const alertBox = document.getElementById('censor-alert');
+      const title = document.getElementById('in-title').value.trim();
+      const text = document.getElementById('in-text').value.trim();
+      const c1 = document.getElementById('in-c1').value.trim() || 'Продолжить путь';
+      const r1 = document.getElementById('in-c1-res').value.trim() || 'История успешно пройдена!';
       if (!title || !text) return;
-      if (isContentBlocked(title + ' ' + text + ' ' + c1 + ' ' + r1) === 'danger') {
-        alertBox.style.display = 'block';
-        return;
-      }
-      alertBox.style.display = 'none';
       const st = document.getElementById('in-style').value;
       stories.unshift({ title, genre: st === 'manga' ? 'Манга • Автор' : 'Аниме • Автор', steps: [{ img: photoData, speaker: uid, text, choices: [{ t: c1, next: 1 }] }, { img: photoData, speaker: 'Финал', text: r1, choices: [] }] });
-      try {
-        localStorage.setItem('mxs_stories_v3', JSON.stringify(stories));
-      } catch (err) {
-        stories = stories.slice(0, 6);
-        try { localStorage.setItem('mxs_stories_v3', JSON.stringify(stories)); } catch (e2) {}
-      }
-      rawLoadedImg = null;
+      if (rawBmp && rawBmp.close) { rawBmp.close(); rawBmp = null; }
       photoData = '';
       updateSparks(15000);
-      idx = 0; renderStory(); switchTab('feed');
-
+      idx = 0; stepIdx = 0; renderStory(); switchTab('feed');
     }
-    // Жест свайпа пальцем вверх/вниз на смартфоне (как в TikTok / Shorts)
+
     let touchStartY = 0;
-    document.addEventListener('touchstart', e => {
-      if (document.getElementById('scr-feed').classList.contains('active') && e.touches.length) {
-        touchStartY = e.touches.item(0).clientY;
-      }
-    }, { passive: true });
-    document.addEventListener('touchend', e => {
-      if (document.getElementById('scr-feed').classList.contains('active') && e.changedTouches.length) {
-        const dy = touchStartY - e.changedTouches.item(0).clientY;
-        if (Math.abs(dy) > 35) nextStory(dy > 0 ? 1 : -1);
-      }
-    }, { passive: true });
-    document.getElementById('st-speaker').style.cursor = 'pointer';
-    document.getElementById('st-speaker').title = 'Нажмите для озвучки реплики';
-    document.getElementById('st-speaker').onclick = () => {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(document.getElementById('st-text').textContent);
-        u.lang = 'ru-RU'; window.speechSynthesis.speak(u);
-      }
-    };
-    try { localStorage.removeItem('mxs_stories_v3'); } catch (e) {}
-    stories = DEFAULT_STORIES;
+    document.addEventListener('touchstart', e => { if (document.getElementById('scr-feed').classList.contains('active') && e.touches.length) touchStartY = e.touches.item(0).clientY; }, { passive: true });
+    document.addEventListener('touchend', e => { if (document.getElementById('scr-feed').classList.contains('active') && e.changedTouches.length) { const dy = touchStartY - e.changedTouches.item(0).clientY; if (Math.abs(dy) > 35) nextStory(dy > 0 ? 1 : -1); } }, { passive: true });
+    document.getElementById('st-speaker').onclick = () => { if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(document.getElementById('st-text').textContent); u.lang = 'ru-RU'; window.speechSynthesis.speak(u); } };
     renderStory();
   </script>
-
 </body>
-
 </html>
-
-
-
-
-
