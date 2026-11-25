@@ -326,7 +326,8 @@
         await deferredStepPrompt.userChoice;
         deferredStepPrompt = null;
       } else {
-        const appUrl = 'https://github.io';
+        const appUrl = location.origin + location.pathname;
+
         if (navigator.clipboard) navigator.clipboard.writeText(appUrl).catch(() => {});
         alert('Чтобы закрепить иконку MX-Step на экране:\n1. Откройте в Chrome или Яндекс Браузере страницу:\n' + appUrl + '\n(ссылка уже скопирована!)\n2. Нажмите три точки (⋮) → «Добавить на главный экран»');
       }
