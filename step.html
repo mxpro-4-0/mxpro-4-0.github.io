@@ -204,6 +204,9 @@
       };
       img.src = URL.createObjectURL(file);
     });
+    function cleanProfanity(str) {
+      return str.replace(/\b[а-яё]*(?:хуй|хуе|хуя|пизд|бляд|блят|ебат|ебан|ёбан|сук[аи]|мудак)[а-яё]*\b/gi, '***');
+    }
     function isContentBlocked(raw) {
       const low = raw.toLowerCase();
       const bannedRoots = ['теракт', 'взрывчат', 'экстремизм', 'суицид', 'наркотик', 'убийств призыв'];
@@ -211,10 +214,10 @@
       return 'ok';
     }
     function publishStory() {
-      const title = document.getElementById('in-title').value.trim();
-      const text = document.getElementById('in-text').value.trim();
-      const c1 = document.getElementById('in-c1').value.trim() || 'Продолжить путь';
-      const r1 = document.getElementById('in-c1-res').value.trim() || 'История успешно пройдена!';
+      const title = cleanProfanity(document.getElementById('in-title').value.trim());
+      const text = cleanProfanity(document.getElementById('in-text').value.trim());
+      const c1 = cleanProfanity(document.getElementById('in-c1').value.trim() || 'Продолжить путь');
+      const r1 = cleanProfanity(document.getElementById('in-c1-res').value.trim() || 'История успешно пройдена!');
       const alertBox = document.getElementById('censor-alert');
       if (!title || !text) return;
       if (isContentBlocked(title + ' ' + text + ' ' + c1 + ' ' + r1) === 'danger') {
@@ -228,7 +231,27 @@
       updateSparks(15000);
       idx = 0; renderStory(); switchTab('feed');
     }
+    // Жест свайпа пальцем вверх/вниз на смартфоне (как в TikTok / Shorts)
+    let touchStartY = 0;
+    const feedEl = document.getElementById('scr-feed');
+    feedEl.addEventListener('touchstart', e => { touchStartY = e.changedTouches.clientY; }, { passive: true });
+    feedEl.addEventListener('touchend', e => {
+      const dy = touchStartY - e.changedTouches.clientY;
+      if (Math.abs(dy) > 48) nextStory(dy > 0 ? 1 : -1);
+    }, { passive: true });
+    // Озвучка реплики голосом при нажатии на имя говорящего
+    document.getElementById('st-speaker').style.cursor = 'pointer';
+    document.getElementById('st-speaker').title = 'Нажмите для озвучки реплики';
+    document.getElementById('st-speaker').onclick = () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(document.getElementById('st-text').textContent);
+        u.lang = 'ru-RU'; window.speechSynthesis.speak(u);
+      }
+    };
     renderStory();
+  </script>
+
   </script>
 </body>
 </html>
