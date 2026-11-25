@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>MX-Step (Beta) — Свайп-лента новелл</title>
-  <link rel="icon" type="image/png" href="icon.png" />
-  <link rel="apple-touch-icon" href="icon.png" />
+  <link rel="manifest" href="step_manifest.json" />
+  <link rel="icon" type="image/png" href="step_icon.png" />
+  <link rel="apple-touch-icon" href="step_icon.png" />
+
   <meta name="theme-color" content="#141413" />
   <style>
     * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
@@ -45,12 +47,30 @@
         <div id="st-text" style="font-size:12.5px; line-height:1.35; color:rgba(255,255,255,0.92); text-shadow:0 1px 3px #000; margin-bottom:6px;"></div>
         <div id="st-choices" style="display:flex; flex-direction:column; gap:4px;"></div>
       </div>
-      <div style="display:flex; justify-content:space-between; margin-top:4px; gap:5px; position:relative; z-index:5;">
-        <button onclick="nextStory(-1)" style="padding:6px 10px; border-radius:8px; border:1px solid rgba(255,255,255,0.25); background:rgba(20,20,19,0.7); color:#FFF; font-size:11.5px; font-weight:600; cursor:pointer;">↑ Назад</button>
-        <button onclick="shareStory()" style="flex:1; padding:6px 10px; border-radius:8px; border:1px solid #D97757; background:rgba(217,119,87,0.4); color:#FFD6C7; font-size:11.5px; font-weight:700; cursor:pointer;">Поделиться (+25к ⚡)</button>
-        <button onclick="nextStory(1)" style="padding:6px 10px; border-radius:8px; border:none; background:#D97757; color:#FFF; font-size:11.5px; font-weight:700; cursor:pointer;">Вперёд ↓</button>
+            <div style="display:flex; justify-content:space-between; margin-top:4px; gap:5px; position:relative; z-index:5;">
+        <button onclick="nextStory(-1)" style="padding:6px 9px; border-radius:8px; border:1px solid rgba(255,255,255,0.25); background:rgba(20,20,19,0.7); color:#FFF; font-size:11.5px; font-weight:600; cursor:pointer;">↑</button>
+        <button onclick="toggleComments()" id="btn-comm" style="padding:6px 9px; border-radius:8px; border:1px solid rgba(255,255,255,0.25); background:rgba(20,20,19,0.75); color:#FAF9F5; font-size:11.5px; font-weight:700; cursor:pointer;">💬 2</button>
+        <button onclick="shareStory()" style="flex:1; padding:6px 9px; border-radius:8px; border:1px solid #D97757; background:rgba(217,119,87,0.4); color:#FFD6C7; font-size:11.5px; font-weight:700; cursor:pointer;">Поделиться (+25к ⚡)</button>
+        <button onclick="nextStory(1)" style="padding:6px 9px; border-radius:8px; border:none; background:#D97757; color:#FFF; font-size:11.5px; font-weight:700; cursor:pointer;">↓</button>
+      </div>
+      <div id="comm-drawer" style="display:none; position:absolute; left:0; right:0; bottom:0; max-height:62%; background:#FAF9F5; color:#141413; border-radius:16px 16px 0 0; padding:12px; z-index:25; flex-direction:column; box-shadow:0 -8px 24px rgba(0,0,0,0.6);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <b style="font-size:14px;">Комментарии игроков</b>
+          <button onclick="toggleComments()" style="background:none; border:none; font-size:18px; font-weight:800; color:#5E5D59; cursor:pointer;">✕</button>
+        </div>
+        <div style="display:flex; gap:6px; margin-bottom:8px;">
+          <button onclick="addEmoji('🔥 Огонь!')" style="padding:4px 8px; border-radius:8px; border:1px solid #E5E2D9; background:#FFF; font-size:12px; cursor:pointer;">🔥 Огонь</button>
+          <button onclick="addEmoji('😱 Мурашки!')" style="padding:4px 8px; border-radius:8px; border:1px solid #E5E2D9; background:#FFF; font-size:12px; cursor:pointer;">😱 Шок</button>
+          <button onclick="addEmoji('❤️ Жду проду!')" style="padding:4px 8px; border-radius:8px; border:1px solid #E5E2D9; background:#FFF; font-size:12px; cursor:pointer;">❤️ Проду</button>
+        </div>
+        <div id="comm-list" style="flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:6px; margin-bottom:8px; font-size:12.5px;"></div>
+        <div style="display:flex; gap:6px;">
+          <input id="comm-input" placeholder="Написать отзыв или эмодзи..." style="flex:1; padding:8px 10px; border-radius:9px; border:1px solid #E5E2D9; font-size:13px;" />
+          <button onclick="postComment()" style="padding:8px 12px; border-radius:9px; border:none; background:#D97757; color:#FFF; font-weight:700; cursor:pointer;">➤</button>
+        </div>
       </div>
     </div>
+
     <div id="scr-create" class="screen" style="background:#FAF9F5; color:#141413; padding:56px 14px 16px;">
       <div style="font-size:20px; font-weight:800; margin-bottom:4px;">Создать микро-новеллу</div>
       <div style="font-size:12px; color:#5E5D59; margin-bottom:10px;">Фото с камеры автоматом переводится в Аниме или Мангу (152-ФЗ)</div>
@@ -246,6 +266,35 @@
     document.addEventListener('touchstart', e => { if (document.getElementById('scr-feed').classList.contains('active') && e.touches.length) touchStartY = e.touches.item(0).clientY; }, { passive: true });
     document.addEventListener('touchend', e => { if (document.getElementById('scr-feed').classList.contains('active') && e.changedTouches.length) { const dy = touchStartY - e.changedTouches.item(0).clientY; if (Math.abs(dy) > 35) nextStory(dy > 0 ? 1 : -1); } }, { passive: true });
     document.getElementById('st-speaker').onclick = () => { if ('speechSynthesis' in window) { window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(document.getElementById('st-text').textContent); u.lang = 'ru-RU'; window.speechSynthesis.speak(u); } };
+    const commStore = {};
+    function toggleComments() {
+      const d = document.getElementById('comm-drawer');
+      d.style.display = d.style.display === 'flex' ? 'none' : 'flex';
+      renderComments();
+    }
+    function renderComments() {
+      const list = commStore[idx] || ['<b>@Alisa_Novels:</b> 🔥 Атмосфера прямо как в лучших новеллах!', '<b>@Gamer_02:</b> ❤️ Сделайте продолжение этой ветки!'];
+      commStore[idx] = list;
+      document.getElementById('btn-comm').textContent = '💬 ' + list.length;
+      document.getElementById('comm-list').innerHTML = list.map(c => `<div style="background:#FFF; border:1px solid #E5E2D9; padding:7px 9px; border-radius:9px;">${c}</div>`).join('');
+    }
+    function addEmoji(txt) {
+      renderComments();
+      commStore[idx].unshift(`<b>${uid}:</b> ${txt}`);
+      renderComments();
+    }
+    function postComment() {
+      const inp = document.getElementById('comm-input');
+      const val = inp.value.trim().replace(/</g, '&lt;').replace(/\b[а-яё]*(?:хуй|хуе|хуя|пизд|бляд|блят|ебат|ебан|ёбан|сук[аи]|мудак)[а-яё]*\b/gi, '***');
+      if (!val) return;
+      renderComments();
+      commStore[idx].unshift(`<b>${uid}:</b> ${val}`);
+      inp.value = '';
+      renderComments();
+    }
+    renderStory();
+  </script>
+
     renderStory();
   </script>
 </body>
