@@ -76,7 +76,7 @@
         <option value="manga">Стиль: Ч/Б Манга-хоррор (Зайчик)</option>
       </select>
       <input type="file" id="in-photo" accept="image/*" style="margin-bottom:8px; font-size:12px;" />
-      <canvas id="fx-canvas" width="720" height="960" style="display:none; width:100%; border-radius:12px; margin-bottom:8px;"></canvas>
+      <canvas id="fx-canvas" width="480" height="640" style="display:none; width:100%; border-radius:12px; margin-bottom:8px;"></canvas>
       <textarea id="in-text" rows="3" placeholder="Реплика героя (мат и запрещённый контент блокируются)..." style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px;"></textarea>
       <input id="in-c1" placeholder="Кнопка выбора 1 (например: Открыть дверь)" style="width:100%; padding:9px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:6px; font-size:13px;" />
       <input id="in-c1-res" placeholder="Финал выбора 1" style="width:100%; padding:9px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:10px; font-size:13px;" />
@@ -231,12 +231,12 @@
       const link = location.origin + location.pathname + '?ref=' + uid;
       if (navigator.clipboard) navigator.clipboard.writeText(link);
       alert('Ссылка приглашения скопирована! Когда друг откроет её, вы оба получите +25 000 Искр:\n' + link);
-    }    let rawLoadedImg = null;
+    let rawLoadedImg = null;
     function applyToonFilter() {
       if (!rawLoadedImg) return;
       const cv = document.getElementById('fx-canvas'), cx = cv.getContext('2d');
       const st = document.getElementById('in-style').value;
-      const w = 720, h = 960, targetRatio = w / h;
+      const w = 480, h = 640, targetRatio = w / h;
       const iw = rawLoadedImg.width, ih = rawLoadedImg.height, imgRatio = iw / ih;
       let sx = 0, sy = 0, sw = iw, sh = ih;
       if (imgRatio > targetRatio) { sw = ih * targetRatio; sx = (iw - sw) / 2; }
@@ -264,23 +264,21 @@
       }
       cx.restore();
       cv.style.display = 'block';
-      photoData = cv.toDataURL('image/jpeg', 0.86);
+      photoData = cv.toDataURL('image/jpeg', 0.68);
     }
-
-
-
-
     document.getElementById('in-style').addEventListener('change', applyToonFilter);
     document.getElementById('in-photo').addEventListener('change', function(e) {
       const file = e.target.files[0]; if (!file) return;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        const img = new Image();
-        img.onload = () => { rawLoadedImg = img; applyToonFilter(); };
-        img.src = ev.target.result;
+      const objUrl = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        rawLoadedImg = img;
+        applyToonFilter();
+        URL.revokeObjectURL(objUrl);
       };
-      reader.readAsDataURL(file);
+      img.src = objUrl;
     });
+
 
     function cleanProfanity(str) {
       return str.replace(/\b[а-яё]*(?:хуй|хуе|хуя|пизд|бляд|блят|ебат|ебан|ёбан|сук[аи]|мудак)[а-яё]*\b/gi, '***');
@@ -305,10 +303,17 @@
       alertBox.style.display = 'none';
       const st = document.getElementById('in-style').value;
       stories.unshift({ title, genre: st === 'manga' ? 'Манга • Автор' : 'Аниме • Автор', steps: [{ img: photoData, speaker: uid, text, choices: [{ t: c1, next: 1 }] }, { img: photoData, speaker: 'Финал', text: r1, choices: [] }] });
-      localStorage.setItem('mxs_stories_v3', JSON.stringify(stories));
-
+      try {
+        localStorage.setItem('mxs_stories_v3', JSON.stringify(stories));
+      } catch (err) {
+        stories = stories.slice(0, 6);
+        try { localStorage.setItem('mxs_stories_v3', JSON.stringify(stories)); } catch (e2) {}
+      }
+      rawLoadedImg = null;
+      photoData = '';
       updateSparks(15000);
       idx = 0; renderStory(); switchTab('feed');
+
     }
     // Жест свайпа пальцем вверх/вниз на смартфоне (как в TikTok / Shorts)
     let touchStartY = 0;
