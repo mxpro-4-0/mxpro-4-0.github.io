@@ -307,9 +307,12 @@
         await deferredStepPrompt.userChoice;
         deferredStepPrompt = null;
       } else {
-        alert('Чтобы закрепить иконку MX-Step на экране:\n1. Откройте эту страницу в Chrome / Яндекс Браузере\n2. Нажмите три точки (⋮) → «Добавить на главный экран»');
+        const appUrl = 'https://github.io';
+        if (navigator.clipboard) navigator.clipboard.writeText(appUrl).catch(() => {});
+        alert('Чтобы закрепить иконку MX-Step на экране:\n1. Откройте в Chrome или Яндекс Браузере страницу:\n' + appUrl + '\n(ссылка уже скопирована!)\n2. Нажмите три точки (⋮) → «Добавить на главный экран»');
       }
     }
+
     renderStory();
   
   
