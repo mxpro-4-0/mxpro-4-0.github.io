@@ -34,8 +34,12 @@
   <div class="app-shell">
     <div class="top-hud">
       <div class="brand-pill">MX-Step <span class="vip-badge">VIP 1000</span></div>
-      <div class="wallet-pill" id="wallet-display" onclick="switchTab('profile')">⚡ 250 000 Искр</div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <button id="btn-install" onclick="installStepApp()" style="background:#D97757; border:none; color:#FFF; padding:5px 9px; border-radius:999px; font-size:11px; font-weight:700; cursor:pointer;">📲 Скачать</button>
+        <div class="wallet-pill" id="wallet-display" onclick="switchTab('profile')">⚡ 250 000 Искр</div>
+      </div>
     </div>
+
     <div id="scr-feed" class="screen active" style="justify-content:flex-end; padding:44px 8px 6px; background:#111827; touch-action:none;">
       <img id="st-bg-img" src="story1_1.jpg" alt="" style="position:absolute; top:0; left:0; width:112%; height:112%; object-fit:cover; object-position:left top; z-index:1;" />
       <div id="story-stage" style="background:rgba(14,14,13,0.52); border-left:3px solid #D97757; border-radius:12px; padding:8px 10px; position:relative; z-index:5;">
@@ -292,6 +296,23 @@
       inp.value = '';
       renderComments();
     }
+    let deferredStepPrompt = null;
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredStepPrompt = e;
+    });
+    async function installStepApp() {
+      if (deferredStepPrompt) {
+        deferredStepPrompt.prompt();
+        await deferredStepPrompt.userChoice;
+        deferredStepPrompt = null;
+      } else {
+        alert('Чтобы закрепить иконку MX-Step на экране:\n1. Откройте эту страницу в Chrome / Яндекс Браузере\n2. Нажмите три точки (⋮) → «Добавить на главный экран»');
+      }
+    }
+    renderStory();
+  </script>
+
     renderStory();
   
   </script>
