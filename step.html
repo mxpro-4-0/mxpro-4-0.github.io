@@ -13,8 +13,8 @@
     :root { --bg:#FAF9F5; --dark:#141413; --accent:#D97757; --accent-h:#C46343; --muted:#5E5D59; --border:#E5E2D9; --danger:#C62828; }
     * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
     html, body { font-family:'Inter',sans-serif; background:#0D0D0C; color:#FAF9F5; margin:0; padding:0; width:100%; height:100%; overflow:hidden; }
-    .app-shell { width:100%; height:100%; background:var(--dark); position:relative; display:flex; flex-direction:column; overflow:hidden; }
-    @media (min-width: 540px) { .app-shell { max-width:440px; margin:0 auto; border-left:1px solid #262523; border-right:1px solid #262523; } }
+    .app-shell { position:fixed; inset:0; width:100%; height:100%; background:var(--dark); display:flex; flex-direction:column; overflow:hidden; }
+    @media (min-width: 600px) { .app-shell { max-width:460px; left:50%; transform:translateX(-50%); border-left:1px solid #262523; border-right:1px solid #262523; } }
 
 
     .top-hud { position:absolute; top:0; left:0; right:0; z-index:20; padding:12px 14px; background:linear-gradient(180deg, rgba(13,13,12,0.88) 0%, rgba(13,13,12,0) 100%); display:flex; justify-content:space-between; align-items:center; gap:8px; }
@@ -96,51 +96,8 @@
       <button class="nav-item" id="nav-profile" onclick="switchTab('profile')"><span class="nav-ico">⚡</span>Кошелёк</button>
     </nav>
   </div>
-    <!-- Экран 2: Конструктор за 3 минуты + авто-фильтр Аниме/Манга + Цензор РФ -->
-    <div id="scr-create" class="screen" style="background:#FAF9F5; color:#141413; padding:62px 14px 16px;">
-      <div style="font-family:'Newsreader',serif; font-size:22px; font-weight:600; margin-bottom:4px;">Создать микро-новеллу</div>
-      <div style="font-size:12px; color:#5E5D59; margin-bottom:10px;">Фото с камеры автоматом перерисовывается в Аниме или Мангу (152-ФЗ)</div>
-      <div id="censor-alert" class="danger-banner">Данный контент запрещено размещать</div>
-      <input id="in-title" placeholder="Название истории (например: Попаданец в 8Б)" style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px;" />
-      <select id="in-style" style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px; background:#FFF;">
-        <option value="anime">Стиль: Аниме-реальность (Бесконечное лето)</option>
-        <option value="manga">Стиль: Ч/Б Манга-хоррор (Зайчик)</option>
-      </select>
-      <input type="file" id="in-photo" accept="image/*" style="margin-bottom:8px; font-size:12px;" />
-      <canvas id="fx-canvas" width="360" height="480" style="display:none; width:100%; border-radius:12px; margin-bottom:8px;"></canvas>
-      <textarea id="in-text" rows="3" placeholder="Реплика героя (мат и запрещённый контент блокируются)..." style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px;"></textarea>
-      <input id="in-c1" placeholder="Кнопка выбора 1 (например: Открыть дверь)" style="width:100%; padding:9px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:6px; font-size:13px;" />
-      <input id="in-c1-res" placeholder="Финал выбора 1" style="width:100%; padding:9px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:10px; font-size:13px;" />
-      <button onclick="publishStory()" style="width:100%; padding:12px; border-radius:12px; border:none; background:#D97757; color:#FFF; font-weight:700; font-size:15px; cursor:pointer;">Опубликовать в ленту (+15 000 Искр)</button>
-    </div>
-    <!-- Экран 3: Топ авторов -->
-    <div id="scr-top" class="screen" style="background:#FAF9F5; color:#141413; padding:62px 14px 16px;">
-      <div style="font-family:'Newsreader',serif; font-size:22px; font-weight:600; margin-bottom:8px;">Топ авторов MX-Step</div>
-      <div style="background:#FFF; border:1px solid #E5E2D9; border-radius:12px; padding:12px; margin-bottom:8px;"><b>1. @Alisa_Novels</b> <span style="color:#D97757; font-size:12px;">VIP #004</span><br><span style="font-size:12px; color:#5E5D59;">Рейтинг ядра: 96/100 • 14 200 прохождений</span></div>
-      <div style="background:#FFF; border:1px solid #E5E2D9; border-radius:12px; padding:12px; margin-bottom:8px;"><b>2. @DarkBunny_Ufa</b> <span style="color:#D97757; font-size:12px;">VIP #019</span><br><span style="font-size:12px; color:#5E5D59;">Рейтинг ядра: 94/100 • 9 850 прохождений</span></div>
-      <div style="background:#FFF; border:1px solid #E5E2D9; border-radius:12px; padding:12px;"><b>3. Вы (<span id="my-id-top"></span>)</b><br><span style="font-size:12px; color:#5E5D59;">Статус: Клуб первых 1 000 VIP-основателей</span></div>
-    </div>
-
-    <!-- Экран 4: Профиль, кошелёк Искр и замороженный вывод по СБП -->
-    <div id="scr-profile" class="screen" style="background:#FAF9F5; color:#141413; padding:62px 14px 16px;">
-      <div style="background:#141413; color:#FAF9F5; border-radius:14px; padding:16px; margin-bottom:12px;">
-        <div style="font-size:12px; color:#FFB89E;">Клуб первых 1 000 VIP-основателей</div>
-        <div style="font-size:24px; font-weight:800; color:#FFD580; margin:4px 0;" id="prof-sparks">250 000 Искр</div>
-        <div style="font-size:12px; opacity:0.8;">Ваш реферальный код: <b id="my-ref-code"></b> (+25 000 Искр обоим за друга)</div>
-      </div>
-      <button disabled style="width:100%; padding:11px; border-radius:10px; border:1px solid #E5E2D9; background:#EFECE6; color:#8E8C86; font-weight:700; margin-bottom:8px;">Вывод по СБП по номеру телефона (Открытие в феврале 2027)</button>
-      <button disabled style="width:100%; padding:11px; border-radius:10px; border:1px solid #E5E2D9; background:#EFECE6; color:#8E8C86; font-weight:700; margin-bottom:12px;">Коммерческий статус и платные главы (Скоро — Бета 0 ₽)</button>
-      <a href="index.html" target="_self" style="display:block; text-align:center; padding:11px; border-radius:10px; border:1px solid #141413; color:#141413; text-decoration:none; font-weight:700;">← Перейти в студию MXPro 4.0</a>
-    </div>
-
-    <nav class="bottom-nav">
-      <button class="nav-item active" id="nav-feed" onclick="switchTab('feed')"><span class="nav-ico">▶</span>Лента</button>
-      <button class="nav-item" id="nav-create" onclick="switchTab('create')"><span class="nav-ico">＋</span>Создать</button>
-      <button class="nav-item" id="nav-top" onclick="switchTab('top')"><span class="nav-ico">★</span>Топ</button>
-      <button class="nav-item" id="nav-profile" onclick="switchTab('profile')"><span class="nav-ico">⚡</span>Кошелёк</button>
-    </nav>
-  </div>
   <script>
+
     const uid = localStorage.getItem('mxs_uid') || ('MX-' + Math.floor(1000 + Math.random() * 9000));
     localStorage.setItem('mxs_uid', uid);
     let sparks = parseInt(localStorage.getItem('mxs_sparks') || '250000', 10);
@@ -236,8 +193,9 @@
     // Жест свайпа пальцем вверх/вниз на смартфоне (как в TikTok / Shorts)
     let touchStartY = 0;
     const feedEl = document.getElementById('scr-feed');
-    feedEl.addEventListener('touchstart', e => { touchStartY = e.changedTouches.clientY; }, { passive: true });
+    feedEl.addEventListener('touchstart', e => { if (e.changedTouches.length) touchStartY = e.changedTouches.clientY; }, { passive: true });
     feedEl.addEventListener('touchend', e => {
+      if (!e.changedTouches.length) return;
       const dy = touchStartY - e.changedTouches.clientY;
       if (Math.abs(dy) > 48) nextStory(dy > 0 ? 1 : -1);
     }, { passive: true });
@@ -253,9 +211,8 @@
     };
     renderStory();
   </script>
-
-  </script>
 </body>
+
 </html>
 
 
