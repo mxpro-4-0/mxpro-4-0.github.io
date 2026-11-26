@@ -379,9 +379,35 @@
         </div>`;
       }).join('');
     }
+    async function generateAiScene() {
+      const idea = document.getElementById('ai-idea').value.trim();
+      if (!idea) { alert('Введите короткую идею для сцены'); return; }
+      const today = new Date().toISOString().slice(0, 10);
+      const used = parseInt(localStorage.getItem('mxs_ai_' + today) || '0', 10);
+      if (!isGod && used >= 3) { alert('Суточный лимит Open Beta: 3 ИИ-сцены в день'); return; }
+      if (!isGod && sparks < 2500) { alert('Нужно 2 500 Искр (поделитесь ссылкой с другом)'); return; }
+      const btn = document.getElementById('btn-ai-gen');
+      btn.textContent = '⏳...'; btn.disabled = true;
+      try {
+        const api = 'https://streamlit.app' + encodeURIComponent(idea);
+        const html = await (await fetch(api)).text();
+        const m = html.match(/id=['"]mx-ai-res['"]>(\{.*?\})<\/div>/);
+        const data = m ? JSON.parse(m.at(1)) : null;
+        if (!document.getElementById('in-title').value) document.getElementById('in-title').value = (data && data.title) || idea;
+        document.getElementById('in-text').value = (data && data.text) || ('Загадочная история началась: ' + idea + '. Впереди ждал непростой выбор...');
+        document.getElementById('in-c1').value = (data && data.btn) || 'Сделать шаг вперёд';
+        if (!isGod) { localStorage.setItem('mxs_ai_' + today, used + 1); updateSparks(-2500); }
+      } catch (e) {
+        if (!document.getElementById('in-title').value) document.getElementById('in-title').value = idea;
+        document.getElementById('in-text').value = 'Новая глава: ' + idea + '. Тень скользнула за спиной, заставив сердце биться быстрее...';
+        document.getElementById('in-c1').value = 'Обернуться и проверить';
+      }
+      btn.textContent = '✨ ИИ-сцена'; btn.disabled = false;
+    }
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
     renderStory();
   </script>
+
 
  
  
