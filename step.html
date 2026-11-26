@@ -81,7 +81,12 @@
       <div style="font-size:20px; font-weight:800; margin-bottom:4px;">Создать микро-новеллу</div>
       <div style="font-size:12px; color:#5E5D59; margin-bottom:10px;">Фото с камеры автоматом переводится в Аниме или Мангу (152-ФЗ)</div>
       <div id="censor-alert" class="danger-banner">Данный контент запрещено размещать</div>
+      <div style="display:flex; gap:6px; margin-bottom:8px;">
+        <input id="ai-idea" placeholder="Идея для ИИ (напр.: детектив в ночном поезде)" style="flex:1; padding:9px 10px; border-radius:10px; border:1px solid #D97757; background:#FFF; font-size:13px;" />
+        <button id="btn-ai-gen" onclick="generateAiScene()" style="padding:9px 11px; border-radius:10px; border:none; background:#141413; color:#FAF9F5; font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap;">✨ ИИ-сцена</button>
+      </div>
       <input id="in-title" placeholder="Название истории (например: Попаданец в 8Б)" style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px;" />
+
       <select id="in-style" style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px; background:#FFF;">
         <option value="anime">Стиль: Аниме-реальность (Бесконечное лето)</option>
         <option value="manga">Стиль: Ч/Б Манга-хоррор (Зайчик)</option>
