@@ -88,6 +88,8 @@
       </select>
       <input type="file" id="in-photo" accept="image/*" style="margin-bottom:8px; font-size:12px;" />
       <canvas id="fx-canvas" width="360" height="480" style="display:none; width:100%; border-radius:12px; margin-bottom:8px;"></canvas>
+      <img id="fx-anim" alt="" style="display:none; width:100%; border-radius:12px; margin-bottom:8px;" />
+
       <textarea id="in-text" rows="3" placeholder="Реплика героя..." style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:14px;"></textarea>
       <input id="in-c1" placeholder="Кнопка выбора (например: Открыть дверь)" style="width:100%; padding:9px; border-radius:10px; border:1px solid #E5E2D9; margin-bottom:8px; font-size:13px;" />
       <div id="draft-count" style="font-size:12px; font-weight:700; color:#D97757; margin-bottom:8px;">Собрано сцен в новелле: 0 (добавьте минимум 2 сцены)</div>
@@ -224,11 +226,24 @@
     document.getElementById('in-photo').addEventListener('change', async function(e) {
       const file = e.target.files.item(0);
       if (!file) return;
+      const isAnim = file.type === 'image/gif' || file.type === 'image/webp';
+      if (isAnim) {
+        if (file.size > 650000) { alert('Анимация слишком тяжёлая (макс. 600 КБ)'); return; }
+        const r = new FileReader();
+        r.onload = () => {
+          photoData = r.result;
+          document.getElementById('fx-canvas').style.display = 'none';
+          const im = document.getElementById('fx-anim');
+          im.src = photoData; im.style.display = 'block';
+        };
+        r.readAsDataURL(file);
+        return;
+      }
+      document.getElementById('fx-anim').style.display = 'none';
       if (rawBmp && rawBmp.close) rawBmp.close();
       rawBmp = await createImageBitmap(file, { resizeWidth: 420, resizeQuality: 'medium' });
       applyToonFilter();
     });
-
     let draftSteps = [];
     function addSceneStep() {
       const text = document.getElementById('in-text').value.trim();
@@ -239,6 +254,8 @@
       document.getElementById('in-text').value = '';
       document.getElementById('in-c1').value = '';
       document.getElementById('fx-canvas').style.display = 'none';
+      document.getElementById('fx-anim').style.display = 'none';
+
       if (rawBmp && rawBmp.close) { rawBmp.close(); rawBmp = null; }
       photoData = '';
       document.getElementById('draft-count').textContent = 'Собрано сцен в новелле: ' + draftSteps.length + ' (можно добавить ещё или опубликовать)';
