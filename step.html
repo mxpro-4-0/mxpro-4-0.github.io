@@ -375,36 +375,53 @@
       }
       idx = i; stepIdx = 0; renderStory(); switchTab('feed');
     }
+    let curMktFlt = 'all', subs = JSON.parse(localStorage.getItem('mxs_subs') || '{}');
+    function toggleSub(auth) {
+      if (subs[auth]) delete subs[auth]; else subs[auth] = 1;
+      localStorage.setItem('mxs_subs', JSON.stringify(subs));
+      renderMarket(curMktFlt);
+    }
+    function filterByAuthor(auth) {
+      const inp = document.getElementById('market-search');
+      if (inp) inp.value = auth;
+      renderMarket('all');
+    }
     function renderMarket(filter) {
-      ['all','hit','pro'].forEach(f => {
+      curMktFlt = filter || 'all';
+      ['all','sub','hit','pro'].forEach(f => {
         const b = document.getElementById('flt-' + f);
         if (!b) return;
-        b.style.background = f === filter ? '#141413' : '#FFF';
-        b.style.color = f === filter ? '#FAF9F5' : '#5E5D59';
-        b.style.borderColor = f === filter ? '#141413' : '#E5E2D9';
+        b.style.background = f === curMktFlt ? '#141413' : '#FFF';
+        b.style.color = f === curMktFlt ? '#FAF9F5' : '#5E5D59';
+        b.style.borderColor = f === curMktFlt ? '#141413' : '#E5E2D9';
       });
+      const q = (document.getElementById('market-search') ? document.getElementById('market-search').value : '').trim().toLowerCase();
       const box = document.getElementById('market-list');
       box.innerHTML = stories.map((s, i) => {
+        const auth = s.authorName || (i % 2 === 0 ? '@Alisa_Novels' : '@DarkBunny_Ufa');
         const isPro = i === 0 || i === 4 || i === 6;
-        if (filter === 'hit' && i > 3) return '';
-        if (filter === 'pro' && !isPro) return '';
+        if (curMktFlt === 'sub' && !subs[auth]) return '';
+        if (curMktFlt === 'hit' && i > 3) return '';
+        if (curMktFlt === 'pro' && !isPro) return '';
+        if (q && !(s.title.toLowerCase().includes(q) || auth.toLowerCase().includes(q) || s.genre.toLowerCase().includes(q))) return '';
         const firstStep = s.steps && s.steps.length ? (s.steps.item ? s.steps.item(0) : s.steps.at(0)) : null;
         const cover = (firstStep && firstStep.img) || 'story1_1.jpg';
-        const score = 98 - (i % 5);
-        const plays = (14.2 - i * 1.3).toFixed(1) + 'к';
-        const price = isPro ? 500 : 0;
-        const open = !price || unlockedStories[i];
+        const price = isPro ? 500 : 0, open = !price || unlockedStories[i] || isGod;
         return `<div style="background:#FFF; border:1px solid #E5E2D9; border-radius:12px; padding:9px; display:flex; gap:10px; align-items:center;">
           <img src="${cover}" style="width:54px; height:72px; border-radius:8px; object-fit:cover; background:#141413; flex-shrink:0;" />
           <div style="flex:1; min-width:0;">
-            <div style="font-size:10.5px; font-weight:700; color:#D97757;">${s.genre} • Ядро ${score}/100</div>
+            <div style="font-size:10.5px; font-weight:700; color:#D97757;">${s.genre} • Ядро ${98 - (i % 5)}/100</div>
             <div style="font-size:14px; font-weight:800; color:#141413; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${s.title}</div>
-            <div style="font-size:11px; color:#5E5D59; margin-top:2px;">▶ ${plays} игр • ${s.steps.length} сцен • ${i === 0 ? 'Выбор редакции' : 'VIP-автор'}</div>
+            <div style="font-size:11px; color:#5E5D59; margin-top:2px; display:flex; align-items:center; gap:6px;">
+              <span onclick="filterByAuthor('${auth}')" style="text-decoration:underline; cursor:pointer; font-weight:700;">${auth}</span>
+              <button onclick="toggleSub('${auth}')" style="padding:1px 6px; border-radius:999px; border:1px solid #D97757; background:${subs[auth] ? '#D97757' : '#FFF'}; color:${subs[auth] ? '#FFF' : '#D97757'}; font-size:10px; font-weight:700; cursor:pointer;">${subs[auth] ? '✓ Подписан' : '+ Подписаться'}</button>
+            </div>
           </div>
           <button onclick="playFromMarket(${i}, ${price})" style="padding:7px 11px; border-radius:9px; border:none; background:${open ? '#141413' : '#D97757'}; color:#FAF9F5; font-size:11.5px; font-weight:700; cursor:pointer; flex-shrink:0;">${open ? 'Играть ▶' : '⚡ 500'}</button>
         </div>`;
       }).join('');
     }
+
     async function generateAiScene() {
       const idea = document.getElementById('ai-idea').value.trim();
       if (!idea) { alert('Введите короткую идею для сцены'); return; }
