@@ -109,26 +109,34 @@
         <div style="font-size:20px; font-weight:800; letter-spacing:-0.02em;">Витрина миров</div>
         <span style="font-size:11px; font-weight:700; color:#D97757;">Выбор редакции</span>
       </div>
-      <div style="font-size:12px; color:#5E5D59; margin-bottom:10px;">Лучшие новеллы сообщества • Проверка ядра ИРЯ РАН</div>
-      <div style="display:flex; gap:6px; margin-bottom:10px; overflow-x:auto;">
-        <button onclick="renderMarket('all')" id="flt-all" style="padding:5px 11px; border-radius:999px; border:1px solid #141413; background:#141413; color:#FAF9F5; font-size:11.5px; font-weight:700; cursor:pointer;">Все миры</button>
-        <button onclick="renderMarket('hit')" id="flt-hit" style="padding:5px 11px; border-radius:999px; border:1px solid #E5E2D9; background:#FFF; color:#5E5D59; font-size:11.5px; font-weight:700; cursor:pointer;">🔥 Топ рейтинга</button>
-        <button onclick="renderMarket('pro')" id="flt-pro" style="padding:5px 11px; border-radius:999px; border:1px solid #E5E2D9; background:#FFF; color:#5E5D59; font-size:11.5px; font-weight:700; cursor:pointer;">⚡ Хиты за Искры</button>
+      <div style="font-size:12px; color:#5E5D59; margin-bottom:8px;">Лучшие новеллы сообщества • Проверка ядра ИРЯ РАН</div>
+      <input id="market-search" oninput="renderMarket(curMktFlt)" placeholder="🔍 Поиск по названию или @автору..." style="width:100%; padding:8px 11px; border-radius:10px; border:1px solid #E5E2D9; background:#FFF; font-size:13px; margin-bottom:8px;" />
+      <div style="display:flex; gap:5px; margin-bottom:10px; overflow-x:auto;">
+        <button onclick="renderMarket('all')" id="flt-all" style="padding:5px 10px; border-radius:999px; border:1px solid #141413; background:#141413; color:#FAF9F5; font-size:11px; font-weight:700; cursor:pointer;">Все миры</button>
+        <button onclick="renderMarket('sub')" id="flt-sub" style="padding:5px 10px; border-radius:999px; border:1px solid #E5E2D9; background:#FFF; color:#5E5D59; font-size:11px; font-weight:700; cursor:pointer;">★ Подписки</button>
+        <button onclick="renderMarket('hit')" id="flt-hit" style="padding:5px 10px; border-radius:999px; border:1px solid #E5E2D9; background:#FFF; color:#5E5D59; font-size:11px; font-weight:700; cursor:pointer;">🔥 Топ</button>
+        <button onclick="renderMarket('pro')" id="flt-pro" style="padding:5px 10px; border-radius:999px; border:1px solid #E5E2D9; background:#FFF; color:#5E5D59; font-size:11px; font-weight:700; cursor:pointer;">⚡ За Искры</button>
       </div>
+
       <div id="market-list" style="display:flex; flex-direction:column; gap:8px;"></div>
     </div>
 
 
     <div id="scr-profile" class="screen" style="background:#FAF9F5; color:#141413; padding:56px 14px 16px;">
-      <div style="background:#141413; color:#FAF9F5; border-radius:14px; padding:16px; margin-bottom:12px;">
-        <div style="font-size:12px; color:#FFB89E;">Клуб первых 1 000 VIP-основателей</div>
+      <div style="background:#141413; color:#FAF9F5; border-radius:14px; padding:14px; margin-bottom:10px;">
+        <div style="display:flex; justify-content:space-between; font-size:11.5px; color:#FFB89E;"><span>VIP 1000 • Основатель</span><span>ID: <b id="my-ref-code"></b></span></div>
         <div style="font-size:24px; font-weight:800; color:#FFD580; margin:4px 0;" id="prof-sparks">250 000 Искр</div>
-        <div style="font-size:12px; opacity:0.85;">Ваш реферальный код: <b id="my-ref-code"></b> (+25 000 Искр обоим за друга)</div>
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <input id="in-nick" placeholder="Ваш ник автора (напр. @Edgar)" style="flex:1; padding:7px 10px; border-radius:8px; border:1px solid #3A3936; background:#262523; color:#FAF9F5; font-size:12.5px;" />
+          <button onclick="saveAuthorNick()" style="padding:7px 11px; border-radius:8px; border:none; background:#D97757; color:#FFF; font-size:12px; font-weight:700; cursor:pointer;">Сохранить</button>
+        </div>
       </div>
-      <button disabled style="width:100%; padding:11px; border-radius:10px; border:1px solid #E5E2D9; background:#EFECE6; color:#8E8C86; font-weight:700; margin-bottom:8px;">Вывод по СБП по номеру телефона (Открытие в феврале 2027)</button>
-      <button disabled style="width:100%; padding:11px; border-radius:10px; border:1px solid #E5E2D9; background:#EFECE6; color:#8E8C86; font-weight:700; margin-bottom:12px;">Коммерческий статус и платные главы (Скоро — Бета 0 ₽)</button>
-      <a href="index.html" target="_self" style="display:block; text-align:center; padding:11px; border-radius:10px; border:1px solid #141413; color:#141413; text-decoration:none; font-weight:700;">← Перейти в студию MXPro 4.0</a>
+      <div style="font-size:13px; font-weight:800; margin-bottom:6px;">Мои опубликованные миры</div>
+      <div id="my-works-list" style="display:flex; flex-direction:column; gap:6px; margin-bottom:10px;"></div>
+      <button disabled style="width:100%; padding:10px; border-radius:10px; border:1px solid #E5E2D9; background:#EFECE6; color:#8E8C86; font-size:12px; font-weight:700; margin-bottom:8px;">Вывод по СБП по номеру телефона (Открытие в феврале 2027)</button>
+      <a href="index.html" target="_self" style="display:block; text-align:center; padding:10px; border-radius:10px; border:1px solid #141413; color:#141413; text-decoration:none; font-size:13px; font-weight:700;">← Перейти в студию MXPro 4.0</a>
     </div>
+
 
     <nav class="bottom-nav">
       <button class="nav-item active" id="nav-feed" onclick="switchTab('feed')"><span class="nav-ico">▶</span>Лента</button>
