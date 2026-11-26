@@ -155,7 +155,7 @@
 
 
     try { localStorage.removeItem('mxs_stories_v3'); } catch (e) {}
-    let stories = window.MX_STORIES || [], idx = 0, stepIdx = 0, photoData = '', rawBmp = null;
+    let stories = window.MX_STORIES || [], idx = 0, stepIdx = 0, photoData = '', rawBmp = null, bag = [];
 
 
     function renderStory() {
@@ -172,12 +172,20 @@
       box.innerHTML = '';
       if (cur.choices && cur.choices.length > 0) {
         cur.choices.forEach(ch => {
+          const locked = ch.need && !bag.includes(ch.need);
           const b = document.createElement('button');
-          b.textContent = '▸ ' + ch.t;
-          b.style.cssText = 'padding:9px 12px;border-radius:9px;border:1px solid #D97757;background:rgba(217,119,87,0.32);color:#FFF;font-weight:600;text-align:left;cursor:pointer;font-size:13px;';
-          b.onclick = () => { stepIdx = ch.next; renderStory(); if (!(steps[stepIdx].choices && steps[stepIdx].choices.length)) updateSparks(500); };
+          b.textContent = (locked ? '🔒 ' : '▸ ') + ch.t;
+          b.style.cssText = `padding:9px 12px;border-radius:9px;border:1px solid ${locked ? '#8E8C86' : '#D97757'};background:${locked ? 'rgba(255,255,255,0.08)' : 'rgba(217,119,87,0.32)'};color:${locked ? '#AAA' : '#FFF'};font-weight:600;text-align:left;cursor:pointer;font-size:13px;`;
+          b.onclick = () => {
+            if (locked) { alert('Сначала найдите улику: ' + ch.need); return; }
+            if (ch.item && !bag.includes(ch.item)) bag.push(ch.item);
+            stepIdx = ch.next; renderStory();
+            if (!(steps[stepIdx].choices && steps[stepIdx].choices.length)) { bag = []; updateSparks(500); }
+          };
           box.appendChild(b);
         });
+
+
       } else {
         const bNext = document.createElement('button');
         bNext.textContent = '↻ Пройти заново или свайпни вниз к следующей';
@@ -186,7 +194,7 @@
         box.appendChild(bNext);
       }
     }
-    function nextStory(d) { idx = (idx + d + stories.length) % stories.length; stepIdx = 0; renderStory(); }
+    function nextStory(d) { idx = (idx + d + stories.length) % stories.length; stepIdx = 0; bag = []; renderStory(); }
 
     function switchTab(t) {
       ['feed','create','top','profile'].forEach(k => {
