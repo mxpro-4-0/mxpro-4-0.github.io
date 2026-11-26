@@ -389,7 +389,7 @@
       const btn = document.getElementById('btn-ai-gen');
       btn.textContent = '⏳...'; btn.disabled = true;
       try {
-        const api = 'https://streamlit.app' + encodeURIComponent(idea);
+        const api = 'https://mx-pro.streamlit.app' + encodeURIComponent(idea);
         const html = await (await fetch(api)).text();
         const m = html.match(/id=['"]mx-ai-res['"]>(\{.*?\})<\/div>/);
         const data = m ? JSON.parse(m.at(1)) : null;
