@@ -418,7 +418,8 @@
         const isPro = i === 0 || i === 4 || i === 6;
         if (filter === 'hit' && i > 3) return '';
         if (filter === 'pro' && !isPro) return '';
-        const cover = (s.steps && s.steps.item ? s.steps.item(0).img : (s.steps && s.steps.img)) || 'story1_1.jpg';
+        const firstStep = s.steps && s.steps.length ? (s.steps.item ? s.steps.item(0) : s.steps.at(0)) : null;
+        const cover = (firstStep && firstStep.img) || 'story1_1.jpg';
         const score = 98 - (i % 5);
         const plays = (14.2 - i * 1.3).toFixed(1) + 'к';
         const price = isPro ? 500 : 0;
