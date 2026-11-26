@@ -146,8 +146,9 @@
       document.getElementById('prof-sparks').textContent = sparks.toLocaleString('ru-RU') + ' Искр';
     }
     document.getElementById('my-ref-code').textContent = uid;
-    document.getElementById('my-id-top').textContent = uid;
+    if (document.getElementById('my-id-top')) document.getElementById('my-id-top').textContent = uid;
     updateSparks(0);
+
 
     const DEFAULT_STORIES = [
       {
