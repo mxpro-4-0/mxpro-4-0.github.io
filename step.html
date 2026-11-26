@@ -336,7 +336,7 @@
     }
     const unlockedStories = JSON.parse(localStorage.getItem('mxs_unlocked') || '{}');
     function playFromMarket(i, price) {
-      if (price > 0 && !unlockedStories[i]) {
+      if (price > 0 && !unlockedStories[i]) && !isGod) {
         if (sparks < price) { alert('Недостаточно Искр! Поделитесь ссылкой (+25 000 Искр)'); return; }
         updateSparks(-price);
         unlockedStories[i] = 1;
