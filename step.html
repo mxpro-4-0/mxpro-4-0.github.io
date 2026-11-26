@@ -213,13 +213,31 @@
     }
     function nextStory(d) { idx = (idx + d + stories.length) % stories.length; stepIdx = 0; bag = []; renderStory(); }
 
+    let authorNick = localStorage.getItem('mxs_nick') || ('@' + uid);
+    if (document.getElementById('in-nick')) document.getElementById('in-nick').value = authorNick;
+    function saveAuthorNick() {
+      const v = document.getElementById('in-nick').value.trim();
+      if (!v) return;
+      authorNick = v.startsWith('@') ? v : ('@' + v);
+      localStorage.setItem('mxs_nick', authorNick);
+      document.getElementById('in-nick').value = authorNick;
+      renderMyWorks();
+    }
+    function renderMyWorks() {
+      const box = document.getElementById('my-works-list');
+      if (!box) return;
+      const mine = stories.filter(s => s.authorId === uid);
+      box.innerHTML = mine.length ? mine.map(s => `<div style="background:#FFF; border:1px solid #E5E2D9; border-radius:10px; padding:8px 10px; font-size:12.5px;"><b>${s.title}</b> • ${s.steps.length} сцен (${authorNick})</div>`).join('') : '<div style="font-size:12px; color:#8E8C86;">Пока нет опубликованных миров. Создайте первый во вкладке «＋ Создать».</div>';
+    }
     function switchTab(t) {
       ['feed','create','top','profile'].forEach(k => {
         document.getElementById('scr-' + k).classList.toggle('active', k === t);
         document.getElementById('nav-' + k).classList.toggle('active', k === t);
       });
       if (t === 'top') renderMarket('all');
+      if (t === 'profile') renderMyWorks();
     }
+
 
 
     function shareStory() {
@@ -291,7 +309,7 @@
       if (!title || !draftSteps.length) return;
       draftSteps[draftSteps.length - 1].choices = [];
       const st = document.getElementById('in-style').value;
-      stories.unshift({ title, genre: st === 'manga' ? 'Манга • Автор' : 'Аниме • Автор', steps: draftSteps });
+      stories.unshift({ title, authorId: uid, authorName: authorNick, genre: (st === 'manga' ? 'Манга • ' : 'Аниме • ') + authorNick, steps: draftSteps });
       draftSteps = [];
       document.getElementById('in-title').value = '';
       document.getElementById('draft-count').textContent = 'Собрано сцен в новелле: 0';
