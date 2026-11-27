@@ -106,8 +106,9 @@
 
 
   <script>
-    player = { x: 0, z: 11, y: 0 }; let lastMc = 0; if (typeof updHud === 'function') updHud();
+    let player = { x: 0, z: 11, y: 0 }, npcs = [], move = { x: 0, z: 0 }, animId = null, isNight = false;
     const SPR = {};
+
     function loadCleanSprite(key, src, cutBg) {
       const im = new Image();
       im.onload = () => {
