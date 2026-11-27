@@ -133,6 +133,8 @@
     loadCleanSprite('station', 'station.png', true);
     loadCleanSprite('tree', 'tree.png', true);
     loadCleanSprite('tower', 'tower.png', false);
+    loadCleanSprite('cops', 'cops.png', true);
+
 
 
     const PRESETS = [
@@ -276,23 +278,36 @@
       return new THREE.CanvasTexture(c);
     }
     function makeTowerTex(seed, ruText, jpText, col) {
-      const c = document.createElement('canvas'); c.width = 256; c.height = 512;
+      const c = document.createElement('canvas'); c.width = 512; c.height = 1024;
       const g = c.getContext('2d');
-      const gr = g.createLinearGradient(0, 0, 0, 512);
-      gr.addColorStop(0, '#020617'); gr.addColorStop(1, '#0f172a');
-      g.fillStyle = gr; g.fillRect(0, 0, 256, 512);
-      for (let y = 16; y < 496; y += 14) for (let x = 14; x < 240; x += 18) {
+      const gr = g.createLinearGradient(0, 0, 0, 1024);
+      gr.addColorStop(0, '#020617'); gr.addColorStop(0.7, '#0f172a'); gr.addColorStop(1, '#1e1b4b');
+      g.fillStyle = gr; g.fillRect(0, 0, 512, 1024);
+      for (let y = 24; y < 840; y += 22) for (let x = 24; x < 480; x += 32) {
         const rnd = (x * 11 + y * 7 + seed * 29) % 13;
         g.fillStyle = rnd === 0 ? '#38bdf8' : (rnd === 1 ? '#f472b6' : (rnd === 2 ? '#fde047' : '#1e293b'));
-        g.fillRect(x, y, 12, 8);
+        g.fillRect(x, y, 20, 12);
       }
-      g.fillStyle = col; g.fillRect(4, 0, 4, 512); g.fillRect(248, 0, 4, 512);
-      g.fillStyle = 'rgba(6,9,19,0.92)'; g.fillRect(18, 220, 220, 58);
-      g.strokeStyle = col; g.lineWidth = 4; g.strokeRect(18, 220, 220, 58);
-      g.fillStyle = '#fff'; g.font = 'bold 19px system-ui'; g.textAlign = 'center'; g.fillText(ruText, 128, 255);
-      g.fillStyle = col; g.font = 'bold 24px system-ui'; g.fillText(jpText, 226, 76); g.fillText('未来', 226, 108);
+      g.fillStyle = col; g.fillRect(6, 0, 6, 1024); g.fillRect(500, 0, 6, 1024);
+      // Первый этаж (витрины с манекенами)
+      g.fillStyle = 'rgba(254,240,138,0.16)'; g.fillRect(24, 880, 464, 136);
+      g.strokeStyle = col; g.lineWidth = 4; g.strokeRect(24, 880, 464, 136);
+      [130, 380].forEach((mx, idx) => {
+        g.fillStyle = idx === 0 ? '#f472b6' : '#38bdf8';
+        g.beginPath(); g.arc(mx, 922, 10, 0, Math.PI * 2); g.fill();
+        g.beginPath();
+        if (idx === 0) { g.moveTo(mx - 16, 995); g.lineTo(mx, 936); g.lineTo(mx + 16, 995); }
+        else { g.rect(mx - 11, 936, 22, 58); }
+        g.fill();
+      });
+      // Вывеска над первым этажом
+      g.fillStyle = 'rgba(6,9,19,0.94)'; g.fillRect(40, 815, 432, 54);
+      g.strokeStyle = col; g.lineWidth = 4; g.strokeRect(40, 815, 432, 54);
+      g.fillStyle = '#fff'; g.font = 'bold 26px system-ui'; g.textAlign = 'center'; g.fillText(ruText, 256, 851);
+      g.fillStyle = col; g.font = 'bold 34px system-ui'; g.fillText(jpText, 465, 140); g.fillText('未来', 465, 185);
       return new THREE.CanvasTexture(c);
     }
+
 
 
 
@@ -313,69 +328,82 @@
       const plaza = new THREE.Mesh(new THREE.PlaneGeometry(42, 42), new THREE.MeshStandardMaterial({ map: makeRoadTex(), roughness: 0.42 }));
       plaza.rotation.x = -Math.PI / 2; scene.add(plaza);
       const towers = [
-        [-16, -12, 'БАР «НЕОН»', '酒場', '#F472B6'], [-16, 0, 'КАФЕ «САКУРА»', '喫茶', '#38BDF8'], [-16, 12, 'БУТИК ОДЕЖДЫ', '衣装', '#FDE047'],
-        [16, -12, 'НОЧНОЙ КЛУБ «АКСИС»', 'クラブ', '#F472B6'], [16, 0, 'САЛОН СМАРТФОНОВ', '電脳', '#38BDF8'], [16, 12, 'ЛАВКА АРТЕФАКТОВ', '宝石', '#A855F7'],
-        [-7, -18, 'ПОРТАЛ МИРОВ', '転送', '#38BDF8'], [7, -18, 'ПАЛАТА ЛИЦЕНЗИЙ', '免許', '#FDE047']
+        [-19, -13, 'БАР «НЕОН»', '酒場', '#F472B6', 68, 9], [-19, 0, 'КАФЕ «САКУРА»', '喫茶', '#38BDF8', 85, 10], [-19, 13, 'БУТИК ОДЕЖДЫ', '衣装', '#FDE047', 62, 8.5],
+        [19, -13, 'НОЧНОЙ КЛУБ «АКСИС»', 'クラブ', '#F472B6', 95, 10.5], [19, 0, 'САЛОН СМАРТФОНОВ', '電脳', '#38BDF8', 74, 9], [19, 13, 'ЛАВКА АРТЕФАКТОВ', '宝石', '#A855F7', 66, 8.5],
+        [-8, -21, 'ПОРТАЛ МИРОВ', '転送', '#38BDF8', 110, 10], [8, -21, 'ПАЛАТА ЛИЦЕНЗИЙ', '免許', '#FDE047', 88, 9.5]
       ];
-      towers.forEach(([bx, bz, ruT, jpT, col], i) => {
-        const bh = 28 + (i % 3) * 10;
-        const bM = new THREE.Mesh(new THREE.BoxGeometry(7.2, bh, 8.2), new THREE.MeshStandardMaterial({ map: makeTowerTex(i, ruT, jpT, col) }));
+      towers.forEach(([bx, bz, ruT, jpT, col, bh, bw], i) => {
+        const tex = makeTowerTex(i, ruT, jpT, col);
+        const bM = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, bw), new THREE.MeshStandardMaterial({ map: tex }));
         bM.position.set(bx, bh / 2, bz); scene.add(bM);
-        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.35, 8), new THREE.MeshBasicMaterial({ color: col }));
-        spire.position.set(bx, bh + 4, bz); scene.add(spire);
-        if (Math.abs(bx) === 16) {
-          const sx = bx < 0 ? -11.2 : 11.2;
-          const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 3.8), new THREE.MeshBasicMaterial({ color: 0x334155 }));
-          const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.24, 8, 8), new THREE.MeshBasicMaterial({ color: 0xfef08a }));
-          post.position.set(sx, 1.9, bz - 2.6); lamp.position.set(sx, 3.9, bz - 2.6);
-          const bench = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.42, 2.2), new THREE.MeshStandardMaterial({ color: 0x78350f }));
-          bench.position.set(sx, 0.21, bz + 1.2);
-          const trk = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 2.3), new THREE.MeshBasicMaterial({ color: 0x451a03 }));
-          const cr = new THREE.Mesh(new THREE.SphereGeometry(1.6, 12, 10), new THREE.MeshBasicMaterial({ color: i % 2 ? 0xf472b6 : 0x38bdf8 }));
-          trk.position.set(sx, 1.15, bz + 3.4); cr.position.set(sx, 3.1, bz + 3.4);
-          scene.add(post, lamp, bench, trk, cr);
+        const topTier = new THREE.Mesh(new THREE.BoxGeometry(bw * 0.68, bh * 0.22, bw * 0.68), new THREE.MeshStandardMaterial({ map: tex }));
+        topTier.position.set(bx, bh + bh * 0.11, bz); scene.add(topTier);
+        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.35, 14), new THREE.MeshBasicMaterial({ color: col }));
+        spire.position.set(bx, bh * 1.22 + 7, bz); scene.add(spire);
+        if (Math.abs(bx) === 19) {
+          const sx = bx < 0 ? -12.2 : 12.2;
+          const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.08, 4.2), new THREE.MeshBasicMaterial({ color: 0x334155 }));
+          const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 8), new THREE.MeshBasicMaterial({ color: 0xfef08a }));
+          post.position.set(sx, 2.1, bz - 3.2); lamp.position.set(sx, 4.3, bz - 3.2);
+          const bench = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.42, 2.1), new THREE.MeshStandardMaterial({ color: 0x78350f }));
+          bench.position.set(sx, 0.21, bz + 1.4);
+          const trk = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.24, 2.8), new THREE.MeshBasicMaterial({ color: 0x451a03 }));
+          trk.position.set(sx, 1.4, bz + 3.8); scene.add(post, lamp, bench, trk);
+          const leafCol = i % 2 ? 0xf472b6 : 0x38bdf8;
+          [[0, 3.2, 0, 1.6], [-0.9, 2.8, 0.5, 1.1], [0.9, 2.9, -0.4, 1.15], [0, 4.1, 0.2, 1.05]].forEach(([ox, oy, oz, r]) => {
+            const lf = new THREE.Mesh(new THREE.DodecahedronGeometry(r, 1), new THREE.MeshStandardMaterial({ color: leafCol, roughness: 0.7 }));
+            lf.position.set(sx + ox, oy, bz + 3.8 + oz); scene.add(lf);
+          });
         }
       });
-      const desk = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.15, 1.2), new THREE.MeshStandardMaterial({ color: 0x0f172a }));
-      desk.position.set(0, 0.58, -9);
-      const deskSign = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.55, 0.2), new THREE.MeshBasicMaterial({ map: makeTowerTex(1, 'ИНФОРМАЦИЯ • FAQ', '案内', '#38BDF8') }));
-      deskSign.position.set(0, 2.75, -9); scene.add(desk, deskSign);
-      const shard = new THREE.Mesh(new THREE.OctahedronGeometry(0.45), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
-      shard.position.set(-7.5, 1.1, 6.5); scene.add(shard);
+      const cafeGuests = [];
+      [-2.2, 2.2].forEach((cz, idx) => {
+        const tbl = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 0.06, 16), new THREE.MeshStandardMaterial({ color: 0xfef3c7 }));
+        const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.1, 0.75, 10), new THREE.MeshStandardMaterial({ color: 0x334155 }));
+        tbl.position.set(-12.5, 0.75, cz); leg.position.set(-12.5, 0.37, cz);
+        const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.05, 0.14, 8), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+        cup.position.set(-12.3, 0.85, cz + 0.15); scene.add(tbl, leg, cup);
+        const guest = new THREE.Group();
+        const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.25, 0.65, 10), new THREE.MeshStandardMaterial({ color: idx ? 0xec4899 : 0x0284c7 })); torso.position.y = 0.75;
+        const hd = new THREE.Mesh(new THREE.SphereGeometry(0.2, 12, 12), new THREE.MeshStandardMaterial({ color: 0xfde6d8 })); hd.position.y = 1.28;
+        const arm = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.42, 0.1), new THREE.MeshStandardMaterial({ color: idx ? 0xec4899 : 0x0284c7 })); arm.position.set(0.24, 0.9, 0.15);
+        guest.add(torso, hd, arm); guest.position.set(-13.2, 0, cz); scene.add(guest);
+        cafeGuests.push({ arm, phase: idx * 2 });
+      });
+      const desk = new THREE.Mesh(new THREE.BoxGeometry(3.4, 1.1, 1.1), new THREE.MeshStandardMaterial({ color: 0x0f172a }));
+      desk.position.set(0, 0.55, -9);
+      const deskSign = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.5, 0.2), new THREE.MeshBasicMaterial({ map: makeTowerTex(1, 'ИНФОРМАЦИЯ • FAQ', '案内', '#38BDF8') }));
+      deskSign.position.set(0, 2.55, -9); scene.add(desk, deskSign);
+      const shard = new THREE.Mesh(new THREE.OctahedronGeometry(0.4), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+      shard.position.set(-7.5, 1.0, 6.5); scene.add(shard);
       function makeCharPlane(key, h, tintHex) {
         const sp = SPR[key], tex = sp ? new THREE.CanvasTexture(sp) : null, asp = sp ? (sp.width / sp.height) : 0.55;
         const grp = new THREE.Group();
         const m = new THREE.Mesh(new THREE.PlaneGeometry(h * asp, h), new THREE.MeshBasicMaterial({ map: tex, color: tex ? (tintHex || 0xffffff) : 0xd97757, transparent: true, alphaTest: 0.08, side: THREE.DoubleSide }));
-        m.position.y = h / 2 + 0.05;
-        const ring = new THREE.Mesh(new THREE.RingGeometry(0.42, 0.58, 24), new THREE.MeshBasicMaterial({ color: tintHex || 0x38bdf8, side: THREE.DoubleSide }));
+        m.position.y = h / 2 + 0.04;
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.35, 0.48, 24), new THREE.MeshBasicMaterial({ color: tintHex || 0x38bdf8, side: THREE.DoubleSide }));
         ring.rotation.x = -Math.PI / 2; ring.position.y = 0.02;
         grp.add(m, ring); return grp;
       }
-      function makeCopMesh(x, z) {
-        const g = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.SphereGeometry(0.52, 12, 12), new THREE.MeshStandardMaterial({ color: 0x1e3a8a }));
-        body.scale.set(1.1, 1.45, 0.95); body.position.y = 1.05;
-        const head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 12), new THREE.MeshStandardMaterial({ color: 0xfde6d8 })); head.position.y = 1.95;
-        const glasses = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.1, 0.14), new THREE.MeshBasicMaterial({ color: 0x020617 })); glasses.position.set(0, 1.98, 0.22);
-        const donut = new THREE.Mesh(new THREE.TorusGeometry(0.11, 0.045, 8, 14), new THREE.MeshBasicMaterial({ color: 0xf472b6 })); donut.position.set(-0.38, 1.48, 0.35);
-        const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.06, 0.18, 10), new THREE.MeshBasicMaterial({ color: 0xfef3c7 })); cup.position.set(0.38, 1.45, 0.35);
-        g.add(body, head, glasses, donut, cup); g.position.set(x, 0, z); scene.add(g); return g;
-      }
-      const cop1 = makeCopMesh(-2.8, 3.2), cop2 = makeCopMesh(-1.7, 3.4);
-      const heroMesh = makeCharPlane('hero', 2.3, 0xffffff); scene.add(heroMesh);
+      const cop1 = SPR.cops ? makeCharPlane('cops', 1.85, 0xffffff) : makeCharPlane('npc1', 1.8, 0x60a5fa);
+      cop1.position.set(-2.4, 0, 3.2); scene.add(cop1);
+
+      const heroMesh = makeCharPlane('hero', 1.75, 0xffffff); scene.add(heroMesh);
       const walkers = [];
       const tints = [0xfef08a, 0xfbcfe8, 0xbae6fd, 0xd9f99d, 0xddd6fe, 0xfed7aa];
       for (let w = 0; w < 6; w++) {
-        const wm = makeCharPlane(w % 2 ? 'npc2' : 'npc1', 2.25, tints[w]);
+        const wm = makeCharPlane(w % 2 ? 'npc2' : 'npc1', 1.75, tints[w]);
         wm.position.set((w - 3) * 2.8, 0, -4 + (w % 3) * 4.5); scene.add(wm);
-        walkers.push({ m: wm, dir: w % 2 ? 1 : -1, sp: 0.009 + (w % 3) * 0.003 });
+        walkers.push({ m: wm, dir: w % 2 ? 1 : -1, sp: 0.008 + (w % 3) * 0.002 });
       }
       npcs = [
-        { name: 'Офицер Пончик', mesh: cop1, isCop: true, x: -2.2, z: 3.3, lines: ['Соблюдайте правила MX-Оазиса. Добро пожаловать в мегаполис!', 'Отличный кофе сегодня в Сакуре, правда, напарник?'] },
-        { name: 'Гид Стойки FAQ', mesh: makeCharPlane('npc2', 2.35, 0xbae6fd), isFaq: true, x: 0, z: -8.2, lines: ['Привет! Я бот-консультант MX-Оазиса. Нажми «ДЕЙСТВИЕ», чтобы открыть FAQ по игре!', 'Подсказка: в углу площади сияет Квантовый осколок с Синими Искрами.'] },
-        { name: 'Бариста Сакуры', mesh: makeCharPlane('npc1', 2.35, 0xfbcfe8), x: -10.2, z: 0, lines: ['Заходи в Кафе «Сакура»! Угости друга кофе или купи пирожное.', 'С крыши соседнего небоскрёба открывается лучший вид на Млечный Путь!'] },
-        { name: 'Охранник Клуба Аксис', mesh: makeCharPlane('npc1', 2.45, 0x94a3b8), x: 10.5, z: -10, lines: ['Ночной клуб «Аксис» открыт. Вход по пропуску или за Искры.', 'Соблюдайте порядок на площади — патруль рядом!'] }
+        { name: 'Патруль MX-Оазиса', mesh: cop1, isCop: true, x: -2.4, z: 3.2, lines: ['Соблюдайте правила MX-Оазиса. Добро пожаловать в мегаполис!', 'Отличный кофе и пончики сегодня в Сакуре, правда, напарник?'] },
+        { name: 'Гид Стойки FAQ', mesh: makeCharPlane('npc2', 1.75, 0xbae6fd), isFaq: true, x: 0, z: -8.2, lines: ['Привет! Я бот-консультант MX-Оазиса. Нажми «ДЕЙСТВИЕ», чтобы открыть FAQ по игре!', 'Подсказка: в углу площади сияет Квантовый осколок с Синими Искрами.'] },
+        { name: 'Бариста Сакуры', mesh: makeCharPlane('npc1', 1.75, 0xfbcfe8), x: -11.5, z: 0, lines: ['Заходи в Кафе «Сакура»! Угости друга кофе или купи пирожное.', 'С крыши соседнего небоскрёба открывается лучший вид на Млечный Путь!'] },
+        { name: 'Охранник Клуба Аксис', mesh: makeCharPlane('npc1', 1.85, 0x94a3b8), x: 11.5, z: -10, lines: ['Ночной клуб «Аксис» открыт. Вход по пропуску или за Искры.', 'Соблюдайте порядок на площади — патруль рядом!'] }
       ];
+
+
       npcs.forEach(n => { if (!n.isCop) { n.mesh.position.set(n.x, 0, n.z); scene.add(n.mesh); } });
       let camYaw = 0, camPitch = 0.22, dragCam = false, lx = 0, ly = 0, copSpoken = false;
       ren.domElement.onmousedown = e => { dragCam = true; lx = e.clientX; ly = e.clientY; };
@@ -395,8 +423,10 @@
         heroMesh.position.set(player.x, player.y + walkBob, player.z); heroMesh.rotation.y = camYaw;
         cam.position.set(player.x + Math.sin(camYaw) * 6.5, player.y + 2.6 + camPitch * 4.8, player.z + Math.cos(camYaw) * 6.5);
         cam.lookAt(player.x - Math.sin(camYaw) * 6, player.y + 2.2 - camPitch * 6.2, player.z - Math.cos(camYaw) * 6);
-        npcs.forEach(n => { if (!n.isCop) n.mesh.rotation.y = camYaw; });
+        npcs.forEach(n => { n.mesh.rotation.y = camYaw; });
+        cafeGuests.forEach(cg => { cg.arm.rotation.x = Math.sin(t * 0.006 + cg.phase) * 0.65; });
         walkers.forEach(w => { w.m.position.x += w.dir * w.sp; if (Math.abs(w.m.position.x) > 9.5) w.dir *= -1; w.m.rotation.y = camYaw; });
+
         if (t - lastMc > 100) {
           lastMc = t;
           const nearIdx = npcs.findIndex(n => Math.hypot(n.x - player.x, n.z - player.z) < 4.2);
