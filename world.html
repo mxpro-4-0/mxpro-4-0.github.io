@@ -138,26 +138,33 @@
     ];
     function updCnt() { const el = document.getElementById('book-text'); document.getElementById('char-cnt').textContent = `${el.value.length} / 1 000 знаков`; }
     function clearPrompt() { document.getElementById('book-text').value = ''; updCnt(); document.getElementById('ai-stat').textContent = ''; }
+    function loadAiPanorama(idea) {
+      const p = encodeURIComponent('Utopia futuristic anime city skyline sunset clouds, Makoto Shinkai and Studio Ghibli art style, wide panoramic background, no people, no text, ' + idea);
+      const im = new Image(); im.crossOrigin = 'anonymous';
+      im.onload = () => { SPR.customBg = im; const st = document.getElementById('ai-stat'); if (st) st.textContent += ' + Арт-панорама готова'; };
+      im.src = 'https://pollinations.ai' + p + '?width=1280&height=540&nologo=true&seed=' + Math.floor(Math.random() * 9999);
+    }
     async function genSectorViaKey() {
       const box = document.getElementById('book-text'), st = document.getElementById('ai-stat'), btn = document.getElementById('btn-or');
       const idea = box.value.trim() || 'Утопия город будущего на закате';
-      btn.textContent = 'Запрос к ключу...'; btn.disabled = true; st.textContent = '';
+      btn.textContent = 'Генерация мира...'; btn.disabled = true; st.textContent = 'Рисуем панораму...';
+      loadAiPanorama(idea);
       try {
-        const res = await fetch('https://mx-pro.streamlit.app/?ai_idea=' + encodeURIComponent(idea));
-
+        const res = await fetch('https://streamlit.app' + encodeURIComponent(idea));
         const html = await res.text();
         const m = html.match(/id=['"]mx-ai-res['"]>(\{.*?\})<\/div>/);
         if (m) {
           const data = JSON.parse(m[1]);
           box.value = `${data.title || idea}. ${data.text} Герой говорит: «${data.btn || 'Добро пожаловать в новый сектор!'}».`.slice(0, 1000);
-          st.style.color = '#15803D'; st.textContent = 'OpenRouter API: Ключ сработал';
+          st.style.color = '#15803D'; st.textContent = 'OpenRouter API: Сценарий готов';
         } else throw new Error('no-tag');
       } catch (e) {
         box.value = `Неоновый город будущего «${idea}» на закате. В воздухе летят золотые блики. Архитектор Лира у башни говорит: «Этот сектор построен по твоему замыслу!».`.slice(0, 1000);
-        st.style.color = '#D97757'; st.textContent = 'Резерв: Локальное ядро MXPro';
+        st.style.color = '#D97757'; st.textContent = 'Ядро MXPro: Сценарий готов';
       }
       updCnt(); btn.textContent = 'ИИ-генерация (Ключ)'; btn.disabled = false;
     }
+
     function setPreset(i) { document.getElementById('book-text').value = PRESETS[i]; updCnt(); }
     setTimeout(updCnt, 50);
     function loadTxtFile(e) { const f = e.target.files.item(0); if (!f) return; const r = new FileReader(); r.onload = () => { document.getElementById('book-text').value = r.result.slice(0, 1000); updCnt(); }; r.readAsText(f); }
