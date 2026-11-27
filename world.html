@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MXPro 5.0 — Синтезатор 3D-аниме миров</title>
+  <style>
+    * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+    body { font-family:system-ui,-apple-system,sans-serif; background:#FAF9F5; color:#141413; overflow:hidden; height:100vh; }
+    #ui-book { position:fixed; inset:0; z-index:20; background:#FAF9F5; display:flex; flex-direction:column; padding:20px 16px; max-width:560px; margin:0 auto; }
+    .brand { font-size:13px; font-weight:800; color:#D97757; letter-spacing:0.04em; text-transform:uppercase; margin-bottom:4px; }
+    h1 { font-size:22px; font-weight:800; letter-spacing:-0.02em; margin-bottom:6px; }
+    .sub { font-size:13px; color:#5E5D59; margin-bottom:12px; line-height:1.4; }
+    textarea { flex:1; width:100%; border:1px solid #E5E2D9; border-radius:14px; padding:14px; font-size:14px; line-height:1.5; background:#FFF; color:#141413; resize:none; margin-bottom:12px; outline:none; }
+    textarea:focus { border-color:#D97757; }
+    .row { display:flex; gap:8px; }
+    .btn-main { flex:2; padding:14px; border-radius:12px; border:none; background:#D97757; color:#FFF; font-size:15px; font-weight:700; cursor:pointer; }
+    .btn-sec { flex:1; padding:14px; border-radius:12px; border:1px solid #E5E2D9; background:#FFF; color:#141413; font-size:13px; font-weight:700; cursor:pointer; }
+    #ui-world { position:fixed; inset:0; display:none; background:#1E1B4B; }
+    .hud-top { position:fixed; top:12px; left:12px; right:12px; z-index:10; display:flex; justify-content:space-between; align-items:center; pointer-events:none; }
+    .pill { background:rgba(20,20,19,0.72); border:1px solid rgba(255,255,255,0.25); color:#FAF9F5; padding:7px 12px; border-radius:999px; font-size:12px; font-weight:700; pointer-events:auto; cursor:pointer; }
+    #npc-speech { position:fixed; top:56px; left:12px; right:12px; z-index:10; max-width:440px; margin:0 auto; background:rgba(250,249,245,0.95); color:#141413; border-left:4px solid #D97757; border-radius:12px; padding:10px 14px; font-size:13px; line-height:1.4; box-shadow:0 8px 24px rgba(0,0,0,0.25); display:none; }
+    #joy-zone { position:fixed; bottom:24px; left:24px; width:110px; height:110px; border-radius:50%; background:rgba(255,255,255,0.22); border:1px solid rgba(255,255,255,0.45); z-index:10; touch-action:none; }
+    #joy-stick { position:absolute; top:35px; left:35px; width:40px; height:40px; border-radius:50%; background:#D97757; box-shadow:0 2px 8px rgba(0,0,0,0.3); }
+    #act-btn { position:fixed; bottom:34px; right:24px; width:84px; height:84px; border-radius:50%; border:2px solid #FFF; background:#D97757; color:#FFF; font-size:13px; font-weight:800; z-index:10; cursor:pointer; box-shadow:0 4px 16px rgba(217,119,87,0.5); }
+    #vn-modal { position:fixed; inset:0; z-index:30; background:rgba(15,23,42,0.65); backdrop-filter:blur(4px); display:none; align-items:center; justify-content:center; padding:16px; }
+    .vn-card { width:100%; max-width:420px; background:#FAF9F5; color:#141413; border-radius:18px; padding:18px; border-top:4px solid #D97757; box-shadow:0 16px 40px rgba(0,0,0,0.45); }
+    .vn-title { font-size:16px; font-weight:800; margin-bottom:8px; color:#141413; }
+    .vn-text { font-size:14px; line-height:1.45; color:#4A4945; margin-bottom:14px; }
+    .vn-opt { width:100%; text-align:left; padding:12px 14px; margin-bottom:8px; border-radius:12px; border:1px solid #E5E2D9; background:#FFF; color:#141413; font-size:13px; font-weight:700; cursor:pointer; }
+    .vn-opt:hover { border-color:#D97757; background:#FFF7F3; }
+  </style>
+
+</head>
+<body>
+  <div id="ui-book">
+    <div class="brand">MXPro 5.0 • Anime 3D World Engine</div>
+    <h1>Сценарный промпт 3D-мира</h1>
+    <div class="sub">Опишите сцену без «воды» (до 1 000 знаков): погода, место, имена героев и их фразы в «кавычках».</div>
+    <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
+      <button class="pill" onclick="setPreset(0)">Закат у моря</button>
+      <button class="pill" onclick="setPreset(1)">Зимний лес</button>
+      <button class="pill" onclick="setPreset(2)">Ночной неон</button>
+    </div>
+    <textarea id="book-text" maxlength="1000" oninput="updCnt()">Тёплый летний закат над тихим городком у моря...</textarea>
+    <div style="display:flex;justify-content:space-between;font-size:12px;color:#5E5D59;margin:-6px 2px 10px;">
+      <span id="char-cnt">0 / 1 000 знаков</span>
+      <span style="color:#D97757;cursor:pointer;font-weight:700;" onclick="clearPrompt()">Очистить</span>
+    </div>
+    <div class="row">
+      <button class="btn-sec" onclick="document.getElementById('file-txt').click()">Файл .txt</button>
+      <button class="btn-main" onclick="buildWorld()">Собрать 3D-мир</button>
+    </div>
+
+
+    <input type="file" id="file-txt" accept=".txt" style="display:none" onchange="loadTxtFile(event)" />
+  </div>
+
+
+  <div id="ui-world">
+    <div class="hud-top">
+      <div class="pill" onclick="backToBook()">← К тексту</div>
+      <div class="pill" id="hud-stat">60 FPS • Атмосфера: Закат Синкая</div>
+    </div>
+    <div id="npc-speech"></div>
+    <div id="joy-zone"><div id="joy-stick"></div></div>
+    <button id="act-btn" onclick="triggerAction()"> ДЕЙСТВИЕ</button>
+    <div id="vn-modal"><div class="vn-card"><div class="vn-title" id="vn-t"></div><div class="vn-text" id="vn-b"></div><div id="vn-opts"></div></div></div>
+  </div>
+
+  <script>
+    let player = { x: 0, z: 8 }, npcs = [], move = { x: 0, z: 0 }, animId = null, isNight = false;
+    const SPR = {};
+    function loadCleanSprite(key, src, cutBg) {
+      const im = new Image();
+      im.onload = () => {
+        if (!cutBg) { SPR[key] = im; return; }
+        const c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
+        const g = c.getContext('2d'); g.drawImage(im, 0, 0);
+        const w = c.width, h = c.height, d = g.getImageData(0, 0, w, h), p = d.data;
+        const vis = new Uint8Array(w * h), q = [0, w - 1, (h - 1) * w, w * h - 1];
+        const lum = idx => (p[idx * 4] + p[idx * 4 + 1] + p[idx * 4 + 2]) / 3;
+        while (q.length) {
+          const idx = q.pop();
+          if (idx < 0 || idx >= w * h || vis[idx] || lum(idx) < 205) continue;
+          vis[idx] = 1; p[idx * 4 + 3] = lum(idx) > 232 ? 0 : Math.round((232 - lum(idx)) * 6);
+          const x = idx % w;
+          if (x > 0) q.push(idx - 1); if (x < w - 1) q.push(idx + 1);
+          q.push(idx - w, idx + w);
+        }
+        g.putImageData(d, 0, 0);
+        let x0 = w, y0 = h, x1 = 0, y1 = 0;
+        for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) if (p[(y * w + x) * 4 + 3] > 20) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
+        if (x1 > x0 && y1 > y0) {
+          const out = document.createElement('canvas'); out.width = x1 - x0 + 1; out.height = y1 - y0 + 1;
+          out.getContext('2d').drawImage(c, x0, y0, out.width, out.height, 0, 0, out.width, out.height);
+          SPR[key] = out;
+        } else SPR[key] = c;
+      };
+      im.src = src + '?v=3';
+    }
+
+    loadCleanSprite('hero', 'hero.png', true);
+    loadCleanSprite('npc1', 'npc1.png', true);
+    loadCleanSprite('npc2', 'npc2.png', true);
+    loadCleanSprite('house', 'house.png', true);
+    loadCleanSprite('tree', 'tree.png', true);
+    loadCleanSprite('tower', 'tower.png', false);
+
+    const PRESETS = [
+      'Тёплый летний закат у моря. По улочке кружатся лепестки сакуры. Пекарь Артур у пекарни говорит: «Свежие булочки с корицей уже готовы!». Художник Алиса у фонаря улыбается: «Какой золотой свет над заливом!».',
+      'Морозный зимний вечер у старой станции. Падает пушистый снег. Смотритель Марк у тоннеля предупреждает: «Тропа заметена, держитесь ближе к огням!». Путешественник Елена шепчет: «Ключ от ворот спрятан у старой ели».',
+      'Ночной неоновый проспект после дождя. В воздухе летят золотые искры. Детектив Виктор у шлюза сообщает: «Центральный банк взломан, периметр перекрыт!». Информатор Кира тихо говорит: «Через старый тоннель можно пройти без досмотра».'
+    ];
+    function updCnt() { const el = document.getElementById('book-text'); document.getElementById('char-cnt').textContent = `${el.value.length} / 1 000 знаков`; }
+    function clearPrompt() { document.getElementById('book-text').value = ''; updCnt(); }
+    function setPreset(i) { document.getElementById('book-text').value = PRESETS[i]; updCnt(); }
+    setTimeout(updCnt, 50);
+    function loadTxtFile(e) { const f = e.target.files.item(0); if (!f) return; const r = new FileReader(); r.onload = () => { document.getElementById('book-text').value = r.result.slice(0, 1000); updCnt(); }; r.readAsText(f); }
+    function backToBook() { if (animId) cancelAnimationFrame(animId); document.getElementById('ui-world').style.display = 'none'; document.getElementById('ui-book').style.display = 'flex'; }
+
+
+    function drawAnimeChar(cx, x, y, s, coatCol, hairCol, name, t, phase) {
+      const bob = Math.sin(t * 0.005 + phase) * s * 0.06;
+      cx.fillStyle = 'rgba(20,15,35,0.28)'; cx.beginPath(); cx.ellipse(x, y, s * 0.42, s * 0.14, 0, 0, Math.PI * 2); cx.fill();
+      cx.fillStyle = coatCol; cx.beginPath(); cx.roundRect(x - s * 0.28, y - s * 1.15 + bob, s * 0.56, s * 1.1, s * 0.14); cx.fill();
+      cx.strokeStyle = '#1E1B4B'; cx.lineWidth = 2; cx.stroke();
+      cx.fillStyle = '#FDE6D8'; cx.beginPath(); cx.arc(x, y - s * 1.42 + bob, s * 0.27, 0, Math.PI * 2); cx.fill(); cx.stroke();
+      cx.fillStyle = hairCol; cx.beginPath(); cx.arc(x, y - s * 1.48 + bob, s * 0.29, Math.PI * 0.9, Math.PI * 2.1); cx.fill();
+      if (name) { cx.fillStyle = '#FFF'; cx.font = 'bold ' + Math.max(11, Math.min(15, s * 0.34)) + 'px system-ui'; cx.textAlign = 'center'; cx.fillText(name, x, y - s * 1.88 + bob); }
+    }
+    let biome = 'sunset', lastSpoken = '';
+    function speakLine(txt, idx) {
+      if (!('speechSynthesis' in window) || lastSpoken === txt) return;
+      lastSpoken = txt; speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(txt);
+      u.lang = 'ru-RU'; u.pitch = idx % 2 === 0 ? 1.15 : 0.88; u.rate = 1.04;
+      speechSynthesis.speak(u);
+    }
+    function buildWorld() {
+      const low = document.getElementById('book-text').value.toLowerCase();
+      biome = (low.includes('зим') || low.includes('снег') || low.includes('мороз')) ? 'winter' : ((low.includes('неон') || low.includes('ноч') || low.includes('дожд')) ? 'cyber' : 'sunset');
+      isNight = biome === 'cyber';
+      const labels = { sunset: 'Закат Синкая', winter: 'Зимний лес', cyber: 'Ночной неон' };
+      document.getElementById('hud-stat').textContent = `60 FPS • ${labels[biome]}`;
+      document.getElementById('ui-book').style.display = 'none';
+      const wBox = document.getElementById('ui-world'); wBox.style.display = 'block';
+
+      const cv = document.createElement('canvas'); cv.width = innerWidth; cv.height = innerHeight; wBox.appendChild(cv);
+      const cx = cv.getContext('2d');
+      player = { x: 0, z: 8 };
+      const clouds = Array.from({ length: 7 }, (_, i) => ({ x: i * 160, y: 55 + (i % 3) * 38, r: 44 + (i % 4) * 14, sp: 0.18 + (i % 3) * 0.08 }));
+      const petals = Array.from({ length: 28 }, (_, i) => ({ x: (i * 97) % innerWidth, y: (i * 53) % innerHeight, sp: 0.6 + (i % 4) * 0.3, ph: i }));
+      const rawTxt = document.getElementById('book-text').value;
+      const quotes = [...rawTxt.matchAll(/[«"]([^»"]{4,140})[»"]/g)].map(m => m[1]);
+      const names = [...new Set((rawTxt.replace(/^[А-ЯЁ][а-яё]+|[.!?]\s+[А-ЯЁ][а-яё]+/g, '').match(/[А-ЯЁ][а-яё]{2,14}/g) || []))].slice(0, 4);
+      const pos = [{ x: -3.2, z: -2, spr: 'npc1' }, { x: 3.3, z: -10, spr: 'npc2' }, { x: -2.2, z: -20, spr: 'npc1' }, { x: 2.8, z: -26, spr: 'npc2' }];
+      npcs = (names.length ? names : ['Пекарь', 'Художник', 'Смотритель']).map((nm, idx) => ({
+        name: nm, spr: pos[idx % 4].spr, coat: '#F59E0B', hair: '#1E3A8A', x: pos[idx % 4].x, z: pos[idx % 4].z,
+        lines: [quotes[idx] || `${nm} внимательно осматривает улицу и ждёт развития событий.`, 'Впереди у старого тоннеля начинается главная развилка этой главы.']
+      }));
+
+
+      function proj(wx, wy, wz) {
+        const dz = (player.z - wz) + 5; if (dz <= 0.4) return null;
+        const sc = (cv.height * 0.65) / dz;
+        return { x: cv.width / 2 + (wx - player.x) * sc, y: cv.height * 0.54 - (wy - 2.2) * sc, s: sc };
+      }
+      let lastMc = 0;
+      function loop(t) {
+        animId = requestAnimationFrame(loop);
+        player.x = Math.max(-4.8, Math.min(4.8, player.x + move.x * 0.13));
+        player.z = Math.max(-36, Math.min(16, player.z + move.z * 0.13));
+        const hy = cv.height * 0.54;
+        const g = cx.createLinearGradient(0, 0, 0, hy);
+        if (biome === 'cyber') { g.addColorStop(0, '#090D16'); g.addColorStop(0.55, '#1E1B4B'); g.addColorStop(1, '#9D174D'); }
+        else if (biome === 'winter') { g.addColorStop(0, '#1E3A8A'); g.addColorStop(0.6, '#60A5FA'); g.addColorStop(1, '#E0F2FE'); }
+        else { g.addColorStop(0, '#0369A1'); g.addColorStop(0.42, '#EC4899'); g.addColorStop(0.82, '#FB923C'); g.addColorStop(1, '#FEF08A'); }
+
+        cx.fillStyle = g; cx.fillRect(0, 0, cv.width, hy);
+        const sunX = cv.width * 0.5, sunY = hy * 0.82;
+        const sg = cx.createRadialGradient(sunX, sunY, 8, sunX, sunY, cv.width * 0.45);
+        sg.addColorStop(0, isNight ? 'rgba(224,231,255,0.9)' : 'rgba(255,255,240,0.95)');
+        sg.addColorStop(0.25, isNight ? 'rgba(129,140,248,0.25)' : 'rgba(253,224,71,0.45)');
+        sg.addColorStop(1, 'rgba(255,255,255,0)');
+        cx.fillStyle = sg; cx.fillRect(0, 0, cv.width, hy);
+        clouds.forEach(c => {
+          c.x = (c.x + c.sp) % (cv.width + 220);
+          const bx = c.x - 110;
+          cx.fillStyle = isNight ? 'rgba(49,46,129,0.55)' : 'rgba(190,24,93,0.28)';
+          cx.beginPath(); cx.arc(bx, c.y + 8, c.r, 0, Math.PI * 2); cx.arc(bx + 36, c.y + 4, c.r * 0.85, 0, Math.PI * 2); cx.fill();
+          cx.fillStyle = isNight ? 'rgba(199,210,254,0.35)' : 'rgba(255,251,235,0.92)';
+          cx.beginPath(); cx.arc(bx, c.y, c.r, 0, Math.PI * 2); cx.arc(bx + 36, c.y - 11, c.r * 0.86, 0, Math.PI * 2); cx.arc(bx + 68, c.y + 2, c.r * 0.72, 0, Math.PI * 2); cx.fill();
+        });
+        cx.fillStyle = biome === 'cyber' ? '#1E1B4B' : (biome === 'winter' ? '#93C5FD' : '#A855F7');
+        cx.beginPath(); cx.moveTo(0, hy - 12); cx.lineTo(cv.width * 0.22, hy - 44); cx.lineTo(cv.width * 0.48, hy - 18); cx.lineTo(cv.width * 0.78, hy - 52); cx.lineTo(cv.width, hy - 20); cx.lineTo(cv.width, hy - 12); cx.fill();
+        cx.fillStyle = isNight ? '#1E3A8A' : '#38BDF8'; cx.fillRect(0, hy - 14, cv.width, 14);
+        cx.fillStyle = isNight ? 'rgba(199,210,254,0.3)' : 'rgba(254,240,138,0.7)'; cx.fillRect(sunX - 40, hy - 12, 80, 3);
+
+        cx.strokeStyle = 'rgba(20,20,30,0.45)'; cx.lineWidth = 1.2;
+        cx.beginPath(); cx.moveTo(0, hy * 0.32); cx.quadraticCurveTo(cv.width * 0.5, hy * 0.48, cv.width, hy * 0.28); cx.stroke();
+
+        const rg = cx.createLinearGradient(0, hy, 0, cv.height);
+        rg.addColorStop(0, isNight ? '#1E293B' : '#9A8C82'); rg.addColorStop(1, isNight ? '#0F172A' : '#57534E');
+        cx.fillStyle = rg; cx.fillRect(0, hy, cv.width, cv.height - hy);
+        for (let z = -40; z <= 16; z += 8) {
+          const pL = proj(-6.5, 0, z), pR = proj(6.5, 0, z);
+          if (pL && pR) {
+            cx.strokeStyle = 'rgba(255,255,255,0.28)'; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(pL.x, pL.y); cx.lineTo(pR.x, pR.y); cx.stroke();
+            [-10.2, 10.2].forEach(bx => {
+              const b = proj(bx, 0, z);
+              if (SPR.house) {
+                const hh = b.s * 7.8, hw = hh * (SPR.house.width / SPR.house.height);
+                cx.drawImage(SPR.house, b.x - hw / 2, b.y - hh + b.s * 0.3, hw, hh);
+              } else {
+                const w = b.s * 6.4, h = 11 * b.s;
+                cx.fillStyle = isNight ? '#334155' : '#FEF3C7'; cx.fillRect(b.x - w / 2, b.y - h, w, h);
+              }
+              const tx = b.x + (bx < 0 ? b.s * 4.2 : -b.s * 4.2);
+              if (SPR.tree) {
+                const th = b.s * 6.4, tw = th * (SPR.tree.width / SPR.tree.height);
+                cx.drawImage(SPR.tree, tx - tw / 2, b.y - th + b.s * 0.2, tw, th);
+              } else {
+                cx.fillStyle = isNight ? '#15803D' : '#F472B6'; cx.beginPath(); cx.arc(tx, b.y - b.s * 3.2, b.s * 1.8, 0, Math.PI * 2); cx.fill();
+              }
+            });
+
+          }
+        }
+
+        const tun = proj(0, 0, -28);
+        if (tun) { cx.strokeStyle = '#57534E'; cx.lineWidth = Math.max(6, tun.s * 0.9); cx.beginPath(); cx.arc(tun.x, tun.y, tun.s * 4.8, Math.PI, 0); cx.stroke(); }
+        if (SPR.tower) {
+          const tw = Math.min(cv.width * 0.42, 220), th = tw * (SPR.tower.height / SPR.tower.width);
+          cx.globalAlpha = isNight ? 0.55 : 0.88;
+          cx.drawImage(SPR.tower, cv.width * 0.5 - tw * 0.5, hy - th + 6, tw, th);
+          cx.globalAlpha = 1;
+        }
+        npcs.slice().sort((a, b) => a.z - b.z).forEach((n, i) => {
+          const p = proj(n.x, 0, n.z); if (!p) return;
+          const sp = SPR[n.spr];
+          if (sp) {
+            const bob = Math.sin(t * 0.004 + i) * p.s * 0.05;
+            const h = p.s * 2.3, w = h * (sp.width / sp.height);
+            cx.fillStyle = 'rgba(20,15,35,0.28)'; cx.beginPath(); cx.ellipse(p.x, p.y, w * 0.32, p.s * 0.14, 0, 0, Math.PI * 2); cx.fill();
+            cx.drawImage(sp, p.x - w / 2, p.y - h + bob, w, h);
+            cx.fillStyle = '#FFF'; cx.font = 'bold ' + Math.max(11, Math.min(15, p.s * 0.34)) + 'px system-ui'; cx.textAlign = 'center'; cx.fillText(n.name, p.x, p.y - h - 6 + bob);
+          } else drawAnimeChar(cx, p.x, p.y, p.s, n.coat, n.hair, n.name, t, i);
+        });
+        if (SPR.hero) {
+          const bob = Math.sin(t * 0.005) * 3, hh = Math.min(165, cv.height * 0.26), hw = hh * (SPR.hero.width / SPR.hero.height);
+          const gy = cv.height * 0.76;
+          cx.fillStyle = 'rgba(20,15,35,0.36)'; cx.beginPath(); cx.ellipse(cv.width / 2, gy, hw * 0.34, 9, 0, 0, Math.PI * 2); cx.fill();
+          cx.drawImage(SPR.hero, cv.width / 2 - hw / 2, gy - hh + bob, hw, hh);
+        } else drawAnimeChar(cx, cv.width / 2, cv.height * 0.76, 46, '#FAF9F5', '#1E293B', 'Вы', t, 0);
+
+
+        petals.forEach(pt => {
+          pt.y = (pt.y + (biome === 'cyber' ? pt.sp * 4 : pt.sp)) % cv.height;
+          pt.x = (pt.x + (biome === 'cyber' ? -1.2 : Math.sin(t * 0.002 + pt.ph) * 0.6) + cv.width) % cv.width;
+          if (biome === 'cyber') { cx.strokeStyle = 'rgba(125,211,252,0.45)'; cx.beginPath(); cx.moveTo(pt.x, pt.y); cx.lineTo(pt.x - 3, pt.y + 10); cx.stroke(); }
+          else if (biome === 'winter') { cx.fillStyle = 'rgba(255,255,255,0.88)'; cx.beginPath(); cx.arc(pt.x, pt.y, 2.8, 0, Math.PI * 2); cx.fill(); }
+          else { cx.fillStyle = 'rgba(251,207,232,0.85)'; cx.beginPath(); cx.ellipse(pt.x, pt.y, 4, 2.5, pt.ph, 0, Math.PI * 2); cx.fill(); }
+        });
+        if (t - lastMc > 100) {
+          lastMc = t; const nearIdx = npcs.findIndex(n => Math.hypot(n.x - player.x, n.z - player.z) < 5); const box = document.getElementById('npc-speech');
+          if (nearIdx >= 0) { const near = npcs[nearIdx], line = near.lines[Math.floor((t / 4000) % near.lines.length)]; box.innerHTML = `<b>${near.name}</b> <span style="color:#D97757;font-size:11px;">• Голос</span><br>${line}`; box.style.display = 'block'; speakLine(line, nearIdx); } else box.style.display = 'none';
+        }
+
+      }
+      loop(0);
+    }
+    function openVnCard(title, body, opts) {
+      document.getElementById('vn-t').textContent = title;
+      document.getElementById('vn-b').textContent = body;
+      const box = document.getElementById('vn-opts'); box.innerHTML = '';
+      opts.forEach(o => {
+        const b = document.createElement('button'); b.className = 'vn-opt'; b.textContent = o.label;
+        b.onclick = () => { document.getElementById('vn-modal').style.display = 'none'; if (o.fn) o.fn(); };
+        box.appendChild(b);
+      });
+      document.getElementById('vn-modal').style.display = 'flex';
+    }
+    let curLoc = 'street', INV = [];
+    const WORLD_MAP = {
+      street: { title: 'Главная улочка', exitHint: 'Слева дверь в Пекарню, справа вход в Переулок, впереди Тоннель к морю.', npcs: [] },
+      bakery: { title: 'Уютная пекарня', exitHint: 'Внутри пахнет свежей выпечкой. У прилавка стоит Хозяин пекарни.', npcs: [{ name: 'Хозяин пекарни', spr: 'npc1', coat: '#D97757', hair: '#78350F', x: 0, z: -6, item: 'Тёплая булочка', lines: ['Добро пожаловать в пекарню! Возьми тёплую булочку в дорогу.', 'Загляни в тихий переулок за углом — там часто находят старинные ключи.'] }] },
+      alley: { title: 'Тихий переулок', exitHint: 'Узкий проход между домами. У корней старого дерева блестит предмет.', npcs: [{ name: 'Таинственный незнакомец', spr: 'npc2', coat: '#334155', hair: '#0F172A', x: 1.5, z: -10, item: 'Старинный ключ', lines: ['Не каждый сворачивает в этот переулок... Возьми этот ключ, он от ворот маяка.', 'Отнеси его Хранителю маяка на берегу моря за тоннелем.'] }] },
+      sea: { title: 'Берег моря у маяка', exitHint: 'Солнце садится в океан, волны бьются о каменный пирс.', npcs: [{ name: 'Хранитель маяка', spr: 'npc2', coat: '#0284C7', hair: '#1E3A8A', x: 0, z: -8, lines: ['Ты прошёл сквозь тоннель! У тебя случайно нет старинного ключа от башни?', 'С этим ключом мы зажжём маяк и откроем следующую главу!'] }] }
+    };
+    function updHud() {
+      const bag = INV.length ? ` • Сумка: ${INV.join(', ')}` : '';
+      document.getElementById('hud-stat').textContent = `${WORLD_MAP[curLoc].title}${bag}`;
+    }
+    function goLoc(id) {
+      if (id === 'street' && WORLD_MAP.street.savedNpcs) npcs = WORLD_MAP.street.savedNpcs;
+      else { if (curLoc === 'street') WORLD_MAP.street.savedNpcs = npcs; npcs = WORLD_MAP[id].npcs; }
+      curLoc = id; player = { x: 0, z: 8 }; updHud();
+    }
+    function triggerAction() {
+      const near = npcs.find(n => Math.hypot(n.x - player.x, n.z - player.z) < 5);
+      if (near) {
+        const opts = [{ label: 'Спросить о дальнейшем пути', fn: () => openVnCard(near.name, `«${near.lines || 'Иди вперёд и исследуй каждый поворот этой локации.'}»`, [{ label: 'Продолжить' }]) }];
+        if (near.item && !INV.includes(near.item)) opts.unshift({ label: `Взять предмет: ${near.item}`, fn: () => { INV.push(near.item); updHud(); openVnCard('Предмет получен', `В вашу сумку добавлен предмет: «${near.item}».`, [{ label: 'Отлично' }]); } });
+        if (near.name === 'Хранитель маяка' && INV.includes('Старинный ключ')) opts.unshift({ label: 'Передать Старинный ключ и зажечь маяк', fn: () => openVnCard('Квест главы выполнен!', 'Луч маяка прорезал закатное небо над морем. Первая глава 2.5D-истории успешно завершена!', [{ label: 'Вернуться в игру' }]) });
+        opts.push({ label: 'Завершить разговор' });
+        openVnCard(`Диалог • ${near.name}`, `«${near.lines}»`, opts);
+        return;
+      }
+      if (curLoc === 'street') {
+        if (player.x < -2.6 && player.z < 4) openVnCard('Дверь в Пекарню', 'Из приоткрытой двери тянет теплом и ароматом ванили.', [{ label: 'Зайти внутрь пекарни', fn: () => goLoc('bakery') }, { label: 'Остаться на улице' }]);
+        else if (player.x > 2.6 && player.z < -4) openVnCard('Вход в Переулок', 'Узкая тропинка уходит вглубь квартала.', [{ label: 'Свернуть в переулок', fn: () => goLoc('alley') }, { label: 'Остаться на улице' }]);
+        else if (player.z < -22) openVnCard('Старый каменный тоннель', 'За аркой слышен шум морского прибоя.', [{ label: 'Пройти к берегу моря', fn: () => goLoc('sea') }, { label: 'Остаться на улице' }]);
+        else openVnCard('Главная улочка', WORLD_MAP.street.exitHint, [{ label: 'Понятно' }]);
+      } else {
+        openVnCard(WORLD_MAP[curLoc].title, `${WORLD_MAP[curLoc].exitHint} Вернуться обратно на главную улочку?`, [{ label: 'Выйти на главную улочку', fn: () => goLoc('street') }, { label: 'Остаться здесь' }]);
+      }
+    }
+
+
+
+    const jz = document.getElementById('joy-zone'), js = document.getElementById('joy-stick');
+    jz.addEventListener('touchmove', e => { const r = jz.getBoundingClientRect(), t = e.touches.item(0); const dx = Math.max(-35, Math.min(35, t.clientX - r.left - 55)), dy = Math.max(-35, Math.min(35, t.clientY - r.top - 55)); js.style.transform = `translate(${dx}px, ${dy}px)`; move = { x: dx / 35, z: dy / 35 }; }, { passive: true });
+    jz.addEventListener('touchend', () => { js.style.transform = 'translate(0,0)'; move = { x: 0, z: 0 }; });
+    onkeydown = e => { if (e.key === 'ArrowUp' || e.key === 'w') move.z = -1; if (e.key === 'ArrowDown' || e.key === 's') move.z = 1; if (e.key === 'ArrowLeft' || e.key === 'a') move.x = -1; if (e.key === 'ArrowRight' || e.key === 'd') move.x = 1; };
+    onkeyup = () => { move = { x: 0, z: 0 }; };
+  </script>
+</body>
+</html>
