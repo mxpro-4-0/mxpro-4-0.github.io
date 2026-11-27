@@ -150,8 +150,9 @@
       document.getElementById('hud-stat').textContent = `60 FPS • ${labels[biome]}`;
       document.getElementById('ui-book').style.display = 'none';
       const wBox = document.getElementById('ui-world'); wBox.style.display = 'block';
-
+      wBox.querySelectorAll('canvas').forEach(c => c.remove());
       const cv = document.createElement('canvas'); cv.width = innerWidth; cv.height = innerHeight; wBox.appendChild(cv);
+
       const cx = cv.getContext('2d');
       player = { x: 0, z: 8 };
       const clouds = Array.from({ length: 7 }, (_, i) => ({ x: i * 160, y: 55 + (i % 3) * 38, r: 44 + (i % 4) * 14, sp: 0.18 + (i % 3) * 0.08 }));
