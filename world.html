@@ -427,60 +427,108 @@
       });
       document.getElementById('vn-modal').style.display = 'flex';
     }
-    let curLoc = 'street', INV = [];
-    const WORLD_MAP = {
-      street: { title: 'Главная улочка', exitHint: 'Слева дверь в Пекарню, справа вход в Переулок, впереди Тоннель к морю.', npcs: [] },
-      bakery: { title: 'Уютная пекарня', exitHint: 'Внутри пахнет свежей выпечкой. У прилавка стоит Хозяин пекарни.', npcs: [{ name: 'Хозяин пекарни', spr: 'npc1', coat: '#D97757', hair: '#78350F', x: 0, z: -6, item: 'Тёплая булочка', lines: ['Добро пожаловать в пекарню! Возьми тёплую булочку в дорогу.', 'Загляни в тихий переулок за углом — там часто находят старинные ключи.'] }] },
-      alley: { title: 'Тихий переулок', exitHint: 'Узкий проход между домами. У корней старого дерева блестит предмет.', npcs: [{ name: 'Таинственный незнакомец', spr: 'npc2', coat: '#334155', hair: '#0F172A', x: 1.5, z: -10, item: 'Старинный ключ', lines: ['Не каждый сворачивает в этот переулок... Возьми этот ключ, он от ворот маяка.', 'Отнеси его Хранителю маяка на берегу моря за тоннелем.'] }] },
-      sea: { title: 'Берег моря у маяка', exitHint: 'Солнце садится в океан, волны бьются о каменный пирс.', npcs: [{ name: 'Хранитель маяка', spr: 'npc2', coat: '#0284C7', hair: '#1E3A8A', x: 0, z: -8, lines: ['Ты прошёл сквозь тоннель! У тебя случайно нет старинного ключа от башни?', 'С этим ключом мы зажжём маяк и откроем следующую главу!'] }] }
-    };
+    let curLoc = 'street', onRoof = false, shardTaken = false;
+    let timeCapsule = localStorage.getItem('mxs_capsule') || 'Добро пожаловать в MX-Оазис! Оставь здесь своё послание для других игроков.';
+    function getBlueSparks() { return parseInt(localStorage.getItem('mxs_sparks') || '250000', 10); }
+    function getOrangeSparks() { return parseInt(localStorage.getItem('mxs_orange_sparks') || '0', 10); }
+    function addBlueSparks(d) { localStorage.setItem('mxs_sparks', Math.max(0, getBlueSparks() + d)); updHud(); }
     function updHud() {
-      const bag = INV.length ? ` • Сумка: ${INV.join(', ')}` : '';
-      document.getElementById('hud-stat').textContent = `${WORLD_MAP[curLoc].title}${bag}`;
+      const place = onRoof ? 'Крыша башни (60м)' : 'Площадь';
+      document.getElementById('hud-stat').textContent = `${place} • Синие: ${getBlueSparks().toLocaleString('ru-RU')} • Оранжевые: ${getOrangeSparks().toLocaleString('ru-RU')}`;
     }
-    function goLoc(id) {
-      if (id === 'street' && WORLD_MAP.street.savedNpcs) npcs = WORLD_MAP.street.savedNpcs;
-      else { if (curLoc === 'street') WORLD_MAP.street.savedNpcs = npcs; npcs = WORLD_MAP[id].npcs; }
-      curLoc = id; player = { x: 0, z: 8 }; updHud();
+    function takeOasisPhoto() {
+      const srcCv = document.querySelector('#ui-world canvas');
+      if (!srcCv) return;
+      const out = document.createElement('canvas'); out.width = srcCv.width; out.height = srcCv.height;
+      const g = out.getContext('2d'); g.drawImage(srcCv, 0, 0);
+      const nick = localStorage.getItem('mxs_nick') || ('@' + (localStorage.getItem('mxs_uid') || 'Искатель'));
+      g.fillStyle = 'rgba(15,23,42,0.78)'; g.fillRect(16, out.height - 54, 290, 38);
+      g.strokeStyle = '#D97757'; g.lineWidth = 2; g.strokeRect(16, out.height - 54, 290, 38);
+      g.fillStyle = '#FAF9F5'; g.font = 'bold 14px system-ui';
+      g.fillText(`${nick} • MX-Оазис 3D`, 30, out.height - 30);
+      const a = document.createElement('a'); a.download = 'mx-oasis-shot.png'; a.href = out.toDataURL('image/png'); a.click();
+    }
+
+    function toggleRoof(up) {
+      onRoof = up;
+      player.y = up ? 28 : 0;
+      if (up) { player.x = -11; player.z = 0; }
+      updHud();
+    }
+    function openFaqMenu() {
+      openVnCard('Стойка Информации • FAQ MX-Оазиса', 'Выберите вопрос о правилах и возможностях мира:', [
+        { label: 'В чём разница Синих и Оранжевых Искр?', fn: () => openVnCard('Двухконтурные Искры', 'Синие Искры — бесплатные бонусы за игры и квесты. Оранжевые Искры приобретаются по СБП и выводятся на карту по закону РФ (422-ФЗ) при наличии лицензии.', [{ label: 'Назад к FAQ', fn: openFaqMenu }]) },
+        { label: 'Как подняться на крышу и сделать фото?', fn: () => openVnCard('Смотровая площадка (60м)', 'Подойдите к башне Кафе «Сакура» (слева) и нажмите «ДЕЙСТВИЕ», чтобы подняться на лифте. Кнопка «Фото» вверху сохранит кадр с вашим ником.', [{ label: 'Назад к FAQ', fn: openFaqMenu }]) },
+        { label: 'Как оставить Тайную капсулу времени?', fn: () => { const msg = prompt('Введите послание для игроков площади:'); if (msg) { timeCapsule = msg.slice(0, 120); localStorage.setItem('mxs_capsule', timeCapsule); addBlueSparks(50); } } },
+        { label: 'Закрыть' }
+      ]);
     }
     function triggerAction() {
-      const near = npcs.find(n => Math.hypot(n.x - player.x, n.z - player.z) < 5);
-      if (near) {
-        const opts = [{ label: 'Спросить о дальнейшем пути', fn: () => openVnCard(near.name, `«${near.lines || 'Иди вперёд и исследуй каждый поворот этой локации.'}»`, [{ label: 'Продолжить' }]) }];
-        if (near.item && !INV.includes(near.item)) opts.unshift({ label: `Взять предмет: ${near.item}`, fn: () => { INV.push(near.item); updHud(); openVnCard('Предмет получен', `В вашу сумку добавлен предмет: «${near.item}».`, [{ label: 'Отлично' }]); } });
-        if (near.name === 'Хранитель маяка' && INV.includes('Старинный ключ')) opts.unshift({ label: 'Передать Старинный ключ и зажечь маяк', fn: () => openVnCard('Квест главы выполнен!', 'Луч маяка прорезал закатное небо над морем. Первая глава 2.5D-истории успешно завершена!', [{ label: 'Вернуться в игру' }]) });
-        opts.push({ label: 'Завершить разговор' });
-        openVnCard(`Диалог • ${near.name}`, `«${near.lines}»`, opts);
+      if (onRoof) {
+        openVnCard('Крыша небоскрёба (60 метров)', 'Отсюда виден Млечный Путь, Луна и весь мегаполис. Сделайте снимок кнопкой «Фото» вверху или спуститесь вниз.', [
+          { label: 'Спуститься на площадь', fn: () => toggleRoof(false) },
+          { label: 'Остаться наверху' }
+        ]);
         return;
       }
-      if (curLoc === 'street') {
-        if (player.x < -2.6 && player.z < 4) openVnCard('Дверь в Пекарню', 'Из приоткрытой двери тянет теплом и ароматом ванили.', [{ label: 'Зайти внутрь пекарни', fn: () => goLoc('bakery') }, { label: 'Остаться на улице' }]);
-        else if (player.x > 2.6 && player.z < -4) openVnCard('Вход в Переулок', 'Узкая тропинка уходит вглубь квартала.', [{ label: 'Свернуть в переулок', fn: () => goLoc('alley') }, { label: 'Остаться на улице' }]);
-        else if (player.z < -22) openVnCard('Старый каменный тоннель', 'За аркой слышен шум морского прибоя.', [{ label: 'Пройти к берегу моря', fn: () => goLoc('sea') }, { label: 'Остаться на улице' }]);
-        else openVnCard('Главная улочка', WORLD_MAP.street.exitHint, [{ label: 'Понятно' }]);
+      if (!shardTaken && Math.hypot(player.x + 7.5, player.z - 6.5) < 4) {
+        shardTaken = true; addBlueSparks(1000);
+        openVnCard('Найден Квантовый осколок!', 'Вы собрали ежедневную аномалию площади и получили +1 000 Синих Искр!', [{ label: 'Отлично' }]);
+        return;
+      }
+      const near = npcs.find(n => Math.hypot(n.x - player.x, n.z - player.z) < 4.5);
+      if (near) {
+        if (near.isFaq) { openFaqMenu(); return; }
+        openVnCard(near.name, `«${near.lines[0]}»`, [
+          { label: 'Угостить кофе (-100 Синих Искр)', fn: () => { addBlueSparks(-100); openVnCard(near.name, 'Спасибо за тёплый кофе! Репутация на площади выросла.', [{ label: 'Продолжить' }]); } },
+          { label: 'Завершить разговор' }
+        ]);
+        return;
+      }
+      if (player.x < -8.5) {
+        openVnCard('Скоростной лифт небоскрёба', 'Подняться на смотровую площадку крыши (высота 60 метров) для обзора Млечного Пути и скриншотов?', [
+          { label: 'Подняться на крышу', fn: () => toggleRoof(true) },
+          { label: 'Остаться на площади' }
+        ]);
       } else {
-        openVnCard(WORLD_MAP[curLoc].title, `${WORLD_MAP[curLoc].exitHint} Вернуться обратно на главную улочку?`, [{ label: 'Выйти на главную улочку', fn: () => goLoc('street') }, { label: 'Остаться здесь' }]);
+        openVnCard('Тайная капсула площади', `Последнее послание игроков: «${timeCapsule}»`, [
+          { label: 'Оставить своё послание (+50 Синих Искр)', fn: () => { const msg = prompt('Ваше послание:'); if (msg) { timeCapsule = msg.slice(0, 120); localStorage.setItem('mxs_capsule', timeCapsule); addBlueSparks(50); } } },
+          { label: 'Продолжить прогулку' }
+        ]);
       }
     }
+
 
 
 
     const jz = document.getElementById('joy-zone'), js = document.getElementById('joy-stick');
-    jz.addEventListener('touchmove', e => { const r = jz.getBoundingClientRect(), t = e.touches.item(0); const dx = Math.max(-35, Math.min(35, t.clientX - r.left - 55)), dy = Math.max(-35, Math.min(35, t.clientY - r.top - 55)); js.style.transform = `translate(${dx}px, ${dy}px)`; move = { x: dx / 35, z: dy / 35 }; }, { passive: true });
-    jz.addEventListener('touchend', () => { js.style.transform = 'translate(0,0)'; move = { x: 0, z: 0 }; });
+    let jDrag = false;
+    function setJoy(cx, cy) {
+      const r = jz.getBoundingClientRect();
+      const dx = Math.max(-35, Math.min(35, cx - r.left - 55)), dy = Math.max(-35, Math.min(35, cy - r.top - 55));
+      js.style.transform = `translate(${dx}px, ${dy}px)`; move = { x: dx / 35, z: dy / 35 };
+    }
+    function stopJoy() { jDrag = false; js.style.transform = 'translate(0,0)'; move = { x: 0, z: 0 }; }
+    jz.addEventListener('touchstart', e => { jDrag = true; const t = e.touches.item(0); setJoy(t.clientX, t.clientY); }, { passive: true });
+    jz.addEventListener('touchmove', e => { if (!jDrag) return; const t = e.touches.item(0); setJoy(t.clientX, t.clientY); }, { passive: true });
+    jz.addEventListener('touchend', stopJoy);
+    jz.onmousedown = e => { jDrag = true; setJoy(e.clientX, e.clientY); };
+    onmousemove = e => { if (jDrag) setJoy(e.clientX, e.clientY); };
+    onmouseup = stopJoy;
     function openPortals() {
-      const sectors = [
-        { name: 'Центральная площадь (Мой респаун)', fn: () => goLoc('street') },
-        { name: 'Кафе и Лавка снаряжения (@Master_Ufa)', fn: () => goLoc('bakery') },
-        { name: 'Тихий переулок для встреч (@Alisa_Novels)', fn: () => goLoc('alley') },
-        { name: 'Берег моря у маяка (@Keeper_Sea)', fn: () => goLoc('sea') }
+      const pts = [
+        { name: 'Центр площади (Точка респауна)', fn: () => { toggleRoof(false); player.x = 0; player.z = 11; } },
+        { name: 'Стойка Информации • FAQ', fn: () => { toggleRoof(false); player.x = 0; player.z = -5.5; openFaqMenu(); } },
+        { name: 'Крыша небоскрёба (Высота 60м • Фото)', fn: () => toggleRoof(true) },
+        { name: 'Ночной клуб «Аксис» и правый проспект', fn: () => { toggleRoof(false); player.x = 8.5; player.z = -9; } }
       ];
-      openVnCard('Порталы MX-Оазиса', 'Выберите сектор для мгновенного перемещения или создайте свой через «+ Моя локация»:', sectors.map(s => ({ label: s.name, fn: s.fn })).concat([{ label: 'Закрыть' }]));
+      openVnCard('Порталы MX-Оазиса', 'Мгновенное перемещение по точкам мегаполиса:', pts.map(p => ({ label: p.name, fn: p.fn })).concat([{ label: 'Закрыть' }]));
     }
     onkeydown = e => { const k = e.key.toLowerCase(); if (k === 'arrowup' || k === 'w' || k === 'ц') move.z = -1; if (k === 'arrowdown' || k === 's' || k === 'ы') move.z = 1; if (k === 'arrowleft' || k === 'a' || k === 'ф') move.x = -1; if (k === 'arrowright' || k === 'd' || k === 'в') move.x = 1; };
     onkeyup = () => { move = { x: 0, z: 0 }; };
     setTimeout(buildWorld, 60);
   </script>
+
 
 </body>
 </html>
