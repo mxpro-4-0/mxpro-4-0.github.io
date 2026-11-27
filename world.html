@@ -224,102 +224,148 @@
       speechSynthesis.speak(u);
     }
     function makeRoadTex() {
-      const c = document.createElement('canvas'); c.width = 512; c.height = 1024;
+      const c = document.createElement('canvas'); c.width = 512; c.height = 512;
       const g = c.getContext('2d');
-      g.fillStyle = '#0F172A'; g.fillRect(0, 0, 512, 1024);
-      g.strokeStyle = 'rgba(56,189,248,0.22)'; g.lineWidth = 3;
-      for (let y = 0; y < 1024; y += 64) { g.beginPath(); g.moveTo(0, y); g.lineTo(512, y); g.stroke(); }
-      g.fillStyle = '#38BDF8'; g.fillRect(36, 0, 8, 1024); g.fillRect(468, 0, 8, 1024);
-      g.save(); g.translate(256, 512); g.rotate(-Math.PI / 2);
-      g.font = 'bold 34px system-ui'; g.textAlign = 'center';
-      g.fillStyle = '#FDE047'; g.fillText('КАФЕ «САКУРА»   •   ЛАВКА АРТЕФАКТОВ   •   ПОРТАЛ', 0, -140);
-      g.fillStyle = '#F472B6'; g.fillText('ПАЛАТА ЛИЦЕНЗИЙ   •   ПАРИКМАХЕРСКАЯ   •   MX-ОАЗИС', 0, 165);
-      g.restore();
-      const tx = new THREE.CanvasTexture(c); tx.wrapS = tx.wrapT = THREE.RepeatWrapping; tx.repeat.set(1, 3);
+      g.fillStyle = '#0F172A'; g.fillRect(0, 0, 512, 512);
+      for (let y = 0; y < 512; y += 32) {
+        const off = (y / 32) % 2 ? 16 : 0;
+        for (let x = -16; x < 512; x += 32) {
+          g.fillStyle = ((x + y) % 64 === 0) ? '#1E293B' : '#172033';
+          g.fillRect(x + off + 2, y + 2, 28, 28);
+        }
+      }
+      g.strokeStyle = '#38BDF8'; g.lineWidth = 4; g.strokeRect(18, 18, 476, 476);
+      g.font = 'bold 24px system-ui'; g.textAlign = 'center'; g.fillStyle = '#FDE047';
+      g.fillText('ЦЕНТРАЛЬНАЯ ПЛОЩАДЬ • MX-ОАЗИС', 256, 52);
+      const tx = new THREE.CanvasTexture(c); tx.wrapS = tx.wrapT = THREE.RepeatWrapping; tx.repeat.set(4, 6);
       return tx;
     }
     function makeBuildingTex(seed, ruText, jpText) {
       const c = document.createElement('canvas'); c.width = 256; c.height = 512;
       const g = c.getContext('2d');
-      g.fillStyle = seed % 2 ? '#0B1120' : '#111827'; g.fillRect(0, 0, 256, 512);
-      for (let y = 24; y < 480; y += 26) for (let x = 20; x < 230; x += 28) {
-        g.fillStyle = ((x + y + seed * 17) % 5 === 0) ? '#38BDF8' : (((x * y + seed) % 7 === 0) ? '#F472B6' : '#1E293B');
-        g.fillRect(x, y, 16, 14);
+      const gr = g.createLinearGradient(0, 0, 0, 512);
+      gr.addColorStop(0, '#020617'); gr.addColorStop(1, seed % 2 ? '#1E1B4B' : '#0F172A');
+      g.fillStyle = gr; g.fillRect(0, 0, 256, 512);
+      for (let y = 18; y < 490; y += 18) for (let x = 14; x < 238; x += 22) {
+        const rnd = (x * 13 + y * 7 + seed * 31) % 11;
+        g.fillStyle = rnd === 0 ? '#38BDF8' : (rnd === 1 ? '#F472B6' : (rnd === 2 ? '#FDE047' : '#1E293B'));
+        g.fillRect(x, y, 14, 10);
       }
-      g.fillStyle = 'rgba(15,23,42,0.92)'; g.fillRect(28, 180, 200, 56);
-      g.strokeStyle = seed % 2 ? '#F472B6' : '#38BDF8'; g.lineWidth = 4; g.strokeRect(28, 180, 200, 56);
-      g.fillStyle = '#FFF'; g.font = 'bold 20px system-ui'; g.textAlign = 'center'; g.fillText(ruText, 128, 214);
-      g.fillStyle = '#38BDF8'; g.font = 'bold 24px system-ui'; g.fillText(jpText, 224, 90); g.fillText('未来', 224, 122);
+      g.fillStyle = '#38BDF8'; g.fillRect(6, 0, 4, 512); g.fillRect(246, 0, 4, 512);
+      g.fillStyle = 'rgba(9,13,22,0.94)'; g.fillRect(20, 210, 216, 62);
+      g.strokeStyle = seed % 2 ? '#F472B6' : '#38BDF8'; g.lineWidth = 4; g.strokeRect(20, 210, 216, 62);
+      g.fillStyle = '#FFF'; g.font = 'bold 19px system-ui'; g.textAlign = 'center'; g.fillText(ruText, 128, 247);
+      g.fillStyle = '#F472B6'; g.font = 'bold 26px system-ui'; g.fillText(jpText, 224, 80); g.fillText('電脳', 224, 115);
       return new THREE.CanvasTexture(c);
     }
-    function buildWorld() {
 
+    function buildWorld() {
       const low = document.getElementById('book-text').value.toLowerCase();
       biome = (low.includes('зим') || low.includes('снег') || low.includes('мороз')) ? 'winter' : ((low.includes('неон') || low.includes('ноч') || low.includes('дожд')) ? 'cyber' : 'sunset');
       isNight = biome === 'cyber';
-      const labels = { sunset: 'Закат Синкая', winter: 'Зимний лес', cyber: 'Ночной неон' };
-      document.getElementById('hud-stat').textContent = `60 FPS • ${labels[biome]}`;
+      document.getElementById('hud-stat').textContent = 'MX-Оазис • Центральная площадь';
       document.getElementById('ui-book').style.display = 'none';
       const wBox = document.getElementById('ui-world'); wBox.style.display = 'block';
       wBox.querySelectorAll('canvas').forEach(c => c.remove());
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color(biome === 'winter' ? 0x1e3a8a : 0x090d16);
-      scene.fog = new THREE.FogExp2(biome === 'winter' ? 0x1e3a8a : 0x090d16, 0.022);
-      const cam = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.1, 160);
+      scene.background = new THREE.Color(0x060913);
+      scene.fog = new THREE.FogExp2(0x060913, 0.015);
+      const cam = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.1, 180);
       const ren = new THREE.WebGLRenderer({ antialias: true });
       ren.setSize(innerWidth, innerHeight); ren.setPixelRatio(Math.min(devicePixelRatio, 2));
       wBox.appendChild(ren.domElement);
-      scene.add(new THREE.AmbientLight(0xffffff, 0.85));
-      const dirL = new THREE.DirectionalLight(0xf472b6, 1.1); dirL.position.set(10, 24, 15); scene.add(dirL);
-      const road = new THREE.Mesh(new THREE.PlaneGeometry(11, 110), new THREE.MeshStandardMaterial({ map: makeRoadTex(), roughness: 0.35 }));
-      road.rotation.x = -Math.PI / 2; road.position.z = -35; scene.add(road);
-      const signs = [['КАФЕ «САКУРА»', '東京'], ['ЛАВКА АРТЕФАКТОВ', '渋谷'], ['ПАЛАТА ЛИЦЕНЗИЙ', '新宿'], ['ПАРИКМАХЕРСКАЯ', '秋葉原']];
-      for (let i = 0; i < 8; i++) {
-        [-1, 1].forEach((side, sIdx) => {
-          const [ruT, jpT] = signs[(i + sIdx) % 4];
-          const bh = 16 + ((i * 5 + sIdx * 3) % 14);
-          const bMesh = new THREE.Mesh(new THREE.BoxGeometry(6.5, bh, 7), new THREE.MeshStandardMaterial({ map: makeBuildingTex(i + sIdx, ruT, jpT) }));
-          bMesh.position.set(side * 9.5, bh / 2, 6 - i * 11); scene.add(bMesh);
-          const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.25, 2.2), new THREE.MeshBasicMaterial({ color: 0x451a03 }));
-          const crown = new THREE.Mesh(new THREE.SphereGeometry(1.4, 10, 10), new THREE.MeshBasicMaterial({ color: biome === 'winter' ? 0xe0f2fe : 0xf472b6 }));
-          trunk.position.set(side * 4.8, 1.1, 3 - i * 11); crown.position.set(side * 4.8, 2.8, 3 - i * 11);
-          scene.add(trunk, crown);
-        });
-      }
-      function makeCharPlane(key, h) {
-        const sp = SPR[key];
-        const tex = sp ? new THREE.CanvasTexture(sp) : null;
-        const asp = sp ? (sp.width / sp.height) : 0.55;
-        const mat = new THREE.MeshBasicMaterial({ map: tex, color: tex ? 0xffffff : 0xd97757, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide });
-        const m = new THREE.Mesh(new THREE.PlaneGeometry(h * asp, h), mat); m.position.y = h / 2; return m;
-      }
-      const heroMesh = makeCharPlane('hero', 2.4); scene.add(heroMesh);
-      const rawTxt = document.getElementById('book-text').value;
-      const quotes = [...rawTxt.matchAll(/[«"]([^»"]{4,140})[»"]/g)].map(m => m[1]);
-      const names = [...new Set((rawTxt.replace(/^[А-ЯЁ][а-яё]+|[.!?]\s+[А-ЯЁ][а-яё]+/g, '').match(/[А-ЯЁ][а-яё]{2,14}/g) || []))].slice(0, 4);
-      const pos = [{ x: -2.4, z: -2, spr: 'npc1' }, { x: 2.5, z: -10, spr: 'npc2' }, { x: -2.0, z: -18, spr: 'npc1' }, { x: 2.2, z: -26, spr: 'npc2' }];
-      npcs = (names.length ? names : ['Бариста', 'Архитектор', 'Смотритель']).map((nm, idx) => {
-        const mesh = makeCharPlane(pos[idx % 4].spr, 2.5);
-        mesh.position.set(pos[idx % 4].x, 1.25, pos[idx % 4].z); scene.add(mesh);
-        return { name: nm, mesh, x: pos[idx % 4].x, z: pos[idx % 4].z, lines: [quotes[idx] || `${nm}: Добро пожаловать в неоновый сектор MX-Оазиса!`, 'Впереди у башни открыт портал в другие миры.'] };
+      scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+      const dL = new THREE.DirectionalLight(0x38bdf8, 1.2); dL.position.set(12, 28, 16); scene.add(dL);
+      const plaza = new THREE.Mesh(new THREE.PlaneGeometry(36, 36), new THREE.MeshStandardMaterial({ map: makeRoadTex(), roughness: 0.4 }));
+      plaza.rotation.x = -Math.PI / 2; scene.add(plaza);
+      const shops = [
+        [-15, -10, 'БАР «НЕОН»', '酒場'], [-15, 0, 'КАФЕ «САКУРА»', '喫茶'], [-15, 10, 'БУТИК ОДЕЖДЫ', '衣装'],
+        [15, -10, 'НОЧНОЙ КЛУБ «АКСИС»', 'クラブ'], [15, 0, 'САЛОН СМАРТФОНОВ', '電脳'], [15, 10, 'АКСЕССУАРЫ И РУНЫ', '宝石'],
+        [-6, -16, 'ПОРТАЛ МИРОВ', '転送'], [6, -16, 'ПАЛАТА ЛИЦЕНЗИЙ', '免許']
+      ];
+      shops.forEach(([bx, bz, ruT, jpT], i) => {
+        const bh = 22 + (i % 3) * 7;
+        const bM = new THREE.Mesh(new THREE.BoxGeometry(6.5, bh, 7.5), new THREE.MeshStandardMaterial({ map: makeBuildingTex(i, ruT, jpT) }));
+        bM.position.set(bx, bh / 2, bz); scene.add(bM);
+        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.3, 6), new THREE.MeshBasicMaterial({ color: i % 2 ? 0xf472b6 : 0x38bdf8 }));
+        spire.position.set(bx, bh + 3, bz); scene.add(spire);
+        if (Math.abs(bx) === 15) {
+          const sx = bx < 0 ? -10.5 : 10.5;
+          const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 3.6), new THREE.MeshBasicMaterial({ color: 0x334155 }));
+          const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 8), new THREE.MeshBasicMaterial({ color: 0xfef08a }));
+          post.position.set(sx, 1.8, bz - 2.5); lamp.position.set(sx, 3.7, bz - 2.5);
+          const bench = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.45, 2.2), new THREE.MeshStandardMaterial({ color: 0x78350f }));
+          bench.position.set(sx, 0.25, bz + 1.5);
+          const trk = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.24, 2.4), new THREE.MeshBasicMaterial({ color: 0x451a03 }));
+          const cr1 = new THREE.Mesh(new THREE.ConeGeometry(1.6, 2.2, 7), new THREE.MeshBasicMaterial({ color: 0xf472b6 }));
+          const cr2 = new THREE.Mesh(new THREE.ConeGeometry(1.1, 1.8, 7), new THREE.MeshBasicMaterial({ color: 0xf9a8d4 }));
+          trk.position.set(sx, 1.2, bz + 3.4); cr1.position.set(sx, 2.8, bz + 3.4); cr2.position.set(sx, 3.9, bz + 3.4);
+          scene.add(post, lamp, bench, trk, cr1, cr2);
+        }
       });
-      player = { x: 0, z: 8 }; let lastMc = 0;
+      function makeBot3D(coatCol, skinCol, visorCol, glasses) {
+        const g = new THREE.Group();
+        const body = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.9, 0.32), new THREE.MeshStandardMaterial({ color: coatCol })); body.position.y = 1.15;
+        const legL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.7, 0.22), new THREE.MeshStandardMaterial({ color: 0x0f172a })); legL.position.set(-0.15, 0.35, 0);
+        const legR = legL.clone(); legR.position.x = 0.15;
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 12, 12), new THREE.MeshStandardMaterial({ color: skinCol })); head.position.y = 1.85;
+        const visor = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.09, 0.14), new THREE.MeshBasicMaterial({ color: glasses ? 0x020617 : visorCol })); visor.position.set(0, 1.86, 0.19);
+        g.add(body, legL, legR, head, visor); return g;
+      }
+      [-11.2, -8.8].forEach(gz => { const grd = makeBot3D(0x090d16, 0xfde6d8, 0x000000, true); grd.position.set(11.2, 0, gz); grd.rotation.y = -Math.PI / 2; scene.add(grd); });
+      const crowd = [];
+      for (let q = 0; q < 5; q++) {
+        const b = makeBot3D(q % 2 ? 0xf472b6 : 0x38bdf8, 0xfde6d8, 0x38bdf8, false);
+        b.position.set(8.8 - q * 1.1, 0, -10); b.rotation.y = Math.PI / 2; scene.add(b);
+      }
+      for (let w = 0; w < 8; w++) {
+        const bot = makeBot3D(w % 2 ? 0xa855f7 : 0x0284c7, 0xfde6d8, 0xfde047, false);
+        bot.position.set((w - 4) * 2.2, 0, -6 + (w % 3) * 5); scene.add(bot);
+        crowd.push({ m: bot, dir: w % 2 ? 1 : -1, sp: 0.02 + (w % 3) * 0.01 });
+      }
+      const cars = [0x38bdf8, 0xf472b6, 0xfde047].map((c, idx) => {
+        const cm = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.5, 2.8), new THREE.MeshBasicMaterial({ color: c }));
+        cm.position.set(-4 + idx * 4, 8 + idx * 2.5, -20 + idx * 10); scene.add(cm); return cm;
+      });
+      function makeCharPlane(key, h) {
+        const sp = SPR[key], tex = sp ? new THREE.CanvasTexture(sp) : null, asp = sp ? (sp.width / sp.height) : 0.55;
+        const grp = new THREE.Group();
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(h * asp, h), new THREE.MeshBasicMaterial({ map: tex, color: tex ? 0xffffff : 0xd97757, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide }));
+        m.position.y = h / 2 + 0.08;
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.45, 0.65, 24), new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide }));
+        ring.rotation.x = -Math.PI / 2; ring.position.y = 0.03;
+        grp.add(m, ring); return grp;
+      }
+      const heroMesh = makeCharPlane('hero', 2.3); scene.add(heroMesh);
+      const rawTxt = document.getElementById('book-text').value;
+      const quotes = [...rawTxt.matchAll(/[«"]([^»"]{4,140})[»"]/g)].map(m => m);
+      const names = [...new Set((rawTxt.replace(/^[А-ЯЁ][а-яё]+|[.!?]\s+[А-ЯЁ][а-яё]+/g, '').match(/[А-ЯЁ][а-яё]{2,14}/g) || []))].slice(0, 4);
+      const pos = [{ x: -8.5, z: 0, spr: 'npc1' }, { x: 8.5, z: 0, spr: 'npc2' }, { x: 9.8, z: -10, spr: 'npc1' }, { x: -5.5, z: -12, spr: 'npc2' }];
+      npcs = (names.length ? names : ['Бариста Кафе', 'Консультант Смартфонов', 'Охранник Клуба', 'Хранитель Портала']).map((nm, idx) => {
+        const mesh = makeCharPlane(pos[idx % 4].spr, 2.4);
+        mesh.position.set(pos[idx % 4].x, 0, pos[idx % 4].z); scene.add(mesh);
+        return { name: nm, mesh, x: pos[idx % 4].x, z: pos[idx % 4].z, lines: [quotes[idx] || `${nm}: Добро пожаловать на Центральную площадь MX-Оазиса!`, 'Очередь в ночной клуб «Аксис» уже собралась у правого проспекта.'] };
+      });
+      player = { x: 0, z: 11 }; let lastMc = 0;
       function loop(t) {
         animId = requestAnimationFrame(loop);
-        player.x = Math.max(-3.6, Math.min(3.6, player.x + move.x * 0.14));
-        player.z = Math.max(-42, Math.min(14, player.z + move.z * 0.14));
+        player.x = Math.max(-11.5, Math.min(11.5, player.x + move.x * 0.16));
+        player.z = Math.max(-13.5, Math.min(14.5, player.z + move.z * 0.16));
         const walkBob = (Math.abs(move.x) + Math.abs(move.z) > 0.05) ? Math.abs(Math.sin(t * 0.014)) * 0.14 : Math.sin(t * 0.004) * 0.03;
-        heroMesh.position.set(player.x, 1.2 + walkBob, player.z);
-        cam.position.set(player.x * 0.65, 3.6, player.z + 6.8);
+        heroMesh.position.set(player.x, walkBob, player.z);
+        cam.position.set(player.x * 0.72, 4.2, player.z + 7.5);
         cam.lookAt(player.x, 1.8, player.z - 8);
+        crowd.forEach(c => { c.m.position.x += c.dir * c.sp; if (Math.abs(c.m.position.x) > 9) c.dir *= -1; c.m.rotation.y = c.dir > 0 ? Math.PI / 2 : -Math.PI / 2; });
+        cars.forEach((cm, i) => { cm.position.z += (i % 2 ? 0.35 : -0.35); if (Math.abs(cm.position.z) > 35) cm.position.z *= -1; });
         if (t - lastMc > 100) {
           lastMc = t; const nearIdx = npcs.findIndex(n => Math.hypot(n.x - player.x, n.z - player.z) < 4.5); const box = document.getElementById('npc-speech');
-          if (nearIdx >= 0) { const near = npcs[nearIdx], line = near.lines[Math.floor((t / 4000) % near.lines.length)]; box.innerHTML = `<b>${near.name}</b> <span style="color:#D97757;font-size:11px;">• 3D-Голос</span><br>${line}`; box.style.display = 'block'; speakLine(line, nearIdx); } else box.style.display = 'none';
+          if (nearIdx >= 0) { const near = npcs[nearIdx], line = near.lines[Math.floor((t / 4000) % near.lines.length)]; box.innerHTML = `<b>${near.name}</b> <span style="color:#D97757;font-size:11px;">• Площадь</span><br>${line}`; box.style.display = 'block'; speakLine(line, nearIdx); } else box.style.display = 'none';
         }
         ren.render(scene, cam);
       }
       loop(0);
     }
+
 
     function openVnCard(title, body, opts) {
       document.getElementById('vn-t').textContent = title;
