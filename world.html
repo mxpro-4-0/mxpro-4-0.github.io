@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>MX-Оазис 3D — Неоновый мегаполис</title>
-  <script src="https://cloudflare.com"></script>
+  <script src="https://://cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <style>
 
     * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
@@ -144,7 +144,7 @@
       const p = encodeURIComponent('Utopia futuristic anime city skyline sunset clouds, Makoto Shinkai and Studio Ghibli art style, wide panoramic background, no people, no text, ' + idea);
       const im = new Image(); im.crossOrigin = 'anonymous';
       im.onload = () => { SPR.customBg = im; const st = document.getElementById('ai-stat'); if (st) st.textContent += ' + Арт-панорама готова'; };
-      im.src = 'https://pollinations.ai' + p + '?width=1280&height=540&nologo=true&seed=' + Math.floor(Math.random() * 9999);
+      im.src = 'https://image.pollinations.ai/prompt/' + p + '?width=1280&height=540&nologo=true&seed=' + Math.floor(Math.random() * 9999);
     }
     async function genSectorViaKey() {
       const box = document.getElementById('book-text'), st = document.getElementById('ai-stat'), btn = document.getElementById('btn-or');
@@ -152,7 +152,8 @@
       btn.textContent = 'Генерация мира...'; btn.disabled = true; st.textContent = 'Рисуем панораму...';
       loadAiPanorama(idea);
       try {
-        const res = await fetch('https://streamlit.app' + encodeURIComponent(idea));
+        const res = await fetch('https://mx-pro.streamlit.app/?ai_idea=' + encodeURIComponent(idea));
+
         const html = await res.text();
         const m = html.match(/id=['"]mx-ai-res['"]>(\{.*?\})<\/div>/);
         if (m) {
