@@ -4,8 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>MX-Оазис 3D — Неоновый мегаполис</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cloudflare.com"></script>
+  <script src="https://jsdelivr.net"></script>
   <style>
+
 
     * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
     body { font-family:system-ui,-apple-system,sans-serif; background:#FAF9F5; color:#141413; overflow:hidden; height:100vh; }
@@ -87,9 +89,20 @@
       <button id="chat-send" onclick="sendBubbleChat()">Сказать</button>
     </div>
     <button id="act-btn" onclick="triggerAction()">ДЕЙСТВИЕ</button>
-
     <div id="vn-modal"><div class="vn-card"><div class="vn-title" id="vn-t"></div><div class="vn-text" id="vn-b"></div><div id="vn-opts"></div></div></div>
+    <div id="char-modal" style="position:fixed;inset:0;z-index:35;background:rgba(9,13,22,0.85);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:16px;">
+      <div class="vn-card" style="text-align:center;">
+        <div class="brand">Паспорт жителя MX-Оазиса</div>
+        <div class="vn-title">Выберите пол и образ персонажа</div>
+        <div class="vn-text">Ваш выбор определит доступную одежду, причёски и голос в мегаполисе.</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <button class="vn-opt" style="text-align:center;" onclick="selectGender('male')">Мужской образ</button>
+          <button class="vn-opt" style="text-align:center;" onclick="selectGender('female')">Женский образ</button>
+        </div>
+      </div>
+    </div>
   </div>
+
 
   <script>
     let player = { x: 0, z: 8 }, npcs = [], move = { x: 0, z: 0 }, animId = null, isNight = false;
@@ -320,7 +333,20 @@
     }
 
 
+    let playerGender = localStorage.getItem('mxs_gender') || '';
+    function selectGender(g) {
+      playerGender = g;
+      localStorage.setItem('mxs_gender', g);
+      document.getElementById('char-modal').style.display = 'none';
+      buildWorld();
+    }
     function buildWorld() {
+      if (!playerGender) {
+        document.getElementById('ui-world').style.display = 'block';
+        document.getElementById('char-modal').style.display = 'flex';
+        return;
+      }
+
       document.getElementById('ui-book').style.display = 'none';
       const wBox = document.getElementById('ui-world'); wBox.style.display = 'block';
       wBox.querySelectorAll('canvas').forEach(c => c.remove());
@@ -422,7 +448,42 @@
         g.add(body, head, cap, glasses, donut, cup); g.position.set(x, 0, z); scene.add(g); return g;
       }
       const cop1 = makeCop3D(-1.8, 5.2), cop2 = makeCop3D(-0.9, 5.4);
-      const heroMesh = makeCharPlane('hero', 1.75, 0xffffff); scene.add(heroMesh);
+        function makeRealistic3DChar(isFemale, suitCol) {
+        const g = new THREE.Group();
+        const legL = new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.06, 0.78, 12), new THREE.MeshStandardMaterial({ color: 0x0f172a })); legL.position.set(-0.11, 0.39, 0);
+        const legR = legL.clone(); legR.position.x = 0.11;
+        const torso = new THREE.Mesh(new THREE.CylinderGeometry(isFemale ? 0.16 : 0.21, isFemale ? 0.14 : 0.18, 0.62, 14), new THREE.MeshStandardMaterial({ color: suitCol })); torso.position.y = 1.08;
+        const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.065, 0.12, 10), new THREE.MeshStandardMaterial({ color: 0xfde6d8 })); neck.position.y = 1.44;
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.165, 16, 16), new THREE.MeshStandardMaterial({ color: 0xfde6d8 })); head.position.y = 1.62;
+        const hair = new THREE.Mesh(new THREE.SphereGeometry(0.178, 16, 16), new THREE.MeshStandardMaterial({ color: isFemale ? 0x3b0764 : 0x1e293b })); hair.position.set(0, 1.65, -0.02);
+        g.add(legL, legR, torso, neck, head, hair);
+        g.userData = { legL, legR };
+        return g;
+      }
+      const heroMesh = makeRealistic3DChar(playerGender === 'female', playerGender === 'female' ? 0xf472b6 : 0x38bdf8);
+      scene.add(heroMesh);
+      if (window.THREE && THREE.GLTFLoader) {
+        const loader = new THREE.GLTFLoader();
+        const glbName = playerGender === 'female' ? 'hero_female.glb' : 'hero_male.glb';
+        loader.load(glbName, gltf => {
+          heroMesh.clear();
+          const model = gltf.scene; model.scale.set(1, 1, 1);
+          heroMesh.add(model);
+        }, undefined, () => {});
+      }
+      const traffic = [0x38bdf8, 0xf472b6, 0xfde047, 0x22c55e].map((col, idx) => {
+        const car = new THREE.Group();
+        const body = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.55, 3.8), new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.7, roughness: 0.2 })); body.position.y = 0.45;
+        const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.45, 2.0), new THREE.MeshStandardMaterial({ color: col, transparent: true, opacity: 0.75 })); cabin.position.set(0, 0.9, -0.2);
+        const lights = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.12, 0.1), new THREE.MeshBasicMaterial({ color: 0xfef08a })); lights.position.set(0, 0.45, 1.92);
+        car.add(body, cabin, lights);
+        const laneX = idx % 2 === 0 ? -14.8 : 14.8;
+        car.position.set(laneX, 0, -25 + idx * 14);
+        if (idx % 2 !== 0) car.rotation.y = Math.PI;
+        scene.add(car);
+        return { m: car, dir: idx % 2 === 0 ? 1 : -1, sp: 0.18 + (idx % 2) * 0.06 };
+      });
+
       function makeCitizenMesh(grpType, idx) {
         const g = new THREE.Group();
         const palettes = {
@@ -495,8 +556,15 @@
         const nz = player.z + (rgtZ * move.x - fwdZ * move.z) * 0.068;
         if (canStep(nx, player.z)) player.x = nx;
         if (canStep(player.x, nz)) player.z = nz;
-        const walkBob = (Math.abs(move.x) + Math.abs(move.z) > 0.05) ? Math.abs(Math.sin(t * 0.009)) * 0.08 : Math.sin(t * 0.003) * 0.02;
-        heroMesh.position.set(player.x, player.y + walkBob, player.z); heroMesh.rotation.y = camYaw;
+        const isMoving = (Math.abs(move.x) + Math.abs(move.z) > 0.05);
+        const walkBob = isMoving ? Math.abs(Math.sin(t * 0.012)) * 0.06 : Math.sin(t * 0.003) * 0.015;
+        if (heroMesh.userData.legL) {
+          heroMesh.userData.legL.rotation.x = isMoving ? Math.sin(t * 0.012) * 0.55 : 0;
+          heroMesh.userData.legR.rotation.x = isMoving ? -Math.sin(t * 0.012) * 0.55 : 0;
+        }
+        heroMesh.position.set(player.x, player.y + walkBob, player.z); heroMesh.rotation.y = camYaw + Math.PI;
+        traffic.forEach(tr => { tr.m.position.z += tr.dir * tr.sp; if (tr.m.position.z > 32) tr.m.position.z = -32; if (tr.m.position.z < -32) tr.m.position.z = 32; });
+
         cam.position.set(player.x + Math.sin(camYaw) * 6.5, player.y + 2.5 + camPitch * 4.8, player.z + Math.cos(camYaw) * 6.5);
         cam.lookAt(player.x - Math.sin(camYaw) * 6, player.y + 2.0 - camPitch * 6.2, player.z - Math.cos(camYaw) * 6);
         npcs.forEach(n => { if (!n.isCop) n.mesh.rotation.y = camYaw; });
@@ -605,10 +673,16 @@
         ]);
         return;
       }
-      if (player.x < -8.5) {
-        openVnCard('Скоростной лифт небоскрёба', 'Подняться на смотровую площадку крыши (высота 60 метров) для обзора Млечного Пути и скриншотов?', [
-          { label: 'Подняться на крышу', fn: () => toggleRoof(true) },
+      if (player.x < -9.5 && Math.abs(player.z) < 5) {
+        openVnCard('Вход в Кафе «Сакура»', 'За панорамным стеклом горят тёплые лампы, пахнет корицей и играет спокойная музыка. Что выберете?', [
+          { label: 'Заказать латте и пирожное (-150 Синих Искр)', fn: () => { addBlueSparks(-150); openVnCard('Кафе «Сакура»', 'Вы отдохнули за деревянным столиком у окна. Атмосфера уюта восстановлена!', [{ label: 'Выйти на площадь' }]); } },
+          { label: 'Скоростной лифт на крышу (60м • Фото)', fn: () => toggleRoof(true) },
           { label: 'Остаться на площади' }
+        ]);
+      } else if (player.x > 9.5 && Math.abs(player.z) < 5) {
+        openVnCard('Бизнес-центр «Оазис-Тауэр»', 'Стеклянные двери холла бесшумно разъезжаются. Внутри виден голографический ресепшен и биржа лицензий.', [
+          { label: 'Открыть Палату Лицензий (ИНН / Профессии)', fn: () => openVnCard('Палата Лицензий РФ (422-ФЗ)', 'Оформление лицензии Строителя, Бармена или Автора для вывода Оранжевых Искр по СБП доступно после верификации 12-значного ИНН самозанятого или ИП.', [{ label: 'Понятно' }]) },
+          { label: 'Выйти на площадь' }
         ]);
       } else {
         openVnCard('Тайная капсула площади', `Последнее послание игроков: «${timeCapsule}»`, [
@@ -617,8 +691,6 @@
         ]);
       }
     }
-
-
 
 
     const jz = document.getElementById('joy-zone'), js = document.getElementById('joy-stick');
