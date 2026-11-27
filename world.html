@@ -143,7 +143,8 @@
       const idea = box.value.trim() || 'Утопия город будущего на закате';
       btn.textContent = 'Запрос к ключу...'; btn.disabled = true; st.textContent = '';
       try {
-        const res = await fetch('https://streamlit.app' + encodeURIComponent(idea));
+        const res = await fetch('https://mx-pro.streamlit.app/?ai_idea=' + encodeURIComponent(idea));
+
         const html = await res.text();
         const m = html.match(/id=['"]mx-ai-res['"]>(\{.*?\})<\/div>/);
         if (m) {
