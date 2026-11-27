@@ -62,11 +62,14 @@
 
 
   <div id="ui-world">
-    <div class="hud-top">
-      <div class="pill" onclick="backToBook()">← К тексту</div>
-      <div class="pill" id="hud-stat">ОАЗИС-Хаб • Площадь</div>
+    <div class="hud-top" style="flex-wrap:wrap;gap:6px;">
+      <a href="step.html" class="pill" style="text-decoration:none;">← MX-Step</a>
+      <div class="pill" id="hud-stat">MX-Оазис • Площадь</div>
+      <div class="pill" style="background:#D97757;border-color:#D97757;" onclick="backToBook()">+ Моя локация</div>
+      <div class="pill" onclick="openPortals()">Порталы</div>
       <div class="pill" id="status-pill" onclick="toggleMyStatus()" style="display:flex;align-items:center;gap:6px;"><span id="st-dot" style="width:9px;height:9px;border-radius:50%;background:#38BDF8;display:inline-block;"></span><span id="st-txt">Общение</span></div>
     </div>
+
     <div id="npc-speech"></div>
     <div id="joy-zone"><div id="joy-stick"></div></div>
     <div id="chat-bar">
@@ -379,8 +382,19 @@
     const jz = document.getElementById('joy-zone'), js = document.getElementById('joy-stick');
     jz.addEventListener('touchmove', e => { const r = jz.getBoundingClientRect(), t = e.touches.item(0); const dx = Math.max(-35, Math.min(35, t.clientX - r.left - 55)), dy = Math.max(-35, Math.min(35, t.clientY - r.top - 55)); js.style.transform = `translate(${dx}px, ${dy}px)`; move = { x: dx / 35, z: dy / 35 }; }, { passive: true });
     jz.addEventListener('touchend', () => { js.style.transform = 'translate(0,0)'; move = { x: 0, z: 0 }; });
-    onkeydown = e => { if (e.key === 'ArrowUp' || e.key === 'w') move.z = -1; if (e.key === 'ArrowDown' || e.key === 's') move.z = 1; if (e.key === 'ArrowLeft' || e.key === 'a') move.x = -1; if (e.key === 'ArrowRight' || e.key === 'd') move.x = 1; };
+    function openPortals() {
+      const sectors = [
+        { name: 'Центральная площадь (Мой респаун)', fn: () => goLoc('street') },
+        { name: 'Кафе и Лавка снаряжения (@Master_Ufa)', fn: () => goLoc('bakery') },
+        { name: 'Тихий переулок для встреч (@Alisa_Novels)', fn: () => goLoc('alley') },
+        { name: 'Берег моря у маяка (@Keeper_Sea)', fn: () => goLoc('sea') }
+      ];
+      openVnCard('Порталы MX-Оазиса', 'Выберите сектор для мгновенного перемещения или создайте свой через «+ Моя локация»:', sectors.map(s => ({ label: s.name, fn: s.fn })).concat([{ label: 'Закрыть' }]));
+    }
+    onkeydown = e => { const k = e.key.toLowerCase(); if (k === 'arrowup' || k === 'w' || k === 'ц') move.z = -1; if (k === 'arrowdown' || k === 's' || k === 'ы') move.z = 1; if (k === 'arrowleft' || k === 'a' || k === 'ф') move.x = -1; if (k === 'arrowright' || k === 'd' || k === 'в') move.x = 1; };
     onkeyup = () => { move = { x: 0, z: 0 }; };
+    setTimeout(buildWorld, 60);
   </script>
+
 </body>
 </html>
