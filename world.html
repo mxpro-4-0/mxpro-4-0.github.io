@@ -540,13 +540,19 @@
       window.addEventListener('mouseup', () => { dragCam = false; }); window.addEventListener('touchend', () => { dragCam = false; });
       player = { x: 0, z: 11, y: 0 }; let lastMc = 0; updHud();
       const solidObjs = [{ x: 0, z: -9, r: 2.1 }, { x: -1.8, z: 5.2, r: 0.9 }, { x: -0.9, z: 5.4, r: 0.9 }, { x: -12.5, z: -2.2, r: 1.2 }, { x: -12.5, z: 2.2, r: 1.2 }];
+      [-13, 0, 13].forEach(bz => {
+        [-12.6, 12.6].forEach(sx => {
+          solidObjs.push({ x: sx, z: bz + 1.4, r: 1.15 }, { x: sx, z: bz + 3.8, r: 0.85 });
+        });
+      });
       function canStep(nx, nz) {
         if (onRoof) return Math.abs(nx + 11) < 4 && Math.abs(nz) < 4;
         if (Math.abs(nx) > 13.8 || Math.abs(nz) > 15.8) return false;
         if (solidObjs.some(o => Math.hypot(o.x - nx, o.z - nz) < o.r)) return false;
         if (npcs.some(n => !n.isCop && Math.hypot(n.x - nx, n.z - nz) < 0.85)) return false;
-        return !walkers.some(w => Math.hypot(w.m.position.x - nx, w.m.position.z - nz) < 0.72);
+        return !walkers.some(w => Math.hypot(w.m.position.x - nx, w.m.position.z - nz) < 0.78);
       }
+
       function loop(t) {
         animId = requestAnimationFrame(loop);
         skyDome.rotation.y = t * 0.000018;
@@ -576,9 +582,14 @@
             w.pause = w.type === 'tourist' ? 160 : (w.type === 'elder' ? 140 : 70);
             w.tx = (Math.random() - 0.5) * 21; w.tz = (Math.random() - 0.5) * 23;
           } else {
-            w.m.position.x += (dx / dist) * w.sp; w.m.position.z += (dz / dist) * w.sp;
-            w.m.rotation.y = Math.atan2(dx, dz);
+            const nxW = w.m.position.x + (dx / dist) * w.sp, nzW = w.m.position.z + (dz / dist) * w.sp;
+            if (Math.hypot(nxW - player.x, nzW - player.z) < 1.1 || solidObjs.some(o => Math.hypot(o.x - nxW, o.z - nzW) < o.r)) {
+              w.tx = (Math.random() - 0.5) * 20; w.tz = (Math.random() - 0.5) * 22;
+            } else {
+              w.m.position.x = nxW; w.m.position.z = nzW; w.m.rotation.y = Math.atan2(dx, dz);
+            }
           }
+
         });
         if (t - lastMc > 100) {
           lastMc = t;
@@ -673,13 +684,14 @@
         ]);
         return;
       }
-      if (player.x < -9.5 && Math.abs(player.z) < 5) {
+      if (player.x < -7.5 && Math.abs(player.z) < 6) {
         openVnCard('Вход в Кафе «Сакура»', 'За панорамным стеклом горят тёплые лампы, пахнет корицей и играет спокойная музыка. Что выберете?', [
           { label: 'Заказать латте и пирожное (-150 Синих Искр)', fn: () => { addBlueSparks(-150); openVnCard('Кафе «Сакура»', 'Вы отдохнули за деревянным столиком у окна. Атмосфера уюта восстановлена!', [{ label: 'Выйти на площадь' }]); } },
           { label: 'Скоростной лифт на крышу (60м • Фото)', fn: () => toggleRoof(true) },
           { label: 'Остаться на площади' }
         ]);
-      } else if (player.x > 9.5 && Math.abs(player.z) < 5) {
+      } else if (player.x > 7.5 && Math.abs(player.z) < 6) {
+
         openVnCard('Бизнес-центр «Оазис-Тауэр»', 'Стеклянные двери холла бесшумно разъезжаются. Внутри виден голографический ресепшен и биржа лицензий.', [
           { label: 'Открыть Палату Лицензий (ИНН / Профессии)', fn: () => openVnCard('Палата Лицензий РФ (422-ФЗ)', 'Оформление лицензии Строителя, Бармена или Автора для вывода Оранжевых Искр по СБП доступно после верификации 12-значного ИНН самозанятого или ИП.', [{ label: 'Понятно' }]) },
           { label: 'Выйти на площадь' }
