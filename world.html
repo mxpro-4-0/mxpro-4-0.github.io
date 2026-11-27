@@ -104,8 +104,13 @@
     loadCleanSprite('npc1', 'npc1.png', true);
     loadCleanSprite('npc2', 'npc2.png', true);
     loadCleanSprite('house', 'house.png', true);
+    loadCleanSprite('school', 'school.png', true);
+    loadCleanSprite('kiber', 'kiber.png', true);
+    loadCleanSprite('castle', 'castle.png', true);
+    loadCleanSprite('station', 'station.png', true);
     loadCleanSprite('tree', 'tree.png', true);
     loadCleanSprite('tower', 'tower.png', false);
+
 
     const PRESETS = [
       'Тёплый летний закат у моря. По улочке кружатся лепестки сакуры. Пекарь Артур у пекарни говорит: «Свежие булочки с корицей уже готовы!». Художник Алиса у фонаря улыбается: «Какой золотой свет над заливом!».',
@@ -207,12 +212,16 @@
           const pL = proj(-6.5, 0, z), pR = proj(6.5, 0, z);
           if (pL && pR) {
             cx.strokeStyle = 'rgba(255,255,255,0.28)'; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(pL.x, pL.y); cx.lineTo(pR.x, pR.y); cx.stroke();
+            const rawL = document.getElementById('book-text').value.toLowerCase();
+            const hKey = biome === 'cyber' ? 'kiber' : (biome === 'winter' ? 'station' : (rawL.includes('школ') ? 'school' : ((rawL.includes('княз') || rawL.includes('терем') || rawL.includes('замок')) ? 'castle' : 'house')));
+            const hSpr = SPR[hKey] || SPR.house;
             [-10.2, 10.2].forEach(bx => {
               const b = proj(bx, 0, z);
-              if (SPR.house) {
-                const hh = b.s * 7.8, hw = hh * (SPR.house.width / SPR.house.height);
-                cx.drawImage(SPR.house, b.x - hw / 2, b.y - hh + b.s * 0.3, hw, hh);
+              if (hSpr) {
+                const hh = b.s * 7.8, hw = hh * (hSpr.width / hSpr.height);
+                cx.drawImage(hSpr, b.x - hw / 2, b.y - hh + b.s * 0.3, hw, hh);
               } else {
+
                 const w = b.s * 6.4, h = 11 * b.s;
                 cx.fillStyle = isNight ? '#334155' : '#FEF3C7'; cx.fillRect(b.x - w / 2, b.y - h, w, h);
               }
