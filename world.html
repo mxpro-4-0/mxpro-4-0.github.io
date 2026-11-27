@@ -226,140 +226,145 @@
     function makeRoadTex() {
       const c = document.createElement('canvas'); c.width = 512; c.height = 512;
       const g = c.getContext('2d');
-      g.fillStyle = '#0F172A'; g.fillRect(0, 0, 512, 512);
+      g.fillStyle = '#090D16'; g.fillRect(0, 0, 512, 512);
       for (let y = 0; y < 512; y += 32) {
         const off = (y / 32) % 2 ? 16 : 0;
         for (let x = -16; x < 512; x += 32) {
-          g.fillStyle = ((x + y) % 64 === 0) ? '#1E293B' : '#172033';
+          g.fillStyle = ((x + y) % 64 === 0) ? '#131C31' : '#0F172A';
           g.fillRect(x + off + 2, y + 2, 28, 28);
         }
       }
-      g.strokeStyle = '#38BDF8'; g.lineWidth = 4; g.strokeRect(18, 18, 476, 476);
-      g.font = 'bold 24px system-ui'; g.textAlign = 'center'; g.fillStyle = '#FDE047';
-      g.fillText('ЦЕНТРАЛЬНАЯ ПЛОЩАДЬ • MX-ОАЗИС', 256, 52);
-      const tx = new THREE.CanvasTexture(c); tx.wrapS = tx.wrapT = THREE.RepeatWrapping; tx.repeat.set(4, 6);
+      g.strokeStyle = 'rgba(56,189,248,0.45)'; g.lineWidth = 3; g.strokeRect(12, 12, 488, 488);
+      g.font = 'bold 22px system-ui'; g.textAlign = 'center'; g.fillStyle = '#FDE047';
+      g.fillText('ЦЕНТРАЛЬНАЯ ПЛОЩАДЬ • MX-ОАЗИС', 256, 46);
+      const tx = new THREE.CanvasTexture(c); tx.wrapS = tx.wrapT = THREE.RepeatWrapping; tx.repeat.set(5, 5);
       return tx;
     }
-    function makeBuildingTex(seed, ruText, jpText) {
-      const c = document.createElement('canvas'); c.width = 256; c.height = 512;
+    function makeSignTex(ruText, jpText, col) {
+      const c = document.createElement('canvas'); c.width = 512; c.height = 128;
       const g = c.getContext('2d');
-      const gr = g.createLinearGradient(0, 0, 0, 512);
-      gr.addColorStop(0, '#020617'); gr.addColorStop(1, seed % 2 ? '#1E1B4B' : '#0F172A');
-      g.fillStyle = gr; g.fillRect(0, 0, 256, 512);
-      for (let y = 18; y < 490; y += 18) for (let x = 14; x < 238; x += 22) {
-        const rnd = (x * 13 + y * 7 + seed * 31) % 11;
-        g.fillStyle = rnd === 0 ? '#38BDF8' : (rnd === 1 ? '#F472B6' : (rnd === 2 ? '#FDE047' : '#1E293B'));
-        g.fillRect(x, y, 14, 10);
-      }
-      g.fillStyle = '#38BDF8'; g.fillRect(6, 0, 4, 512); g.fillRect(246, 0, 4, 512);
-      g.fillStyle = 'rgba(9,13,22,0.94)'; g.fillRect(20, 210, 216, 62);
-      g.strokeStyle = seed % 2 ? '#F472B6' : '#38BDF8'; g.lineWidth = 4; g.strokeRect(20, 210, 216, 62);
-      g.fillStyle = '#FFF'; g.font = 'bold 19px system-ui'; g.textAlign = 'center'; g.fillText(ruText, 128, 247);
-      g.fillStyle = '#F472B6'; g.font = 'bold 26px system-ui'; g.fillText(jpText, 224, 80); g.fillText('電脳', 224, 115);
+      g.fillStyle = 'rgba(6,9,19,0.92)'; g.fillRect(8, 8, 496, 112);
+      g.strokeStyle = col; g.lineWidth = 6; g.strokeRect(8, 8, 496, 112);
+      g.fillStyle = '#FFF'; g.font = 'bold 34px system-ui'; g.textAlign = 'center'; g.fillText(ruText, 240, 62);
+      g.fillStyle = col; g.font = 'bold 24px system-ui'; g.fillText(jpText + ' • CYBER DISTRICT', 240, 98);
       return new THREE.CanvasTexture(c);
     }
+    function loadAiSprite3D(promptTxt, w, h, cb) {
+      const im = new Image(); im.crossOrigin = 'anonymous';
+      im.onload = () => {
+        const c = document.createElement('canvas'); c.width = im.width; c.height = im.height;
+        const g = c.getContext('2d'); g.drawImage(im, 0, 0);
+        const d = g.getImageData(0, 0, c.width, c.height), p = d.data;
+        for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) {
+          const i = (y * c.width + x) * 4;
+          const lum = (p[i] + p[i + 1] + p[i + 2]) / 3;
+          const edge = Math.min(x / 35, (c.width - x) / 35, y / 35, 1);
+          if (lum < 28) p[i + 3] = 0;
+          else p[i + 3] = Math.min(255, Math.round(edge * 255));
+        }
+        g.putImageData(d, 0, 0); cb(new THREE.CanvasTexture(c));
+      };
+      im.src = 'https://pollinations.ai' + encodeURIComponent(promptTxt) + '?width=' + w + '&height=' + h + '&nologo=true&seed=77';
+    }
+
 
     function buildWorld() {
       const low = document.getElementById('book-text').value.toLowerCase();
       biome = (low.includes('зим') || low.includes('снег') || low.includes('мороз')) ? 'winter' : ((low.includes('неон') || low.includes('ноч') || low.includes('дожд')) ? 'cyber' : 'sunset');
       isNight = biome === 'cyber';
-      document.getElementById('hud-stat').textContent = 'MX-Оазис • Центральная площадь';
+      document.getElementById('hud-stat').textContent = 'MX-Оазис • Кибер-Площадь 360°';
       document.getElementById('ui-book').style.display = 'none';
       const wBox = document.getElementById('ui-world'); wBox.style.display = 'block';
       wBox.querySelectorAll('canvas').forEach(c => c.remove());
       const scene = new THREE.Scene();
-      scene.background = new THREE.Color(0x060913);
-      scene.fog = new THREE.FogExp2(0x060913, 0.015);
-      const cam = new THREE.PerspectiveCamera(62, innerWidth / innerHeight, 0.1, 180);
+      scene.fog = new THREE.FogExp2(0x070a14, 0.014);
+      const cam = new THREE.PerspectiveCamera(65, innerWidth / innerHeight, 0.1, 220);
       const ren = new THREE.WebGLRenderer({ antialias: true });
       ren.setSize(innerWidth, innerHeight); ren.setPixelRatio(Math.min(devicePixelRatio, 2));
       wBox.appendChild(ren.domElement);
-      scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-      const dL = new THREE.DirectionalLight(0x38bdf8, 1.2); dL.position.set(12, 28, 16); scene.add(dL);
-      const plaza = new THREE.Mesh(new THREE.PlaneGeometry(36, 36), new THREE.MeshStandardMaterial({ map: makeRoadTex(), roughness: 0.4 }));
+      const skyGeo = new THREE.SphereGeometry(95, 24, 16);
+      const skyMat = new THREE.MeshBasicMaterial({ color: 0x0f172a, side: THREE.BackSide });
+      const skyDome = new THREE.Mesh(skyGeo, skyMat); scene.add(skyDome);
+      loadAiSprite3D('Cyberpunk 2077 night Tokyo megacity skyscrapers neon holograms flying cars towering into starry sky, wide 360 anime panorama, masterpiece', 1024, 512, tex => { skyMat.map = tex; skyMat.color.setHex(0xffffff); skyMat.needsUpdate = true; });
+      const plaza = new THREE.Mesh(new THREE.PlaneGeometry(38, 38), new THREE.MeshBasicMaterial({ map: makeRoadTex() }));
       plaza.rotation.x = -Math.PI / 2; scene.add(plaza);
+      const bldMat = new THREE.MeshBasicMaterial({ map: SPR.kiber ? new THREE.CanvasTexture(SPR.kiber) : null, transparent: true, alphaTest: 0.08, side: THREE.DoubleSide });
+      loadAiSprite3D('Cyberpunk 2077 futuristic neon storefront building facade with glowing signs and glass windows, isolated on pure black background, anime game art', 512, 768, tex => { bldMat.map = tex; bldMat.needsUpdate = true; });
+      const treeMat = new THREE.MeshBasicMaterial({ map: SPR.tree ? new THREE.CanvasTexture(SPR.tree) : null, transparent: true, alphaTest: 0.08, side: THREE.DoubleSide });
+      loadAiSprite3D('Lush glowing pink neon sakura tree with full branches and roots, isolated on pure black background, anime game concept art', 512, 512, tex => { treeMat.map = tex; treeMat.needsUpdate = true; });
       const shops = [
-        [-15, -10, 'БАР «НЕОН»', '酒場'], [-15, 0, 'КАФЕ «САКУРА»', '喫茶'], [-15, 10, 'БУТИК ОДЕЖДЫ', '衣装'],
-        [15, -10, 'НОЧНОЙ КЛУБ «АКСИС»', 'クラブ'], [15, 0, 'САЛОН СМАРТФОНОВ', '電脳'], [15, 10, 'АКСЕССУАРЫ И РУНЫ', '宝石'],
-        [-6, -16, 'ПОРТАЛ МИРОВ', '転送'], [6, -16, 'ПАЛАТА ЛИЦЕНЗИЙ', '免許']
+        [-14, -10, 'БАР «НЕОН»', '酒場', '#F472B6'], [-14, 0, 'КАФЕ «САКУРА»', '喫茶', '#38BDF8'], [-14, 10, 'БУТИК ОДЕЖДЫ', '衣装', '#FDE047'],
+        [14, -10, 'НОЧНОЙ КЛУБ «АКСИС»', 'クラブ', '#F472B6'], [14, 0, 'САЛОН СМАРТФОНОВ', '電脳', '#38BDF8'], [14, 10, 'АКСЕССУАРЫ И РУНЫ', '宝石', '#A855F7'],
+        [-6, -15, 'ПОРТАЛ МИРОВ', '転送', '#38BDF8'], [6, -15, 'ПАЛАТА ЛИЦЕНЗИЙ', '免許', '#FDE047']
       ];
-      shops.forEach(([bx, bz, ruT, jpT], i) => {
-        const bh = 22 + (i % 3) * 7;
-        const bM = new THREE.Mesh(new THREE.BoxGeometry(6.5, bh, 7.5), new THREE.MeshStandardMaterial({ map: makeBuildingTex(i, ruT, jpT) }));
-        bM.position.set(bx, bh / 2, bz); scene.add(bM);
-        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.3, 6), new THREE.MeshBasicMaterial({ color: i % 2 ? 0xf472b6 : 0x38bdf8 }));
-        spire.position.set(bx, bh + 3, bz); scene.add(spire);
-        if (Math.abs(bx) === 15) {
-          const sx = bx < 0 ? -10.5 : 10.5;
-          const post = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 3.6), new THREE.MeshBasicMaterial({ color: 0x334155 }));
-          const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.28, 8, 8), new THREE.MeshBasicMaterial({ color: 0xfef08a }));
-          post.position.set(sx, 1.8, bz - 2.5); lamp.position.set(sx, 3.7, bz - 2.5);
-          const bench = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.45, 2.2), new THREE.MeshStandardMaterial({ color: 0x78350f }));
-          bench.position.set(sx, 0.25, bz + 1.5);
-          const trk = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.24, 2.4), new THREE.MeshBasicMaterial({ color: 0x451a03 }));
-          const cr1 = new THREE.Mesh(new THREE.ConeGeometry(1.6, 2.2, 7), new THREE.MeshBasicMaterial({ color: 0xf472b6 }));
-          const cr2 = new THREE.Mesh(new THREE.ConeGeometry(1.1, 1.8, 7), new THREE.MeshBasicMaterial({ color: 0xf9a8d4 }));
-          trk.position.set(sx, 1.2, bz + 3.4); cr1.position.set(sx, 2.8, bz + 3.4); cr2.position.set(sx, 3.9, bz + 3.4);
-          scene.add(post, lamp, bench, trk, cr1, cr2);
+      shops.forEach(([bx, bz, ruT, jpT, col], i) => {
+        const bPlane = new THREE.Mesh(new THREE.PlaneGeometry(11, 16), bldMat);
+        bPlane.position.set(bx, 8, bz); bPlane.rotation.y = bx < 0 ? Math.PI / 2 : (bx > 0 ? -Math.PI / 2 : 0);
+        const sign = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 1.6), new THREE.MeshBasicMaterial({ map: makeSignTex(ruT, jpT, col), transparent: true, side: THREE.DoubleSide }));
+        sign.position.set(bx + (bx < 0 ? 0.4 : (bx > 0 ? -0.4 : 0)), 4.6, bz + (Math.abs(bx) < 10 ? 0.4 : 0));
+        sign.rotation.y = bPlane.rotation.y; scene.add(bPlane, sign);
+        if (Math.abs(bx) === 14) {
+          const sx = bx < 0 ? -9.5 : 9.5;
+          const tr = new THREE.Mesh(new THREE.PlaneGeometry(5.2, 5.6), treeMat);
+          tr.position.set(sx, 2.8, bz + 3.2); tr.rotation.y = bPlane.rotation.y;
+          const bench = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.42, 2.1), new THREE.MeshBasicMaterial({ color: 0x334155 }));
+          bench.position.set(sx, 0.21, bz + 1.2);
+          const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 3.8), new THREE.MeshBasicMaterial({ color: 0x1e293b }));
+          const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.24, 8, 8), new THREE.MeshBasicMaterial({ color: 0x38bdf8 }));
+          pole.position.set(sx, 1.9, bz - 2.4); bulb.position.set(sx, 3.85, bz - 2.4);
+          scene.add(tr, bench, pole, bulb);
         }
-      });
-      function makeBot3D(coatCol, skinCol, visorCol, glasses) {
-        const g = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.9, 0.32), new THREE.MeshStandardMaterial({ color: coatCol })); body.position.y = 1.15;
-        const legL = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.7, 0.22), new THREE.MeshStandardMaterial({ color: 0x0f172a })); legL.position.set(-0.15, 0.35, 0);
-        const legR = legL.clone(); legR.position.x = 0.15;
-        const head = new THREE.Mesh(new THREE.SphereGeometry(0.24, 12, 12), new THREE.MeshStandardMaterial({ color: skinCol })); head.position.y = 1.85;
-        const visor = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.09, 0.14), new THREE.MeshBasicMaterial({ color: glasses ? 0x020617 : visorCol })); visor.position.set(0, 1.86, 0.19);
-        g.add(body, legL, legR, head, visor); return g;
-      }
-      [-11.2, -8.8].forEach(gz => { const grd = makeBot3D(0x090d16, 0xfde6d8, 0x000000, true); grd.position.set(11.2, 0, gz); grd.rotation.y = -Math.PI / 2; scene.add(grd); });
-      const crowd = [];
-      for (let q = 0; q < 5; q++) {
-        const b = makeBot3D(q % 2 ? 0xf472b6 : 0x38bdf8, 0xfde6d8, 0x38bdf8, false);
-        b.position.set(8.8 - q * 1.1, 0, -10); b.rotation.y = Math.PI / 2; scene.add(b);
-      }
-      for (let w = 0; w < 8; w++) {
-        const bot = makeBot3D(w % 2 ? 0xa855f7 : 0x0284c7, 0xfde6d8, 0xfde047, false);
-        bot.position.set((w - 4) * 2.2, 0, -6 + (w % 3) * 5); scene.add(bot);
-        crowd.push({ m: bot, dir: w % 2 ? 1 : -1, sp: 0.02 + (w % 3) * 0.01 });
-      }
-      const cars = [0x38bdf8, 0xf472b6, 0xfde047].map((c, idx) => {
-        const cm = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.5, 2.8), new THREE.MeshBasicMaterial({ color: c }));
-        cm.position.set(-4 + idx * 4, 8 + idx * 2.5, -20 + idx * 10); scene.add(cm); return cm;
       });
       function makeCharPlane(key, h) {
         const sp = SPR[key], tex = sp ? new THREE.CanvasTexture(sp) : null, asp = sp ? (sp.width / sp.height) : 0.55;
         const grp = new THREE.Group();
-        const m = new THREE.Mesh(new THREE.PlaneGeometry(h * asp, h), new THREE.MeshBasicMaterial({ map: tex, color: tex ? 0xffffff : 0xd97757, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide }));
-        m.position.y = h / 2 + 0.08;
-        const ring = new THREE.Mesh(new THREE.RingGeometry(0.45, 0.65, 24), new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide }));
-        ring.rotation.x = -Math.PI / 2; ring.position.y = 0.03;
+        const m = new THREE.Mesh(new THREE.PlaneGeometry(h * asp, h), new THREE.MeshBasicMaterial({ map: tex, color: tex ? 0xffffff : 0xd97757, transparent: true, alphaTest: 0.08, side: THREE.DoubleSide }));
+        m.position.y = h / 2 + 0.05;
+        const ring = new THREE.Mesh(new THREE.RingGeometry(0.42, 0.6, 24), new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide }));
+        ring.rotation.x = -Math.PI / 2; ring.position.y = 0.02;
         grp.add(m, ring); return grp;
       }
       const heroMesh = makeCharPlane('hero', 2.3); scene.add(heroMesh);
+      const crowd = [];
+      [-11.2, -8.8].forEach(gz => { const grd = makeCharPlane('npc1', 2.45); grd.position.set(11.2, 0, gz); scene.add(grd); crowd.push(grd); });
+      for (let q = 0; q < 4; q++) { const qb = makeCharPlane(q % 2 ? 'npc2' : 'npc1', 2.3); qb.position.set(9.2 - q * 1.1, 0, -10); scene.add(qb); crowd.push(qb); }
+      const walkers = [];
+      for (let w = 0; w < 6; w++) {
+        const wm = makeCharPlane(w % 2 ? 'npc2' : 'npc1', 2.3);
+        wm.position.set((w - 3) * 2.6, 0, -5 + (w % 3) * 4.5); scene.add(wm);
+        walkers.push({ m: wm, dir: w % 2 ? 1 : -1, sp: 0.022 + (w % 3) * 0.008 });
+      }
       const rawTxt = document.getElementById('book-text').value;
       const quotes = [...rawTxt.matchAll(/[«"]([^»"]{4,140})[»"]/g)].map(m => m);
       const names = [...new Set((rawTxt.replace(/^[А-ЯЁ][а-яё]+|[.!?]\s+[А-ЯЁ][а-яё]+/g, '').match(/[А-ЯЁ][а-яё]{2,14}/g) || []))].slice(0, 4);
-      const pos = [{ x: -8.5, z: 0, spr: 'npc1' }, { x: 8.5, z: 0, spr: 'npc2' }, { x: 9.8, z: -10, spr: 'npc1' }, { x: -5.5, z: -12, spr: 'npc2' }];
-      npcs = (names.length ? names : ['Бариста Кафе', 'Консультант Смартфонов', 'Охранник Клуба', 'Хранитель Портала']).map((nm, idx) => {
+      const pos = [{ x: -8.5, z: 0, spr: 'npc1' }, { x: 8.5, z: 0, spr: 'npc2' }, { x: 10.2, z: -10, spr: 'npc1' }, { x: -5.5, z: -12, spr: 'npc2' }];
+      npcs = (names.length ? names : ['Бариста Сакуры', 'Консультант Смартфонов', 'Охранник Клуба Аксис', 'Хранитель Портала']).map((nm, idx) => {
         const mesh = makeCharPlane(pos[idx % 4].spr, 2.4);
         mesh.position.set(pos[idx % 4].x, 0, pos[idx % 4].z); scene.add(mesh);
-        return { name: nm, mesh, x: pos[idx % 4].x, z: pos[idx % 4].z, lines: [quotes[idx] || `${nm}: Добро пожаловать на Центральную площадь MX-Оазиса!`, 'Очередь в ночной клуб «Аксис» уже собралась у правого проспекта.'] };
+        return { name: nm, mesh, x: pos[idx % 4].x, z: pos[idx % 4].z, lines: [quotes[idx] || `${nm}: Добро пожаловать на Кибер-Площадь MX-Оазиса!`, 'Очередь в ночной клуб «Аксис» уже выстроилась у правого проспекта.'] };
       });
-      player = { x: 0, z: 11 }; let lastMc = 0;
+      let camYaw = 0, camPitch = 0.22, dragCam = false, lx = 0, ly = 0;
+      ren.domElement.onmousedown = e => { dragCam = true; lx = e.clientX; ly = e.clientY; };
+      ren.domElement.addEventListener('touchstart', e => { dragCam = true; lx = e.touches[0].clientX; ly = e.touches[0].clientY; }, { passive: true });
+      window.addEventListener('mousemove', e => { if (!dragCam) return; camYaw -= (e.clientX - lx) * 0.007; camPitch = Math.max(-0.35, Math.min(0.85, camPitch + (e.clientY - ly) * 0.005)); lx = e.clientX; ly = e.clientY; });
+      window.addEventListener('touchmove', e => { if (!dragCam) return; camYaw -= (e.touches[0].clientX - lx) * 0.008; camPitch = Math.max(-0.35, Math.min(0.85, camPitch + (e.touches[0].clientY - ly) * 0.006)); lx = e.touches[0].clientX; ly = e.touches[0].clientY; }, { passive: true });
+      window.addEventListener('mouseup', () => { dragCam = false; }); window.addEventListener('touchend', () => { dragCam = false; });
+      player = { x: 0, z: 10 }; let lastMc = 0;
       function loop(t) {
         animId = requestAnimationFrame(loop);
-        player.x = Math.max(-11.5, Math.min(11.5, player.x + move.x * 0.16));
-        player.z = Math.max(-13.5, Math.min(14.5, player.z + move.z * 0.16));
+        const fwdX = -Math.sin(camYaw), fwdZ = -Math.cos(camYaw), rgtX = Math.cos(camYaw), rgtZ = -Math.sin(camYaw);
+        player.x = Math.max(-11, Math.min(11, player.x + (rgtX * move.x - fwdX * move.z) * 0.16));
+        player.z = Math.max(-13, Math.min(14, player.z + (rgtZ * move.x - fwdZ * move.z) * 0.16));
         const walkBob = (Math.abs(move.x) + Math.abs(move.z) > 0.05) ? Math.abs(Math.sin(t * 0.014)) * 0.14 : Math.sin(t * 0.004) * 0.03;
-        heroMesh.position.set(player.x, walkBob, player.z);
-        cam.position.set(player.x * 0.72, 4.2, player.z + 7.5);
-        cam.lookAt(player.x, 1.8, player.z - 8);
-        crowd.forEach(c => { c.m.position.x += c.dir * c.sp; if (Math.abs(c.m.position.x) > 9) c.dir *= -1; c.m.rotation.y = c.dir > 0 ? Math.PI / 2 : -Math.PI / 2; });
-        cars.forEach((cm, i) => { cm.position.z += (i % 2 ? 0.35 : -0.35); if (Math.abs(cm.position.z) > 35) cm.position.z *= -1; });
+        heroMesh.position.set(player.x, walkBob, player.z); heroMesh.rotation.y = camYaw;
+        cam.position.set(player.x + Math.sin(camYaw) * 6.5, 2.6 + camPitch * 4.5, player.z + Math.cos(camYaw) * 6.5);
+        cam.lookAt(player.x - Math.sin(camYaw) * 6, 2.2 - camPitch * 5.5, player.z - Math.cos(camYaw) * 6);
+        crowd.forEach(m => { m.rotation.y = camYaw; });
+        npcs.forEach(n => { n.mesh.rotation.y = camYaw; });
+        walkers.forEach(w => { w.m.position.x += w.dir * w.sp; if (Math.abs(w.m.position.x) > 8.5) w.dir *= -1; w.m.rotation.y = camYaw; });
         if (t - lastMc > 100) {
           lastMc = t; const nearIdx = npcs.findIndex(n => Math.hypot(n.x - player.x, n.z - player.z) < 4.5); const box = document.getElementById('npc-speech');
-          if (nearIdx >= 0) { const near = npcs[nearIdx], line = near.lines[Math.floor((t / 4000) % near.lines.length)]; box.innerHTML = `<b>${near.name}</b> <span style="color:#D97757;font-size:11px;">• Площадь</span><br>${line}`; box.style.display = 'block'; speakLine(line, nearIdx); } else box.style.display = 'none';
+          if (nearIdx >= 0) { const near = npcs[nearIdx], line = near.lines[Math.floor((t / 4000) % near.lines.length)]; box.innerHTML = `<b>${near.name}</b> <span style="color:#D97757;font-size:11px;">• 360° Голос</span><br>${line}`; box.style.display = 'block'; speakLine(line, nearIdx); } else box.style.display = 'none';
         }
         ren.render(scene, cam);
       }
