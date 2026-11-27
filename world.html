@@ -246,7 +246,7 @@
       let lastMc = 0;
       function loop(t) {
         animId = requestAnimationFrame(loop);
-        player.x = Math.max(-4.8, Math.min(4.8, player.x + move.x * 0.13));
+        player.x = Math.max(-3.1, Math.min(3.1, player.x + move.x * 0.13));
         player.z = Math.max(-36, Math.min(16, player.z + move.z * 0.13));
         const hy = cv.height * 0.54;
         const g = cx.createLinearGradient(0, 0, 0, hy);
@@ -329,12 +329,15 @@
 
         const tun = proj(0, 0, -28);
         if (tun) { cx.strokeStyle = '#57534E'; cx.lineWidth = Math.max(6, tun.s * 0.9); cx.beginPath(); cx.arc(tun.x, tun.y, tun.s * 4.8, Math.PI, 0); cx.stroke(); }
-        if (SPR.tower) {
-          const tw = Math.min(cv.width * 0.42, 220), th = tw * (SPR.tower.height / SPR.tower.width);
-          cx.globalAlpha = isNight ? 0.55 : 0.88;
-          cx.drawImage(SPR.tower, cv.width * 0.5 - tw * 0.5, hy - th + 6, tw, th);
-          cx.globalAlpha = 1;
+        if (curLoc === 'street') {
+          [{ x: -2.7, z: 0, t: 'КАФЕ И ЛАВКА' }, { x: 2.7, z: -8, t: 'ПЕРЕУЛОК' }, { x: 0, z: -24, t: 'К МОРЮ' }].forEach(zPt => {
+            const zp = proj(zPt.x, 0, zPt.z); if (!zp) return;
+            cx.fillStyle = 'rgba(217,119,87,0.35)'; cx.beginPath(); cx.ellipse(zp.x, zp.y, zp.s * 1.1, zp.s * 0.35, 0, 0, Math.PI * 2); cx.fill();
+            cx.fillStyle = '#FEF08A'; cx.font = 'bold ' + Math.max(9, Math.min(13, zp.s * 0.28)) + 'px system-ui'; cx.textAlign = 'center';
+            cx.fillText(zPt.t, zp.x, zp.y - 4);
+          });
         }
+
         npcs.slice().sort((a, b) => a.z - b.z).forEach((n, i) => {
           const p = proj(n.x, 0, n.z); if (!p) return;
           const sp = SPR[n.spr];
