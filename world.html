@@ -52,12 +52,13 @@
       <span style="color:#D97757;cursor:pointer;font-weight:700;" onclick="clearPrompt()">Очистить</span>
     </div>
     <div class="row">
-      <button class="btn-sec" onclick="document.getElementById('file-txt').click()">Файл .txt</button>
-      <button class="btn-main" onclick="buildWorld()">Собрать 3D-мир</button>
+      <button class="btn-sec" onclick="document.getElementById('file-txt').click()">Текст .txt</button>
+      <button class="btn-sec" onclick="document.getElementById('file-bg').click()">Панорама .jpg</button>
+      <button class="btn-main" onclick="buildWorld()">Войти в сектор</button>
     </div>
-
-
     <input type="file" id="file-txt" accept=".txt" style="display:none" onchange="loadTxtFile(event)" />
+    <input type="file" id="file-bg" accept="image/*" style="display:none" onchange="loadBgArt(event)" />
+
   </div>
 
 
@@ -135,6 +136,12 @@
     function setPreset(i) { document.getElementById('book-text').value = PRESETS[i]; updCnt(); }
     setTimeout(updCnt, 50);
     function loadTxtFile(e) { const f = e.target.files.item(0); if (!f) return; const r = new FileReader(); r.onload = () => { document.getElementById('book-text').value = r.result.slice(0, 1000); updCnt(); }; r.readAsText(f); }
+    function loadBgArt(e) {
+      const f = e.target.files.item(0); if (!f) return;
+      const r = new FileReader();
+      r.onload = () => { const im = new Image(); im.onload = () => { SPR.customBg = im; }; im.src = r.result; };
+      r.readAsDataURL(f);
+    }
     function backToBook() { if (animId) cancelAnimationFrame(animId); document.getElementById('ui-world').style.display = 'none'; document.getElementById('ui-book').style.display = 'flex'; }
 
 
@@ -223,8 +230,17 @@
         else { g.addColorStop(0, '#0369A1'); g.addColorStop(0.42, '#EC4899'); g.addColorStop(0.82, '#FB923C'); g.addColorStop(1, '#FEF08A'); }
 
         cx.fillStyle = g; cx.fillRect(0, 0, cv.width, hy);
-        const sunX = cv.width * 0.5, sunY = hy * 0.82;
+        const bgArt = SPR.customBg || SPR.tower;
+        if (bgArt) {
+          const pw = cv.width * 1.24, ph = Math.max(hy, pw * (bgArt.height / bgArt.width));
+          const pxOff = -cv.width * 0.12 - player.x * 14;
+          cx.globalAlpha = isNight ? 0.65 : 0.92;
+          cx.drawImage(bgArt, pxOff, hy - ph + 10, pw, ph);
+          cx.globalAlpha = 1;
+        }
+        const sunX = cv.width * 0.5 - player.x * 8, sunY = hy * 0.82;
         const sg = cx.createRadialGradient(sunX, sunY, 8, sunX, sunY, cv.width * 0.45);
+
         sg.addColorStop(0, isNight ? 'rgba(224,231,255,0.9)' : 'rgba(255,255,240,0.95)');
         sg.addColorStop(0.25, isNight ? 'rgba(129,140,248,0.25)' : 'rgba(253,224,71,0.45)');
         sg.addColorStop(1, 'rgba(255,255,255,0)');
