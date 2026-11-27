@@ -277,38 +277,47 @@
       g.beginPath(); g.ellipse(px, py, 105, 22, -0.35, 0, Math.PI * 2); g.stroke();
       return new THREE.CanvasTexture(c);
     }
-    function makeTowerTex(seed, ruText, jpText, col) {
+    function makeTowerTex(seed, style, col) {
       const c = document.createElement('canvas'); c.width = 512; c.height = 1024;
       const g = c.getContext('2d');
       const gr = g.createLinearGradient(0, 0, 0, 1024);
-      gr.addColorStop(0, '#020617'); gr.addColorStop(0.7, '#0f172a'); gr.addColorStop(1, '#1e1b4b');
+      if (style === 'wood') { gr.addColorStop(0, '#1e1b4b'); gr.addColorStop(0.85, '#451a03'); gr.addColorStop(1, '#78350f'); }
+      else if (style === 'glass') { gr.addColorStop(0, '#020617'); gr.addColorStop(0.5, '#0c4a6e'); gr.addColorStop(1, '#1e293b'); }
+      else { gr.addColorStop(0, '#020617'); gr.addColorStop(0.75, '#0f172a'); gr.addColorStop(1, '#1e1b4b'); }
       g.fillStyle = gr; g.fillRect(0, 0, 512, 1024);
-      for (let y = 24; y < 840; y += 22) for (let x = 24; x < 480; x += 32) {
-        const rnd = (x * 11 + y * 7 + seed * 29) % 13;
-        g.fillStyle = rnd === 0 ? '#38bdf8' : (rnd === 1 ? '#f472b6' : (rnd === 2 ? '#fde047' : '#1e293b'));
-        g.fillRect(x, y, 20, 12);
+      for (let y = 32; y < 920; y += 56) for (let x = 28; x < 480; x += 64) {
+        const rnd = (x * 7 + y * 13 + seed * 19) % 9;
+        g.fillStyle = style === 'glass' ? (rnd < 3 ? 'rgba(56,189,248,0.45)' : 'rgba(14,165,233,0.18)') : (rnd === 0 ? '#38bdf8' : (rnd === 1 ? '#f472b6' : (rnd === 2 ? '#fde047' : '#1e293b')));
+        g.fillRect(x, y, 42, 34);
       }
-      g.fillStyle = col; g.fillRect(6, 0, 6, 1024); g.fillRect(500, 0, 6, 1024);
-      // Первый этаж (витрины с манекенами)
-      g.fillStyle = 'rgba(254,240,138,0.16)'; g.fillRect(24, 880, 464, 136);
-      g.strokeStyle = col; g.lineWidth = 4; g.strokeRect(24, 880, 464, 136);
-      [130, 380].forEach((mx, idx) => {
-        g.fillStyle = idx === 0 ? '#f472b6' : '#38bdf8';
-        g.beginPath(); g.arc(mx, 922, 10, 0, Math.PI * 2); g.fill();
-        g.beginPath();
-        if (idx === 0) { g.moveTo(mx - 16, 995); g.lineTo(mx, 936); g.lineTo(mx + 16, 995); }
-        else { g.rect(mx - 11, 936, 22, 58); }
-        g.fill();
-      });
-      // Вывеска над первым этажом
-      g.fillStyle = 'rgba(6,9,19,0.94)'; g.fillRect(40, 815, 432, 54);
-      g.strokeStyle = col; g.lineWidth = 4; g.strokeRect(40, 815, 432, 54);
-      g.fillStyle = '#fff'; g.font = 'bold 26px system-ui'; g.textAlign = 'center'; g.fillText(ruText, 256, 851);
-      g.fillStyle = col; g.font = 'bold 34px system-ui'; g.fillText(jpText, 465, 140); g.fillText('未来', 465, 185);
+      g.fillStyle = col; g.fillRect(6, 0, 5, 1024); g.fillRect(501, 0, 5, 1024);
       return new THREE.CanvasTexture(c);
     }
-
-
+    function makeStorefrontTex(ruText, jpText, col, kind) {
+      const c = document.createElement('canvas'); c.width = 512; c.height = 256;
+      const g = c.getContext('2d');
+      g.fillStyle = kind === 'cafe' ? '#291d18' : '#090d16'; g.fillRect(0, 0, 512, 256);
+      g.fillStyle = kind === 'cafe' ? 'rgba(253,224,71,0.22)' : 'rgba(56,189,248,0.16)';
+      g.fillRect(20, 68, 472, 180);
+      g.strokeStyle = col; g.lineWidth = 4; g.strokeRect(20, 68, 472, 180);
+      if (kind === 'shop') {
+        [120, 390].forEach((mx, idx) => {
+          g.fillStyle = idx === 0 ? '#f472b6' : '#38bdf8';
+          g.beginPath(); g.arc(mx, 118, 12, 0, Math.PI * 2); g.fill();
+          g.beginPath();
+          if (idx === 0) { g.moveTo(mx - 22, 225); g.lineTo(mx, 134); g.lineTo(mx + 22, 225); }
+          else { g.rect(mx - 14, 134, 28, 90); }
+          g.fill();
+        });
+      } else if (kind === 'cafe') {
+        g.fillStyle = '#fef3c7'; g.fillRect(70, 175, 372, 14);
+        [140, 256, 370].forEach(lx => { g.fillStyle = '#fde047'; g.beginPath(); g.arc(lx, 96, 10, 0, Math.PI * 2); g.fill(); });
+      }
+      g.fillStyle = 'rgba(6,9,19,0.96)'; g.fillRect(16, 8, 480, 52);
+      g.strokeStyle = col; g.lineWidth = 4; g.strokeRect(16, 8, 480, 52);
+      g.fillStyle = '#fff'; g.font = 'bold 24px system-ui'; g.textAlign = 'center'; g.fillText(`${ruText} • ${jpText}`, 256, 42);
+      return new THREE.CanvasTexture(c);
+    }
 
 
     function buildWorld() {
@@ -328,34 +337,50 @@
       const plaza = new THREE.Mesh(new THREE.PlaneGeometry(42, 42), new THREE.MeshStandardMaterial({ map: makeRoadTex(), roughness: 0.42 }));
       plaza.rotation.x = -Math.PI / 2; scene.add(plaza);
       const towers = [
-        [-19, -13, 'БАР «НЕОН»', '酒場', '#F472B6', 68, 9], [-19, 0, 'КАФЕ «САКУРА»', '喫茶', '#38BDF8', 85, 10], [-19, 13, 'БУТИК ОДЕЖДЫ', '衣装', '#FDE047', 62, 8.5],
-        [19, -13, 'НОЧНОЙ КЛУБ «АКСИС»', 'クラブ', '#F472B6', 95, 10.5], [19, 0, 'САЛОН СМАРТФОНОВ', '電脳', '#38BDF8', 74, 9], [19, 13, 'ЛАВКА АРТЕФАКТОВ', '宝石', '#A855F7', 66, 8.5],
-        [-8, -21, 'ПОРТАЛ МИРОВ', '転送', '#38BDF8', 110, 10], [8, -21, 'ПАЛАТА ЛИЦЕНЗИЙ', '免許', '#FDE047', 88, 9.5]
+        [-20, -13, 'БАР «НЕОН»', '酒場', '#F472B6', 72, 9.5, 'cyber', 'cafe'],
+        [-20, 0, 'КАФЕ «САКУРА»', '喫茶', '#38BDF8', 88, 10.5, 'wood', 'cafe'],
+        [-20, 13, 'БУТИК ОДЕЖДЫ', '衣装', '#FDE047', 64, 9, 'glass', 'shop'],
+        [20, -13, 'НОЧНОЙ КЛУБ «АКСИС»', 'クラブ', '#F472B6', 96, 11, 'cyber', 'cafe'],
+        [20, 0, 'ОФИС-ЦЕНТР «ОАЗИС»', '電脳', '#38BDF8', 115, 10.5, 'glass', 'office'],
+        [20, 13, 'ЛАВКА АРТЕФАКТОВ', '宝石', '#A855F7', 68, 9, 'cyber', 'shop'],
+        [-8, -22, 'ПОРТАЛ МИРОВ', '転送', '#38BDF8', 120, 10, 'cyl', 'office'],
+        [8, -22, 'ПАЛАТА ЛИЦЕНЗИЙ', '免許', '#FDE047', 92, 9.5, 'glass', 'office']
       ];
-      towers.forEach(([bx, bz, ruT, jpT, col, bh, bw], i) => {
-        const tex = makeTowerTex(i, ruT, jpT, col);
-        const bM = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, bw), new THREE.MeshStandardMaterial({ map: tex }));
+      const treeTex = SPR.tree ? new THREE.CanvasTexture(SPR.tree) : null;
+      towers.forEach(([bx, bz, ruT, jpT, col, bh, bw, style, kind], i) => {
+        const tex = makeTowerTex(i, style, col);
+        const geo = style === 'cyl' ? new THREE.CylinderGeometry(bw * 0.48, bw * 0.54, bh, 20) : new THREE.BoxGeometry(bw, bh, bw);
+        const bM = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: tex }));
         bM.position.set(bx, bh / 2, bz); scene.add(bM);
-        const topTier = new THREE.Mesh(new THREE.BoxGeometry(bw * 0.68, bh * 0.22, bw * 0.68), new THREE.MeshStandardMaterial({ map: tex }));
-        topTier.position.set(bx, bh + bh * 0.11, bz); scene.add(topTier);
-        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.35, 14), new THREE.MeshBasicMaterial({ color: col }));
-        spire.position.set(bx, bh * 1.22 + 7, bz); scene.add(spire);
-        if (Math.abs(bx) === 19) {
-          const sx = bx < 0 ? -12.2 : 12.2;
+        const topGeo = style === 'cyl' ? new THREE.CylinderGeometry(bw * 0.25, bw * 0.45, bh * 0.22, 16) : new THREE.BoxGeometry(bw * 0.65, bh * 0.2, bw * 0.65);
+        const topTier = new THREE.Mesh(topGeo, new THREE.MeshStandardMaterial({ map: tex }));
+        topTier.position.set(bx, bh + bh * 0.1, bz); scene.add(topTier);
+        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.35, 16), new THREE.MeshBasicMaterial({ color: col }));
+        spire.position.set(bx, bh * 1.2 + 8, bz); scene.add(spire);
+        // Витрина первого этажа и вывеска строго на уровне 4.5 м
+        const sf = new THREE.Mesh(new THREE.PlaneGeometry(bw * 0.94, 4.6), new THREE.MeshBasicMaterial({ map: makeStorefrontTex(ruT, jpT, col, kind), side: THREE.DoubleSide }));
+        sf.position.set(bx + (bx < 0 ? bw / 2 + 0.08 : (bx > 0 && Math.abs(bx) === 20 ? -bw / 2 - 0.08 : 0)), 2.3, bz + (Math.abs(bx) < 20 ? bw / 2 + 0.08 : 0));
+        sf.rotation.y = bx === -20 ? Math.PI / 2 : (bx === 20 ? -Math.PI / 2 : 0);
+        scene.add(sf);
+        if (Math.abs(bx) === 20) {
+          const sx = bx < 0 ? -12.6 : 12.6;
           const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.08, 4.2), new THREE.MeshBasicMaterial({ color: 0x334155 }));
           const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.22, 8, 8), new THREE.MeshBasicMaterial({ color: 0xfef08a }));
-          post.position.set(sx, 2.1, bz - 3.2); lamp.position.set(sx, 4.3, bz - 3.2);
-          const bench = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.42, 2.1), new THREE.MeshStandardMaterial({ color: 0x78350f }));
-          bench.position.set(sx, 0.21, bz + 1.4);
-          const trk = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.24, 2.8), new THREE.MeshBasicMaterial({ color: 0x451a03 }));
-          trk.position.set(sx, 1.4, bz + 3.8); scene.add(post, lamp, bench, trk);
-          const leafCol = i % 2 ? 0xf472b6 : 0x38bdf8;
-          [[0, 3.2, 0, 1.6], [-0.9, 2.8, 0.5, 1.1], [0.9, 2.9, -0.4, 1.15], [0, 4.1, 0.2, 1.05]].forEach(([ox, oy, oz, r]) => {
-            const lf = new THREE.Mesh(new THREE.DodecahedronGeometry(r, 1), new THREE.MeshStandardMaterial({ color: leafCol, roughness: 0.7 }));
-            lf.position.set(sx + ox, oy, bz + 3.8 + oz); scene.add(lf);
-          });
+          post.position.set(sx, 2.1, bz - 3.4); lamp.position.set(sx, 4.3, bz - 3.4);
+          const bench = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.44, 2.2), new THREE.MeshStandardMaterial({ color: 0x78350f }));
+          bench.position.set(sx, 0.22, bz + 1.4); scene.add(post, lamp, bench);
+          if (treeTex) {
+            [0, Math.PI / 2].forEach(ang => {
+              const tp = new THREE.Mesh(new THREE.PlaneGeometry(4.6, 5.2), new THREE.MeshBasicMaterial({ map: treeTex, transparent: true, alphaTest: 0.1, side: THREE.DoubleSide }));
+              tp.position.set(sx, 2.6, bz + 4.1); tp.rotation.y = ang; scene.add(tp);
+            });
+          }
         }
       });
+      // Парящий стеклянный мост между башнями на высоте 32 м
+      const bridge = new THREE.Mesh(new THREE.BoxGeometry(36, 2.4, 3.2), new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.35 }));
+      bridge.position.set(0, 32, 0); scene.add(bridge);
+
       const cafeGuests = [];
       [-2.2, 2.2].forEach((cz, idx) => {
         const tbl = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.75, 0.06, 16), new THREE.MeshStandardMaterial({ color: 0xfef3c7 }));
@@ -385,26 +410,67 @@
         ring.rotation.x = -Math.PI / 2; ring.position.y = 0.02;
         grp.add(m, ring); return grp;
       }
-      const cop1 = SPR.cops ? makeCharPlane('cops', 1.85, 0xffffff) : makeCharPlane('npc1', 1.8, 0x60a5fa);
-      cop1.position.set(-2.4, 0, 3.2); scene.add(cop1);
-
-      const heroMesh = makeCharPlane('hero', 1.75, 0xffffff); scene.add(heroMesh);
-      const walkers = [];
-      const tints = [0xfef08a, 0xfbcfe8, 0xbae6fd, 0xd9f99d, 0xddd6fe, 0xfed7aa];
-      for (let w = 0; w < 6; w++) {
-        const wm = makeCharPlane(w % 2 ? 'npc2' : 'npc1', 1.75, tints[w]);
-        wm.position.set((w - 3) * 2.8, 0, -4 + (w % 3) * 4.5); scene.add(wm);
-        walkers.push({ m: wm, dir: w % 2 ? 1 : -1, sp: 0.008 + (w % 3) * 0.002 });
+      function makeCop3D(x, z) {
+        const g = new THREE.Group();
+        const body = new THREE.Mesh(new THREE.SphereGeometry(0.38, 12, 12), new THREE.MeshStandardMaterial({ color: 0x1e3a8a }));
+        body.scale.set(1.15, 1.45, 0.9); body.position.y = 0.85;
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.21, 12, 12), new THREE.MeshStandardMaterial({ color: 0xfde6d8 })); head.position.y = 1.56;
+        const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.2, 0.1, 12), new THREE.MeshBasicMaterial({ color: 0x0f172a })); cap.position.y = 1.74;
+        const glasses = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.08, 0.12), new THREE.MeshBasicMaterial({ color: 0x020617 })); glasses.position.set(0, 1.58, 0.17);
+        const donut = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.038, 8, 14), new THREE.MeshBasicMaterial({ color: 0xf472b6 })); donut.position.set(-0.28, 1.18, 0.28);
+        const cup = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.05, 0.15, 10), new THREE.MeshBasicMaterial({ color: 0xfef3c7 })); cup.position.set(0.28, 1.16, 0.28);
+        g.add(body, head, cap, glasses, donut, cup); g.position.set(x, 0, z); scene.add(g); return g;
       }
+      const cop1 = makeCop3D(-1.8, 5.2), cop2 = makeCop3D(-0.9, 5.4);
+      const heroMesh = makeCharPlane('hero', 1.75, 0xffffff); scene.add(heroMesh);
+      function makeCitizenMesh(grpType, idx) {
+        const g = new THREE.Group();
+        const palettes = {
+          elder: [0x78716c, 0x57534e, 0x64748b, 0x92400e, 0x475569],
+          girl: [0xf472b6, 0xe879f9, 0x38bdf8, 0xfb7185, 0xa855f7, 0xfacc15, 0x2dd4bf],
+          guy: [0x0284c7, 0x4f46e5, 0x16a34a, 0xea580c, 0x0891b2, 0x7c3aed, 0x2563eb],
+          office: [0x0f172a, 0x1e293b, 0x334155, 0x172554, 0x1e1b4b, 0x27272a, 0x0c4a6e],
+          tourist: [0xf59e0b, 0x10b981, 0xf97316, 0x06b6d4, 0x84cc16, 0xec4899, 0x6366f1, 0xeab308]
+        };
+        const col = palettes[grpType][idx % palettes[grpType].length];
+        const hScale = grpType === 'elder' ? 0.92 : (grpType === 'girl' ? 0.96 : 1.02);
+        const legL = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.68, 0.16), new THREE.MeshStandardMaterial({ color: grpType === 'office' ? 0x090d16 : 0x1e293b })); legL.position.set(-0.11, 0.34, 0);
+        const legR = legL.clone(); legR.position.x = 0.11;
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.66, 0.24), new THREE.MeshStandardMaterial({ color: col })); torso.position.y = 1.01;
+        const head = new THREE.Mesh(new THREE.SphereGeometry(0.18, 10, 10), new THREE.MeshStandardMaterial({ color: 0xfde6d8 })); head.position.y = 1.54;
+        const hair = new THREE.Mesh(new THREE.SphereGeometry(0.19, 10, 10), new THREE.MeshStandardMaterial({ color: grpType === 'elder' ? 0xe2e8f0 : (idx % 2 ? 0x1e1b4b : 0x78350f) })); hair.position.set(0, 1.59, -0.03);
+        g.add(legL, legR, torso, head, hair);
+        if (grpType === 'office' || grpType === 'tourist') {
+          const bag = new THREE.Mesh(new THREE.BoxGeometry(0.24, 0.28, grpType === 'tourist' ? 0.2 : 0.08), new THREE.MeshBasicMaterial({ color: grpType === 'tourist' ? 0xfde047 : 0x451a03 }));
+          bag.position.set(grpType === 'tourist' ? 0 : 0.26, grpType === 'tourist' ? 1.05 : 0.55, grpType === 'tourist' ? -0.18 : 0);
+          g.add(bag);
+        }
+        g.scale.set(1, hScale, 1); return g;
+      }
+      const walkers = [];
+      const specs = [
+        ['elder', 5, 0.004, 'Пожилой горожанин', 'Отдыхает у сакуры и любуется закатом'],
+        ['girl', 7, 0.008, 'Девушка', 'Рассматривает платья в витрине бутика'],
+        ['guy', 7, 0.010, 'Парень', 'Идёт вдоль неоновых вывесок к клубу'],
+        ['office', 7, 0.013, 'Офисный сотрудник', 'Спешит в бизнес-центр с кейсом'],
+        ['tourist', 8, 0.006, 'Турист', 'Фотографирует небоскрёбы и Млечный Путь']
+      ];
+      specs.forEach(([type, count, speed, label, act], gIdx) => {
+        for (let k = 0; k < count; k++) {
+          const m = makeCitizenMesh(type, k);
+          const sx = ((gIdx * 5 + k * 3) % 21) - 10, sz = ((gIdx * 7 + k * 4) % 23) - 11;
+          m.position.set(sx, 0, sz); scene.add(m);
+          walkers.push({ m, type, label: `${label} #${k + 1}`, act, sp: speed, tx: -sx, tz: -sz, pause: (k * 40) % 120 });
+        }
+      });
       npcs = [
-        { name: 'Патруль MX-Оазиса', mesh: cop1, isCop: true, x: -2.4, z: 3.2, lines: ['Соблюдайте правила MX-Оазиса. Добро пожаловать в мегаполис!', 'Отличный кофе и пончики сегодня в Сакуре, правда, напарник?'] },
-        { name: 'Гид Стойки FAQ', mesh: makeCharPlane('npc2', 1.75, 0xbae6fd), isFaq: true, x: 0, z: -8.2, lines: ['Привет! Я бот-консультант MX-Оазиса. Нажми «ДЕЙСТВИЕ», чтобы открыть FAQ по игре!', 'Подсказка: в углу площади сияет Квантовый осколок с Синими Искрами.'] },
-        { name: 'Бариста Сакуры', mesh: makeCharPlane('npc1', 1.75, 0xfbcfe8), x: -11.5, z: 0, lines: ['Заходи в Кафе «Сакура»! Угости друга кофе или купи пирожное.', 'С крыши соседнего небоскрёба открывается лучший вид на Млечный Путь!'] },
+        { name: 'Патруль MX-Оазиса', mesh: cop1, isCop: true, x: -1.35, z: 5.3, lines: ['Соблюдайте правила MX-Оазиса. Добро пожаловать в мегаполис!', 'Отличный кофе и пончики сегодня в Сакуре, правда, напарник?'] },
+        { name: 'Гид Стойки FAQ', mesh: makeCharPlane('npc2', 1.75, 0xbae6fd), isFaq: true, x: 0, z: -8.2, lines: ['Привет! Я бот-консультант MX-Оазиса. Нажми «ДЕЙСТВИЕ», чтобы открыть FAQ по игре!', 'На площади гуляют 34 жителя с разными ролями — подойди к любому!'] },
+        { name: 'Бариста Сакуры', mesh: makeCharPlane('npc1', 1.75, 0xfbcfe8), x: -11.5, z: 0, lines: ['Заходи в Кафе «Сакура»! Угости друга кофе или купи пирожное.', 'С крыши башни открывается лучший вид на Млечный Путь!'] },
         { name: 'Охранник Клуба Аксис', mesh: makeCharPlane('npc1', 1.85, 0x94a3b8), x: 11.5, z: -10, lines: ['Ночной клуб «Аксис» открыт. Вход по пропуску или за Искры.', 'Соблюдайте порядок на площади — патруль рядом!'] }
       ];
-
-
       npcs.forEach(n => { if (!n.isCop) { n.mesh.position.set(n.x, 0, n.z); scene.add(n.mesh); } });
+
       let camYaw = 0, camPitch = 0.22, dragCam = false, lx = 0, ly = 0, copSpoken = false;
       ren.domElement.onmousedown = e => { dragCam = true; lx = e.clientX; ly = e.clientY; };
       ren.domElement.addEventListener('touchstart', e => { dragCam = true; lx = e.touches[0].clientX; ly = e.touches[0].clientY; }, { passive: true });
@@ -412,24 +478,44 @@
       window.addEventListener('touchmove', e => { if (!dragCam) return; camYaw -= (e.touches[0].clientX - lx) * 0.007; camPitch = Math.max(-0.45, Math.min(0.95, camPitch + (e.touches[0].clientY - ly) * 0.006)); lx = e.touches[0].clientX; ly = e.touches[0].clientY; }, { passive: true });
       window.addEventListener('mouseup', () => { dragCam = false; }); window.addEventListener('touchend', () => { dragCam = false; });
       player = { x: 0, z: 11, y: 0 }; let lastMc = 0; updHud();
+      const solidObjs = [{ x: 0, z: -9, r: 2.1 }, { x: -1.8, z: 5.2, r: 0.9 }, { x: -0.9, z: 5.4, r: 0.9 }, { x: -12.5, z: -2.2, r: 1.2 }, { x: -12.5, z: 2.2, r: 1.2 }];
+      function canStep(nx, nz) {
+        if (onRoof) return Math.abs(nx + 11) < 4 && Math.abs(nz) < 4;
+        if (Math.abs(nx) > 13.8 || Math.abs(nz) > 15.8) return false;
+        if (solidObjs.some(o => Math.hypot(o.x - nx, o.z - nz) < o.r)) return false;
+        if (npcs.some(n => !n.isCop && Math.hypot(n.x - nx, n.z - nz) < 0.85)) return false;
+        return !walkers.some(w => Math.hypot(w.m.position.x - nx, w.m.position.z - nz) < 0.72);
+      }
       function loop(t) {
         animId = requestAnimationFrame(loop);
         skyDome.rotation.y = t * 0.000018;
-        shard.rotation.y = t * 0.003; shard.position.y = 1.1 + Math.sin(t * 0.004) * 0.15;
+        shard.rotation.y = t * 0.003; shard.position.y = 1.0 + Math.sin(t * 0.004) * 0.14;
         const fwdX = -Math.sin(camYaw), fwdZ = -Math.cos(camYaw), rgtX = Math.cos(camYaw), rgtZ = -Math.sin(camYaw);
-        player.x = Math.max(-12, Math.min(12, player.x + (rgtX * move.x - fwdX * move.z) * 0.068));
-        player.z = Math.max(-15, Math.min(15, player.z + (rgtZ * move.x - fwdZ * move.z) * 0.068));
-        const walkBob = (Math.abs(move.x) + Math.abs(move.z) > 0.05) ? Math.abs(Math.sin(t * 0.009)) * 0.09 : Math.sin(t * 0.003) * 0.025;
+        const nx = player.x + (rgtX * move.x - fwdX * move.z) * 0.068;
+        const nz = player.z + (rgtZ * move.x - fwdZ * move.z) * 0.068;
+        if (canStep(nx, player.z)) player.x = nx;
+        if (canStep(player.x, nz)) player.z = nz;
+        const walkBob = (Math.abs(move.x) + Math.abs(move.z) > 0.05) ? Math.abs(Math.sin(t * 0.009)) * 0.08 : Math.sin(t * 0.003) * 0.02;
         heroMesh.position.set(player.x, player.y + walkBob, player.z); heroMesh.rotation.y = camYaw;
-        cam.position.set(player.x + Math.sin(camYaw) * 6.5, player.y + 2.6 + camPitch * 4.8, player.z + Math.cos(camYaw) * 6.5);
-        cam.lookAt(player.x - Math.sin(camYaw) * 6, player.y + 2.2 - camPitch * 6.2, player.z - Math.cos(camYaw) * 6);
-        npcs.forEach(n => { n.mesh.rotation.y = camYaw; });
+        cam.position.set(player.x + Math.sin(camYaw) * 6.5, player.y + 2.5 + camPitch * 4.8, player.z + Math.cos(camYaw) * 6.5);
+        cam.lookAt(player.x - Math.sin(camYaw) * 6, player.y + 2.0 - camPitch * 6.2, player.z - Math.cos(camYaw) * 6);
+        npcs.forEach(n => { if (!n.isCop) n.mesh.rotation.y = camYaw; });
         cafeGuests.forEach(cg => { cg.arm.rotation.x = Math.sin(t * 0.006 + cg.phase) * 0.65; });
-        walkers.forEach(w => { w.m.position.x += w.dir * w.sp; if (Math.abs(w.m.position.x) > 9.5) w.dir *= -1; w.m.rotation.y = camYaw; });
-
+        walkers.forEach(w => {
+          if (w.pause > 0) { w.pause--; w.m.rotation.y += 0.015; return; }
+          const dx = w.tx - w.m.position.x, dz = w.tz - w.m.position.z, dist = Math.hypot(dx, dz);
+          if (dist < 0.8) {
+            w.pause = w.type === 'tourist' ? 160 : (w.type === 'elder' ? 140 : 70);
+            w.tx = (Math.random() - 0.5) * 21; w.tz = (Math.random() - 0.5) * 23;
+          } else {
+            w.m.position.x += (dx / dist) * w.sp; w.m.position.z += (dz / dist) * w.sp;
+            w.m.rotation.y = Math.atan2(dx, dz);
+          }
+        });
         if (t - lastMc > 100) {
           lastMc = t;
           const nearIdx = npcs.findIndex(n => Math.hypot(n.x - player.x, n.z - player.z) < 4.2);
+          const nearW = walkers.find(w => Math.hypot(w.m.position.x - player.x, w.m.position.z - player.z) < 2.6);
           const box = document.getElementById('npc-speech');
           if (nearIdx >= 0) {
             const near = npcs[nearIdx], line = near.lines[Math.floor((t / 4500) % near.lines.length)];
@@ -437,10 +523,14 @@
             box.style.display = 'block';
             if (near.isCop && !copSpoken) { copSpoken = true; speakLine('Соблюдайте правила MX-Оазиса. Добро пожаловать в мегаполис!', 0); }
             else if (!near.isCop) speakLine(line, nearIdx);
+          } else if (nearW) {
+            box.innerHTML = `<b>${nearW.label}</b> <span style="color:#38BDF8;font-size:11px;">• Житель</span><br>${nearW.act}.`;
+            box.style.display = 'block';
           } else { box.style.display = 'none'; copSpoken = false; }
         }
         ren.render(scene, cam);
       }
+
       loop(0);
     }
 
