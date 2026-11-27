@@ -29,7 +29,11 @@
     .vn-text { font-size:14px; line-height:1.45; color:#4A4945; margin-bottom:14px; }
     .vn-opt { width:100%; text-align:left; padding:12px 14px; margin-bottom:8px; border-radius:12px; border:1px solid #E5E2D9; background:#FFF; color:#141413; font-size:13px; font-weight:700; cursor:pointer; }
     .vn-opt:hover { border-color:#D97757; background:#FFF7F3; }
+    #chat-bar { position:fixed; bottom:16px; left:144px; right:116px; z-index:12; display:flex; gap:6px; align-items:center; }
+    #chat-in { flex:1; min-width:0; padding:10px 12px; border-radius:999px; border:1px solid rgba(255,255,255,0.3); background:rgba(20,20,19,0.82); color:#FAF9F5; font-size:13px; outline:none; }
+    #chat-send { padding:10px 14px; border-radius:999px; border:none; background:#D97757; color:#FFF; font-size:12px; font-weight:800; cursor:pointer; }
   </style>
+
 
 </head>
 <body>
@@ -60,11 +64,17 @@
   <div id="ui-world">
     <div class="hud-top">
       <div class="pill" onclick="backToBook()">← К тексту</div>
-      <div class="pill" id="hud-stat">60 FPS • Атмосфера: Закат Синкая</div>
+      <div class="pill" id="hud-stat">ОАЗИС-Хаб • Площадь</div>
+      <div class="pill" id="status-pill" onclick="toggleMyStatus()" style="display:flex;align-items:center;gap:6px;"><span id="st-dot" style="width:9px;height:9px;border-radius:50%;background:#38BDF8;display:inline-block;"></span><span id="st-txt">Общение</span></div>
     </div>
     <div id="npc-speech"></div>
     <div id="joy-zone"><div id="joy-stick"></div></div>
-    <button id="act-btn" onclick="triggerAction()"> ДЕЙСТВИЕ</button>
+    <div id="chat-bar">
+      <input id="chat-in" maxlength="80" placeholder="Сказать в чат площади..." onkeydown="if(event.key==='Enter')sendBubbleChat()" />
+      <button id="chat-send" onclick="sendBubbleChat()">Сказать</button>
+    </div>
+    <button id="act-btn" onclick="triggerAction()">ДЕЙСТВИЕ</button>
+
     <div id="vn-modal"><div class="vn-card"><div class="vn-title" id="vn-t"></div><div class="vn-text" id="vn-b"></div><div id="vn-opts"></div></div></div>
   </div>
 
@@ -134,7 +144,33 @@
       cx.fillStyle = hairCol; cx.beginPath(); cx.arc(x, y - s * 1.48 + bob, s * 0.29, Math.PI * 0.9, Math.PI * 2.1); cx.fill();
       if (name) { cx.fillStyle = '#FFF'; cx.font = 'bold ' + Math.max(11, Math.min(15, s * 0.34)) + 'px system-ui'; cx.textAlign = 'center'; cx.fillText(name, x, y - s * 1.88 + bob); }
     }
+    let myStatus = 'chat', myBubble = { txt: '', until: 0 };
+    function setMyStatus(st) {
+      myStatus = st;
+      document.getElementById('st-dot').style.background = st === 'chat' ? '#38BDF8' : '#22C55E';
+      document.getElementById('st-txt').textContent = st === 'chat' ? 'Общение' : 'Занят';
+    }
+    function toggleMyStatus() { setMyStatus(myStatus === 'chat' ? 'busy' : 'chat'); }
+    document.addEventListener('visibilitychange', () => setMyStatus(document.hidden ? 'busy' : 'chat'));
+    function sendBubbleChat() {
+      const inp = document.getElementById('chat-in'), v = inp.value.trim();
+      if (!v) return;
+      myBubble = { txt: v, until: performance.now() + 6500 };
+      inp.value = ''; setMyStatus('chat');
+    }
+    function drawBubble(cx, x, y, txt, st) {
+      cx.fillStyle = st === 'busy' ? '#22C55E' : '#38BDF8';
+      cx.beginPath(); cx.arc(x, y, 5.5, 0, Math.PI * 2); cx.fill();
+      cx.strokeStyle = '#FFF'; cx.lineWidth = 1.5; cx.stroke();
+      if (!txt) return;
+      cx.font = 'bold 12px system-ui';
+      const w = Math.min(220, cx.measureText(txt).width + 20);
+      cx.fillStyle = 'rgba(250,249,245,0.95)';
+      cx.beginPath(); cx.roundRect(x - w / 2, y - 34, w, 24, 12); cx.fill();
+      cx.fillStyle = '#141413'; cx.textAlign = 'center'; cx.fillText(txt.slice(0, 28), x, y - 18);
+    }
     let biome = 'sunset', lastSpoken = '';
+
     function speakLine(txt, idx) {
       if (!('speechSynthesis' in window) || lastSpoken === txt) return;
       lastSpoken = txt; speechSynthesis.cancel();
@@ -221,7 +257,16 @@
               if (hSpr) {
                 const hh = b.s * 7.8, hw = hh * (hSpr.width / hSpr.height);
                 cx.drawImage(hSpr, b.x - hw / 2, b.y - hh + b.s * 0.3, hw, hh);
+                if (b.s > 16) {
+                  const signs = bx < 0 ? ['КАФЕ «САКУРА»', 'ПАЛАТА ЛИЦЕНЗИЙ'] : ['ПАРИКМАХЕРСКАЯ', 'ЛАВКА АРТЕФАКТОВ'];
+                  const sg = signs[Math.abs(z / 8) % 2];
+                  cx.fillStyle = 'rgba(15,23,42,0.86)'; cx.fillRect(b.x - b.s * 2.1, b.y - hh * 0.56, b.s * 4.2, b.s * 0.65);
+                  cx.strokeStyle = '#38BDF8'; cx.lineWidth = 1.5; cx.strokeRect(b.x - b.s * 2.1, b.y - hh * 0.56, b.s * 4.2, b.s * 0.65);
+                  cx.fillStyle = '#FDE047'; cx.font = 'bold ' + Math.max(9, Math.min(13, b.s * 0.32)) + 'px system-ui'; cx.textAlign = 'center';
+                  cx.fillText(sg, b.x, b.y - hh * 0.56 + b.s * 0.44);
+                }
               } else {
+
 
                 const w = b.s * 6.4, h = 11 * b.s;
                 cx.fillStyle = isNight ? '#334155' : '#FEF3C7'; cx.fillRect(b.x - w / 2, b.y - h, w, h);
@@ -262,7 +307,9 @@
           const gy = cv.height * 0.76;
           cx.fillStyle = 'rgba(20,15,35,0.36)'; cx.beginPath(); cx.ellipse(cv.width / 2, gy, hw * 0.34, 9, 0, 0, Math.PI * 2); cx.fill();
           cx.drawImage(SPR.hero, cv.width / 2 - hw / 2, gy - hh + bob, hw, hh);
+          drawBubble(cx, cv.width / 2, gy - hh - 10 + bob, t < myBubble.until ? myBubble.txt : '', myStatus);
         } else drawAnimeChar(cx, cv.width / 2, cv.height * 0.76, 46, '#FAF9F5', '#1E293B', 'Вы', t, 0);
+
 
 
         petals.forEach(pt => {
