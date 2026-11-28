@@ -333,9 +333,20 @@
       g.fillStyle = '#fff'; g.font = 'bold 24px system-ui'; g.textAlign = 'center'; g.fillText(`${ruText} • ${jpText}`, 256, 42);
       return new THREE.CanvasTexture(c);
     }
-
-
+    function makeBannerTex(title, sub, col) {
+      const c = document.createElement('canvas'); c.width = 512; c.height = 256;
+      const g = c.getContext('2d');
+      const gr = g.createLinearGradient(0, 0, 512, 256);
+      gr.addColorStop(0, '#090d16'); gr.addColorStop(1, '#1e1b4b');
+      g.fillStyle = gr; g.fillRect(0, 0, 512, 256);
+      g.strokeStyle = col; g.lineWidth = 8; g.strokeRect(10, 10, 492, 236);
+      g.fillStyle = col; g.font = 'bold 20px system-ui'; g.textAlign = 'center'; g.fillText('MX-ОАЗИС • МЕДИА', 256, 52);
+      g.fillStyle = '#FAF9F5'; g.font = 'bold 34px system-ui'; g.fillText(title, 256, 128);
+      g.fillStyle = '#94A3B8'; g.font = '600 20px system-ui'; g.fillText(sub, 256, 182);
+      return new THREE.CanvasTexture(c);
+    }
     let playerGender = localStorage.getItem('mxs_gender') || '';
+
     function selectGender(g) {
       playerGender = g;
       localStorage.setItem('mxs_gender', g);
@@ -365,31 +376,36 @@
       const plaza = new THREE.Mesh(new THREE.PlaneGeometry(42, 42), new THREE.MeshStandardMaterial({ map: makeRoadTex(), roughness: 0.42 }));
       plaza.rotation.x = -Math.PI / 2; scene.add(plaza);
       const towers = [
-        [-20, -13, 'БАР «НЕОН»', '酒場', '#F472B6', 72, 9.5, 'cyber', 'cafe'],
-        [-20, 0, 'КАФЕ «САКУРА»', '喫茶', '#38BDF8', 88, 10.5, 'wood', 'cafe'],
-        [-20, 13, 'БУТИК ОДЕЖДЫ', '衣装', '#FDE047', 64, 9, 'glass', 'shop'],
-        [20, -13, 'НОЧНОЙ КЛУБ «АКСИС»', 'クラブ', '#F472B6', 96, 11, 'cyber', 'cafe'],
-        [20, 0, 'ОФИС-ЦЕНТР «ОАЗИС»', '電脳', '#38BDF8', 115, 10.5, 'glass', 'office'],
-        [20, 13, 'ЛАВКА АРТЕФАКТОВ', '宝石', '#A855F7', 68, 9, 'cyber', 'shop'],
-        [-8, -22, 'ПОРТАЛ МИРОВ', '転送', '#38BDF8', 120, 10, 'cyl', 'office'],
-        [8, -22, 'ПАЛАТА ЛИЦЕНЗИЙ', '免許', '#FDE047', 92, 9.5, 'glass', 'office']
+        [-20, -13, 'БАР «НЕОН»', '酒場', '#F472B6', 24, 9.5, 'cyber', 'cafe'],
+        [-20, 0, 'КАФЕ «САКУРА»', '喫茶', '#38BDF8', 28, 10.5, 'wood', 'cafe'],
+        [-20, 13, 'БУТИК ОДЕЖДЫ', '衣装', '#FDE047', 22, 9, 'glass', 'shop'],
+        [20, -13, 'НОЧНОЙ КЛУБ «АКСИС»', 'クラブ', '#F472B6', 32, 11, 'cyber', 'cafe'],
+        [20, 0, 'MX-STEP • ШОУРУМ', '展示', '#D97757', 36, 10.5, 'glass', 'office'],
+        [20, 13, 'ЛАВКА АРТЕФАКТОВ', '宝石', '#A855F7', 25, 9, 'cyber', 'shop'],
+        [-8, -22, 'ПОРТАЛ МИРОВ', '転送', '#38BDF8', 38, 10, 'cyl', 'office'],
+        [8, -22, 'ПАЛАТА ЛИЦЕНЗИЙ', '免許', '#FDE047', 30, 9.5, 'glass', 'office']
       ];
+      const banners = {
+        1: ['СВАЙП-ЛЕНТА MX-STEP', 'Создай новеллу за 3 минуты', '#38BDF8'],
+        4: ['ЭКОСИСТЕМА MXPRO 5.0', 'ИИ-синтез миров из текста', '#D97757'],
+        6: ['БИРЖА АРТЕФАКТОВ', 'Торгуй за Оранжевые Искры', '#F472B6']
+      };
       const treeTex = SPR.tree ? new THREE.CanvasTexture(SPR.tree) : null;
       towers.forEach(([bx, bz, ruT, jpT, col, bh, bw, style, kind], i) => {
         const tex = makeTowerTex(i, style, col);
         const geo = style === 'cyl' ? new THREE.CylinderGeometry(bw * 0.48, bw * 0.54, bh, 20) : new THREE.BoxGeometry(bw, bh, bw);
         const bM = new THREE.Mesh(geo, new THREE.MeshStandardMaterial({ map: tex }));
         bM.position.set(bx, bh / 2, bz); scene.add(bM);
-        const topGeo = style === 'cyl' ? new THREE.CylinderGeometry(bw * 0.25, bw * 0.45, bh * 0.22, 16) : new THREE.BoxGeometry(bw * 0.65, bh * 0.2, bw * 0.65);
-        const topTier = new THREE.Mesh(topGeo, new THREE.MeshStandardMaterial({ map: tex }));
-        topTier.position.set(bx, bh + bh * 0.1, bz); scene.add(topTier);
-        const spire = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.35, 16), new THREE.MeshBasicMaterial({ color: col }));
-        spire.position.set(bx, bh * 1.2 + 8, bz); scene.add(spire);
-        // Витрина первого этажа и вывеска строго на уровне 4.5 м
         const sf = new THREE.Mesh(new THREE.PlaneGeometry(bw * 0.94, 4.6), new THREE.MeshBasicMaterial({ map: makeStorefrontTex(ruT, jpT, col, kind), side: THREE.DoubleSide }));
         sf.position.set(bx + (bx < 0 ? bw / 2 + 0.08 : (bx > 0 && Math.abs(bx) === 20 ? -bw / 2 - 0.08 : 0)), 2.3, bz + (Math.abs(bx) < 20 ? bw / 2 + 0.08 : 0));
         sf.rotation.y = bx === -20 ? Math.PI / 2 : (bx === 20 ? -Math.PI / 2 : 0);
         scene.add(sf);
+        if (banners[i]) {
+          const [bt, bs, bc] = banners[i];
+          const bn = new THREE.Mesh(new THREE.PlaneGeometry(bw * 0.86, 4.4), new THREE.MeshBasicMaterial({ map: makeBannerTex(bt, bs, bc), side: THREE.DoubleSide }));
+          bn.position.set(sf.position.x, 11.5, sf.position.z); bn.rotation.y = sf.rotation.y; scene.add(bn);
+        }
+
         if (Math.abs(bx) === 20) {
           const sx = bx < 0 ? -12.6 : 12.6;
           const post = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.08, 4.2), new THREE.MeshBasicMaterial({ color: 0x334155 }));
