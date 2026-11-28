@@ -409,7 +409,7 @@
         if (banners[i]) {
           const [bt, bs, bc] = banners[i];
           const bn = new THREE.Mesh(new THREE.PlaneGeometry(bw * 0.86, 4.4), new THREE.MeshBasicMaterial({ map: makeBannerTex(bt, bs, bc), side: THREE.DoubleSide }));
-          bn.position.set(sf.position.x, 11.5, sf.position.z); bn.rotation.y = sf.rotation.y; scene.add(bn);
+          bn.position.set(sf.position.x, 7.4, sf.position.z); bn.rotation.y = sf.rotation.y; scene.add(bn);
         }
 
         if (Math.abs(bx) === 20) {
@@ -600,10 +600,12 @@
         if (onRoof) return Math.abs(nx + 11) < 4 && Math.abs(nz) < 4;
         if (Math.abs(nx) > 13.8 || Math.abs(nz) > 15.8) return false;
         if (solidObjs.some(o => Math.hypot(o.x - nx, o.z - nz) < o.r)) return false;
-        traffic.forEach(tr => { tr.m.position.z += tr.dir * tr.sp; if (tr.m.position.z > 32) tr.m.position.z = -32; if (tr.m.position.z < -32) tr.m.position.z = 32; });
-
-
+        if (traffic.some(tr => Math.abs(tr.m.position.x - nx) < 1.35 && Math.abs(tr.m.position.z - nz) < 2.4)) return false;
+        if (npcs.some(n => !n.isCop && Math.hypot(n.x - nx, n.z - nz) < 0.85)) return false;
+        return !walkers.some(w => Math.hypot(w.m.position.x - nx, w.m.position.z - nz) < 0.78);
+      }
       function loop(t) {
+
         animId = requestAnimationFrame(loop);
         mixers.forEach(mx => mx.update(0.016));
         skyDome.rotation.y = t * 0.000018;
