@@ -421,9 +421,18 @@
           }
         }
       });
-      // Парящий стеклянный мост между башнями на высоте 32 м
       const bridge = new THREE.Mesh(new THREE.BoxGeometry(36, 2.4, 3.2), new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.35 }));
-      bridge.position.set(0, 32, 0); scene.add(bridge);
+      bridge.position.set(0, 18, 0); scene.add(bridge);
+      // Дальний горизонт мегаполиса за пределами площади (как в Cyberpunk 2077)
+      for (let d = 0; d < 28; d++) {
+        const ang = (d / 28) * Math.PI * 2, dist = 58 + (d % 4) * 16;
+        const dh = 45 + (d % 5) * 22, dw = 10 + (d % 3) * 4;
+        const dCol = d % 3 === 0 ? 0x38bdf8 : (d % 3 === 1 ? 0xf472b6 : 0xfde047);
+        const dm = new THREE.Mesh(new THREE.BoxGeometry(dw, dh, dw), new THREE.MeshStandardMaterial({ map: makeTowerTex(d, 'glass', '#' + dCol.toString(16).padStart(6, '0')) }));
+        dm.position.set(Math.cos(ang) * dist, dh / 2 - 4, Math.sin(ang) * dist);
+        scene.add(dm);
+      }
+
 
       const cafeGuests = [];
       [-2.2, 2.2].forEach((cz, idx) => {
@@ -526,8 +535,24 @@
         }
         g.scale.set(1, hScale, 1); return g;
       }
+      const mixers = [];
+      function attachGlbModel(targetGroup, fileName, scaleVal) {
+        if (!window.THREE || !THREE.GLTFLoader) return;
+        new THREE.GLTFLoader().load(fileName, gltf => {
+          targetGroup.clear();
+          const m = gltf.scene; m.scale.set(scaleVal, scaleVal, scaleVal);
+          targetGroup.add(m);
+          if (gltf.animations && gltf.animations.length) {
+            const mx = new THREE.AnimationMixer(m);
+            mx.clipAction(gltf.animations[0]).play();
+            mixers.push(mx);
+          }
+        }, undefined, () => {});
+      }
+      traffic.forEach((tr, i) => attachGlbModel(tr.m, i % 2 ? 'car_cyber.glb' : 'car_sport.glb', 1));
       const walkers = [];
       const specs = [
+
         ['elder', 5, 0.004, 'Пожилой горожанин', 'Отдыхает у сакуры и любуется закатом'],
         ['girl', 7, 0.008, 'Девушка', 'Рассматривает платья в витрине бутика'],
         ['guy', 7, 0.010, 'Парень', 'Идёт вдоль неоновых вывесок к клубу'],
@@ -539,9 +564,12 @@
           const m = makeCitizenMesh(type, k);
           const sx = ((gIdx * 5 + k * 3) % 21) - 10, sz = ((gIdx * 7 + k * 4) % 23) - 11;
           m.position.set(sx, 0, sz); scene.add(m);
+          const glbMap = { girl: 'bot_girl.glb', guy: 'bot_guy.glb', office: 'bot_office.glb', elder: 'bot_elder.glb', tourist: 'bot_tourist.glb' };
+          attachGlbModel(m, glbMap[type], 1);
           walkers.push({ m, type, label: `${label} #${k + 1}`, act, sp: speed, tx: -sx, tz: -sz, pause: (k * 40) % 120 });
         }
       });
+
       npcs = [
         { name: 'Патруль MX-Оазиса', mesh: cop1, isCop: true, x: -1.35, z: 5.3, lines: ['Соблюдайте правила MX-Оазиса. Добро пожаловать в мегаполис!', 'Отличный кофе и пончики сегодня в Сакуре, правда, напарник?'] },
         { name: 'Гид Стойки FAQ', mesh: makeCharPlane('npc2', 1.75, 0xbae6fd), isFaq: true, x: 0, z: -8.2, lines: ['Привет! Я бот-консультант MX-Оазиса. Нажми «ДЕЙСТВИЕ», чтобы открыть FAQ по игре!', 'На площади гуляют 34 жителя с разными ролями — подойди к любому!'] },
@@ -573,7 +601,9 @@
 
       function loop(t) {
         animId = requestAnimationFrame(loop);
+        mixers.forEach(mx => mx.update(0.016));
         skyDome.rotation.y = t * 0.000018;
+
         shard.rotation.y = t * 0.003; shard.position.y = 1.0 + Math.sin(t * 0.004) * 0.14;
         const fwdX = -Math.sin(camYaw), fwdZ = -Math.cos(camYaw), rgtX = Math.cos(camYaw), rgtZ = -Math.sin(camYaw);
         const nx = player.x + (rgtX * move.x - fwdX * move.z) * 0.068;
@@ -709,12 +739,14 @@
           { label: 'Остаться на площади' }
         ]);
       } else if (player.x > 7.5 && Math.abs(player.z) < 6) {
-
-        openVnCard('Бизнес-центр «Оазис-Тауэр»', 'Стеклянные двери холла бесшумно разъезжаются. Внутри виден голографический ресепшен и биржа лицензий.', [
-          { label: 'Открыть Палату Лицензий (ИНН / Профессии)', fn: () => openVnCard('Палата Лицензий РФ (422-ФЗ)', 'Оформление лицензии Строителя, Бармена или Автора для вывода Оранжевых Искр по СБП доступно после верификации 12-значного ИНН самозанятого или ИП.', [{ label: 'Понятно' }]) },
+        openVnCard('Первый этаж: MX-STEP • ШОУРУМ', 'Добро пожаловать в штаб-квартиру экосистемы MXPro! Здесь представлены все приложения и свежие новости платформы.', [
+          { label: 'Новости и обновления (Ноябрь 2026)', fn: () => openVnCard('Новости MXPro / MX-Оазис', '1. Открыта Центральная площадь 360° с космосом.\n2. Запущена двухконтурная система Синих и Оранжевых Искр.\n3. Подключена генерация сцен из текста.', [{ label: 'Назад в Шоурум', fn: triggerAction }]) },
+          { label: 'Наши приложения (MXPro 4.0 / MX-Step)', fn: () => openVnCard('Экосистема продуктов', '• MXPro 4.0 — студия аудита текста (ИРЯ РАН) и симулятор Монте-Карло.\n• MX-Step — свайп-лента новелл.\n• MX-Оазис — 3D-мегаполис.', [{ label: 'Перейти в MX-Step', fn: () => location.href = 'step.html' }, { label: 'Назад', fn: triggerAction }]) },
+          { label: 'Палата Лицензий РФ (ИНН / 422-ФЗ)', fn: () => openVnCard('Палата Лицензий', 'Оформление лицензии Строителя, Бармена или Автора для вывода Оранжевых Искр по СБП доступно после проверки ИНН.', [{ label: 'Назад', fn: triggerAction }]) },
           { label: 'Выйти на площадь' }
         ]);
       } else {
+
         openVnCard('Тайная капсула площади', `Последнее послание игроков: «${timeCapsule}»`, [
           { label: 'Оставить своё послание (+50 Синих Искр)', fn: () => { const msg = prompt('Ваше послание:'); if (msg) { timeCapsule = msg.slice(0, 120); localStorage.setItem('mxs_capsule', timeCapsule); addBlueSparks(50); } } },
           { label: 'Продолжить прогулку' }
