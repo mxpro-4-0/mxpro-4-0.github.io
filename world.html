@@ -253,12 +253,17 @@
           g.fillRect(x + off + 2, y + 2, 28, 28);
         }
       }
-      g.strokeStyle = 'rgba(56,189,248,0.45)'; g.lineWidth = 3; g.strokeRect(12, 12, 488, 488);
-      g.font = 'bold 22px system-ui'; g.textAlign = 'center'; g.fillStyle = '#FDE047';
-      g.fillText('ЦЕНТРАЛЬНАЯ ПЛОЩАДЬ • MX-ОАЗИС', 256, 46);
-      const tx = new THREE.CanvasTexture(c); tx.wrapS = tx.wrapT = THREE.RepeatWrapping; tx.repeat.set(5, 5);
+      // Асфальтовая проезжая часть справа (въезд на площадь) с бордюрами и разметкой
+      g.fillStyle = '#1e293b'; g.fillRect(310, 0, 110, 512);
+      g.fillStyle = '#64748b'; g.fillRect(304, 0, 6, 512); g.fillRect(420, 0, 6, 512);
+      g.fillStyle = '#fde047';
+      for (let y = 16; y < 512; y += 64) g.fillRect(363, y, 4, 34);
+      g.font = 'bold 18px system-ui'; g.textAlign = 'center'; g.fillStyle = '#FDE047';
+      g.fillText('ЦЕНТРАЛЬНАЯ ПЛОЩАДЬ • MX-ОАЗИС', 155, 46);
+      const tx = new THREE.CanvasTexture(c); tx.wrapS = tx.wrapT = THREE.RepeatWrapping; tx.repeat.set(1, 4);
       return tx;
     }
+
     function makeSpaceTex() {
       const c = document.createElement('canvas'); c.width = 2048; c.height = 1024;
       const g = c.getContext('2d');
@@ -376,15 +381,16 @@
       const plaza = new THREE.Mesh(new THREE.PlaneGeometry(42, 42), new THREE.MeshStandardMaterial({ map: makeRoadTex(), roughness: 0.42 }));
       plaza.rotation.x = -Math.PI / 2; scene.add(plaza);
       const towers = [
-        [-20, -13, 'БАР «НЕОН»', '酒場', '#F472B6', 24, 9.5, 'cyber', 'cafe'],
-        [-20, 0, 'КАФЕ «САКУРА»', '喫茶', '#38BDF8', 28, 10.5, 'wood', 'cafe'],
-        [-20, 13, 'БУТИК ОДЕЖДЫ', '衣装', '#FDE047', 22, 9, 'glass', 'shop'],
-        [20, -13, 'НОЧНОЙ КЛУБ «АКСИС»', 'クラブ', '#F472B6', 32, 11, 'cyber', 'cafe'],
-        [20, 0, 'MX-STEP • ШОУРУМ', '展示', '#D97757', 36, 10.5, 'glass', 'office'],
-        [20, 13, 'ЛАВКА АРТЕФАКТОВ', '宝石', '#A855F7', 25, 9, 'cyber', 'shop'],
-        [-8, -22, 'ПОРТАЛ МИРОВ', '転送', '#38BDF8', 38, 10, 'cyl', 'office'],
-        [8, -22, 'ПАЛАТА ЛИЦЕНЗИЙ', '免許', '#FDE047', 30, 9.5, 'glass', 'office']
+        [-20, -13, 'БАР «НЕОН»', '酒場', '#F472B6', 11, 9.5, 'cyber', 'cafe'],
+        [-20, 0, 'КАФЕ «САКУРА»', '喫茶', '#38BDF8', 13, 10.5, 'wood', 'cafe'],
+        [-20, 13, 'БУТИК ОДЕЖДЫ', '衣装', '#FDE047', 10, 9, 'glass', 'shop'],
+        [20, -13, 'НОЧНОЙ КЛУБ «АКСИС»', 'クラブ', '#F472B6', 14, 11, 'cyber', 'cafe'],
+        [20, 0, 'MX-STEP • ШОУРУМ', '展示', '#D97757', 16, 10.5, 'glass', 'office'],
+        [20, 13, 'ЛАВКА АРТЕФАКТОВ', '宝石', '#A855F7', 11, 9, 'cyber', 'shop'],
+        [-8, -22, 'ПОРТАЛ МИРОВ', '転送', '#38BDF8', 16, 10, 'cyl', 'office'],
+        [8, -22, 'ПАЛАТА ЛИЦЕНЗИЙ', '免許', '#FDE047', 14, 9.5, 'glass', 'office']
       ];
+
       const banners = {
         1: ['СВАЙП-ЛЕНТА MX-STEP', 'Создай новеллу за 3 минуты', '#38BDF8'],
         4: ['ЭКОСИСТЕМА MXPRO 5.0', 'ИИ-синтез миров из текста', '#D97757'],
@@ -498,18 +504,17 @@
           heroMesh.add(model);
         }, undefined, () => {});
       }
-      const traffic = [0x38bdf8, 0xf472b6, 0xfde047, 0x22c55e].map((col, idx) => {
+      const traffic = [0x38bdf8, 0xf472b6].map((col, idx) => {
         const car = new THREE.Group();
-        const body = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.55, 3.8), new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.7, roughness: 0.2 })); body.position.y = 0.45;
-        const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.45, 0.45, 2.0), new THREE.MeshStandardMaterial({ color: col, transparent: true, opacity: 0.75 })); cabin.position.set(0, 0.9, -0.2);
-        const lights = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.12, 0.1), new THREE.MeshBasicMaterial({ color: 0xfef08a })); lights.position.set(0, 0.45, 1.92);
+        const body = new THREE.Mesh(new THREE.BoxGeometry(1.85, 0.58, 4.1), new THREE.MeshStandardMaterial({ color: 0x0f172a, metalness: 0.6, roughness: 0.3 })); body.position.y = 0.45;
+        const cabin = new THREE.Mesh(new THREE.BoxGeometry(1.55, 0.48, 2.1), new THREE.MeshStandardMaterial({ color: col, transparent: true, opacity: 0.8 })); cabin.position.set(0, 0.92, -0.15);
+        const lights = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.14, 0.1), new THREE.MeshBasicMaterial({ color: 0xfef08a })); lights.position.set(0, 0.45, 2.06);
         car.add(body, cabin, lights);
-        const laneX = idx % 2 === 0 ? -14.8 : 14.8;
-        car.position.set(laneX, 0, -25 + idx * 14);
-        if (idx % 2 !== 0) car.rotation.y = Math.PI;
+        car.position.set(6.5, 0, -20 + idx * 24);
         scene.add(car);
-        return { m: car, dir: idx % 2 === 0 ? 1 : -1, sp: 0.18 + (idx % 2) * 0.06 };
+        return { m: car, dir: 1, sp: 0.045 };
       });
+
 
       function makeCitizenMesh(grpType, idx) {
         const g = new THREE.Group();
@@ -595,9 +600,8 @@
         if (onRoof) return Math.abs(nx + 11) < 4 && Math.abs(nz) < 4;
         if (Math.abs(nx) > 13.8 || Math.abs(nz) > 15.8) return false;
         if (solidObjs.some(o => Math.hypot(o.x - nx, o.z - nz) < o.r)) return false;
-        if (npcs.some(n => !n.isCop && Math.hypot(n.x - nx, n.z - nz) < 0.85)) return false;
-        return !walkers.some(w => Math.hypot(w.m.position.x - nx, w.m.position.z - nz) < 0.78);
-      }
+        traffic.forEach(tr => { tr.m.position.z += tr.dir * tr.sp; if (tr.m.position.z > 32) tr.m.position.z = -32; if (tr.m.position.z < -32) tr.m.position.z = 32; });
+
 
       function loop(t) {
         animId = requestAnimationFrame(loop);
@@ -617,9 +621,15 @@
           heroMesh.userData.legR.rotation.x = isMoving ? -Math.sin(t * 0.012) * 0.55 : 0;
         }
         heroMesh.position.set(player.x, player.y + walkBob, player.z); heroMesh.rotation.y = camYaw + Math.PI;
-        traffic.forEach(tr => { tr.m.position.z += tr.dir * tr.sp; if (tr.m.position.z > 32) tr.m.position.z = -32; if (tr.m.position.z < -32) tr.m.position.z = 32; });
-
+        traffic.forEach(tr => {
+          const blockedByPlayer = Math.abs(tr.m.position.x - player.x) < 1.6 && (player.z - tr.m.position.z) > 0 && (player.z - tr.m.position.z) < 4.2;
+          if (!blockedByPlayer) {
+            tr.m.position.z += tr.dir * tr.sp;
+            if (tr.m.position.z > 24) tr.m.position.z = -24;
+          }
+        });
         cam.position.set(player.x + Math.sin(camYaw) * 6.5, player.y + 2.5 + camPitch * 4.8, player.z + Math.cos(camYaw) * 6.5);
+
         cam.lookAt(player.x - Math.sin(camYaw) * 6, player.y + 2.0 - camPitch * 6.2, player.z - Math.cos(camYaw) * 6);
         npcs.forEach(n => { if (!n.isCop) n.mesh.rotation.y = camYaw; });
         cafeGuests.forEach(cg => { cg.arm.rotation.x = Math.sin(t * 0.006 + cg.phase) * 0.65; });
